@@ -23,14 +23,14 @@ async function sha256Hex(str) {
 }
 
 const PUZZLE_HASHES = {
-  'p1': 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5', // هاش لـ "M1-5MAGIC"
+  'p1': 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5', // هاش لـ "ZHBT"
   'p2': '',
   'p3': '',
   'p4': ''
 };
 
 const DEFAULT_CODES = {
-  'p1': 'M1-5MAGIC',
+  'p1': 'ZHBT',
   'p2': 'C2-ALPHA',
   'p3': 'C3-SONIC',
   'p4': 'C4-PATTERN'
