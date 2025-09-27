@@ -5,16 +5,21 @@ class PuzzleSystem {
         this.puzzles = {
             1: {
                 title: "اللغز الأول: لوحة النجوم",
-                question: "انظر إلى لوحة النجوم أمامك. ما هو النمط المخفي في ترتيب الكواكب؟",
-                image: "🌍🌟⭐🌕🪐", // يمكن استبدالها بصورة حقيقية لاحقاً
+                question: "انظر إلى لوحة النجوم أمامك. ما هو النمط المخفي في ترتيب الكواكب؟ 🌍🌟⭐🌕🪐",
                 solution: "fibonacci",
                 type: "pattern"
             },
             2: {
                 title: "اللغز الثاني: المخطوطة المفقودة",
-                question: "المخطوطة تحوي رموزاً قديمة. ما هو المعنى المخفي؟",
+                question: "المخطوطة تحوي رموزاً قديمة. ما هو المعنى المخفي؟ 𓂀 𓂁 𓂂 𓂃 𓂄",
                 solution: "pyramid",
                 type: "code"
+            },
+            3: {
+                title: "النهائي: بوابة الحضارة",
+                question: "أخيراً... ما هو السر الأعظم الذي اكتشفته؟",
+                solution: "knowledge",
+                type: "final"
             }
         };
     }
@@ -27,7 +32,7 @@ class PuzzleSystem {
         return `
             <div class="puzzle-header">
                 <h2>${puzzle.title}</h2>
-                <div class="puzzle-image">${puzzle.image}</div>
+                <div class="puzzle-image">${puzzle.question.split(' ').pop()}</div>
             </div>
             
             <div class="puzzle-question">
@@ -48,9 +53,10 @@ class PuzzleSystem {
     displayEnding() {
         return `
             <div class="ending-screen">
-                <h2>تهانينا! لقد أكملت الرحلة</h2>
+                <h2>🎉 تهانينا! لقد أكملت الرحلة 🎉</h2>
                 <p>لقد أثبتت أنك باحث حقيقي. أسرار الحضارة المفقودة أصبحت بين يديك.</p>
-                <button onclick="restartGame()">ابدأ من جديد</button>
+                <p>مستواك النهائي: ${curator.playerLevel} / 3</p>
+                <button onclick="restartGame()">ابدأ رحلة جديدة</button>
             </div>
         `;
     }
@@ -58,7 +64,7 @@ class PuzzleSystem {
     // التحقق من الإجابة
     checkAnswer(answer, puzzleNumber) {
         const puzzle = this.puzzles[puzzleNumber];
-        return answer.toLowerCase() === puzzle.solution;
+        return answer.toLowerCase() === puzzle.solution.toLowerCase();
     }
 }
 
