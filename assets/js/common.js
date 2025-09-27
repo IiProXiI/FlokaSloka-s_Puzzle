@@ -23,21 +23,21 @@ async function sha256Hex(str) {
 }
 
 const PUZZLE_HASHES = {
-  'p1': '',
+  'p1': 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5', // هاش لـ "M1-5MAGIC"
   'p2': '',
   'p3': '',
   'p4': ''
 };
 
 const DEFAULT_CODES = {
-  'p1': 'C1-9QX7',
+  'p1': 'M1-5MAGIC',
   'p2': 'C2-ALPHA',
   'p3': 'C3-SONIC',
   'p4': 'C4-PATTERN'
 };
 
 async function initHashesIfEmpty() {
-  const looksPlaceholder = PUZZLE_HASHES['p1'] === '' || PUZZLE_HASHES['p4'] === '';
+  const looksPlaceholder = PUZZLE_HASHES['p1'] === '';
   if (!looksPlaceholder) return;
   for (const key of Object.keys(DEFAULT_CODES)) {
     const code = DEFAULT_CODES[key];
