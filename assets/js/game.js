@@ -6,16 +6,15 @@ class GameManager {
     }
 
     async init() {
-        // انتظر قليلاً لضمان تحميل العناصر
         setTimeout(async () => {
             await this.showWelcomeMessage();
-        }, 500);
+        }, 1000);
     }
 
     async showWelcomeMessage() {
         const typingElement = document.getElementById('typingText');
         if (typingElement && typingElement.innerHTML === '') {
-            const welcomeMessage = "مرحباً أيها الباحث... لطالما انتظرت وصولك. هل أنت مستعد لاختبار قدراتك؟";
+            const welcomeMessage = "مرحباً أيها المُحلل... أرى في عينيك فضول المعرفة. هل أنت مستعد لتحدي العقل؟";
             await curator.typeMessage(welcomeMessage, typingElement);
         }
     }
@@ -32,12 +31,12 @@ class GameManager {
         const puzzleContent = document.getElementById('puzzleContent');
         puzzleContent.innerHTML = puzzleSystem.displayPuzzle(puzzleNumber);
         
-        // رسالة ترحيبية من الـ AI
         const feedbackElement = document.getElementById('aiFeedback');
         if (feedbackElement) {
+            const puzzle = puzzleSystem.puzzles[puzzleNumber];
             const welcomeMessage = puzzleNumber === 1 ? 
-                "أهلاً بك في التحدي الأول. انظر إلى النجوم وحاول اكتشاف النمط..." :
-                `تحدي جديد ينتظرك! هذه المرة: ${puzzleSystem.puzzles[puzzleNumber].title}`;
+                "أهلاً بك في التحدي الأول. هذا لغز رياضي يتطلب تفكيراً تحليلياً..." :
+                `تحدي جديد! هذه المرة: ${puzzle.title}`;
             
             await curator.typeMessage(welcomeMessage, feedbackElement);
         }
@@ -52,22 +51,26 @@ class GameManager {
         
         const answer = answerInput.value;
         if (!answer) {
-            await curator.typeMessage("يجب أن تدخل إجابة أولاً...", feedbackElement);
+            await curator.typeMessage("❌ يجب أن تدخل إجابة أولاً...", feedbackElement);
             return;
         }
 
         const isCorrect = puzzleSystem.checkAnswer(answer, puzzleSystem.currentPuzzle);
         const response = curator.generateResponse(answer, 
-            puzzleSystem.puzzles[puzzleSystem.currentPuzzle].solution
+            puzzleSystem.puzzles[puzzleSystem.currentPuzzle].solution,
+            puzzleSystem.currentPuzzle
         );
         
         await curator.typeMessage(response, feedbackElement);
         
         if (isCorrect) {
+            // إعادة تعيين حقل الإجابة
+            answerInput.value = '';
+            
             setTimeout(async () => {
                 puzzleSystem.currentPuzzle++;
                 await this.loadPuzzle(puzzleSystem.currentPuzzle);
-            }, 3000);
+            }, 4000);
         }
     }
 
@@ -76,8 +79,8 @@ class GameManager {
         const feedbackElement = document.getElementById('aiFeedback');
         if (!feedbackElement) return;
         
-        const hint = curator.getHintResponse();
-        await curator.typeMessage(hint, feedbackElement);
+        const hint = curator.getHintResponse(puzzleSystem.currentPuzzle);
+        await curator.typeMessage(`💡 تلميح: ${hint}`, feedbackElement);
     }
 
     // إعادة اللعبة
@@ -93,7 +96,7 @@ class GameManager {
     }
 }
 
-// تهيئة اللعبة عند تحميل الصفحة
+// تهيئة اللعبة
 document.addEventListener('DOMContentLoaded', () => {
     window.gameManager = new GameManager();
 });
