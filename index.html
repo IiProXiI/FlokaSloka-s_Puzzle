@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متحف الألغاز الغامض - التحدي النهائي</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <meta name="description" content="تحدي ألغاز متقدم مع شفرات فريدة وألغاز صوتية ومتاهة تفاعلية">
-    <meta name="keywords" content="ألغاز, شفرات, متاهة, ألغاز صوتية, تحدي ذكاء">
 </head>
 <body class="cyber-theme">
     <div class="hologram-container">
@@ -17,17 +15,27 @@
                 <div class="hologram-effect"></div>
             </div>
             
-            <h1 class="neon-title">متحف الألغاز الغامض</h1>
-            <p class="subtitle">التحدي الذي سيختبر حدود قدراتك</p>
+            <h1 class="neon-title">🚀 متحف الألغاز الغامض</h1>
+            <p class="subtitle">اخترق الشفرات.. اكتشف الأسرار.. كن الأفضل</p>
             
             <div class="register-form">
-                <input type="text" id="playerName" placeholder="أدخل اسمك..." maxlength="20">
-                <button onclick="registerPlayer()" class="start-btn">بدء التحدي</button>
+                <div class="input-group">
+                    <input type="text" id="playerName" placeholder="اكتب اسمك هنا..." maxlength="20">
+                    <div class="input-border"></div>
+                </div>
+                <button class="start-btn" onclick="gameManager.registerPlayer()">
+                    <span>بدء التحدي</span>
+                    <div class="btn-glow"></div>
+                </button>
             </div>
             
             <div class="leaderboard-preview">
-                <h3>🏆 أقرب المتصدرين</h3>
-                <div id="topPlayers"></div>
+                <h3>🏆 المتصدرون</h3>
+                <div id="topPlayers" class="players-list">
+                    <div class="player-rank">1. أحمد - 15:30</div>
+                    <div class="player-rank">2. محمد - 18:45</div>
+                    <div class="player-rank">3. فاطمة - 20:12</div>
+                </div>
             </div>
         </div>
 
@@ -35,16 +43,21 @@
         <div class="puzzle-screen" id="puzzleScreen" style="display: none;">
             <div class="game-header">
                 <div class="player-info">
-                    <span id="currentPlayer">اللاعب: </span>
-                    <span id="timer">⏱️ 00:00</span>
+                    <span class="player-name" id="currentPlayer">اللاعب: </span>
+                    <span class="timer" id="timer">⏱️ 00:00</span>
                 </div>
                 <div class="puzzle-progress">
-                    <span>اللغز <span id="currentPuzzleNum">1</span> من 4</span>
+                    <div class="progress-steps">
+                        <span class="step active">1</span>
+                        <span class="step">2</span>
+                        <span class="step">3</span>
+                        <span class="step">4</span>
+                    </div>
                 </div>
             </div>
             
             <div class="puzzle-content" id="puzzleContent">
-                <!-- محتوى اللغز سيتم تحميله هنا -->
+                <!-- سيتم تحميل المحتوى هنا -->
             </div>
         </div>
 
@@ -54,10 +67,8 @@
         </div>
     </div>
 
-    <!-- ملفات JavaScript -->
-    <script src="assets/js/ai.js"></script>
+    <script src="assets/js/game.js"></script>
     <script src="assets/js/puzzles.js"></script>
     <script src="assets/js/maze.js"></script>
-    <script src="assets/js/game.js"></script>
 </body>
 </html>
