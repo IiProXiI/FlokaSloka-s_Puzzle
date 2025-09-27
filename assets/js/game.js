@@ -179,32 +179,34 @@ class GameManager {
             return;
         }
         
+        const feedbackElement = document.getElementById('aiFeedback');
+        if (!feedbackElement) return;
+        
         if (curator.hintCount >= 5) {
-            const feedbackElement = document.getElementById('aiFeedback');
-            if (feedbackElement) {
-                try {
-                    await curator.typeMessage("❌ <strong>انتهت التلميحات:</strong> لقد استخدمت جميع التلميحات المتاحة. حاول حل اللغز بطريقتك الخاصة.", feedbackElement);
-                } catch (error) {
-                    console.error('Error typing hint limit message:', error);
-                    feedbackElement.innerHTML = "❌ <strong>انتهت التلميحات:</strong> لقد استخدمت جميع التلميحات المتاحة. حاول حل اللغز بطريقتك الخاصة.";
-                }
+            try {
+                const limitMessage = "❌ <strong>انتهت التلميحات:</strong> لقد استخدمت جميع التلميحات المتاحة. حاول حل اللغز بطريقتك الخاصة.";
+                await curator.typeMessage(limitMessage, feedbackElement);
+            } catch (error) {
+                console.error('Error typing hint limit message:', error);
+                feedbackElement.innerHTML = "❌ <strong>انتهت التلميحات:</strong> لقد استخدمت جميع التلميحات المتاحة. حاول حل اللغز بطريقتك الخاصة.";
             }
             return;
         }
-        
-        const feedbackElement = document.getElementById('aiFeedback');
-        if (!feedbackElement) return;
         
         try {
             // الحصول على التلميح باستخدام العداد الحالي
             const hint = puzzleSystem.getHint(puzzleSystem.currentPuzzle, curator.hintCount);
             
-            if (!hint || typeof hint !== 'string') {
+            console.log('Hint received:', hint, 'Type:', typeof hint); // للتشخيص
+            
+            // التأكد من أن التلميح صالح
+            if (!hint || typeof hint !== 'string' || hint.trim() === '') {
+                console.error('Invalid hint received:', hint);
                 feedbackElement.innerHTML = "❌ <strong>خطأ:</strong> لا يمكن تحميل التلميح في الوقت الحالي. حاول مرة أخرى.";
                 return;
             }
             
-            // زيادة عداد التلميحات بعد الحصول على التلميح
+            // زيادة عداد التلميحات بعد التأكد من صحة التلميح
             curator.hintCount++;
             curator.totalHintsUsed++;
             
@@ -217,17 +219,34 @@ class GameManager {
                 "⚡ <strong>إضاءة:</strong> "
             ];
             
-            const intro = hintIntros[Math.min(curator.hintCount - 1, hintIntros.length - 1)];
-            const fullHintMessage = intro + hint;
+            const introIndex = Math.min(curator.hintCount - 1, hintIntros.length - 1);
+            const intro = hintIntros[introIndex];
+            const fullHintMessage = intro + hint.trim();
             
-            await curator.typeMessage(fullHintMessage, feedbackElement);
+            console.log('Full hint message:', fullHintMessage, 'Type:', typeof fullHintMessage); // للتشخيص
+            
+            // التأكد من أن الرسالة النهائية صالحة
+            if (typeof fullHintMessage !== 'string') {
+                console.error('Invalid final message:', fullHintMessage);
+                feedbackElement.innerHTML = intro + "حاول التفكير بطريقة مختلفة...";
+            } else {
+                await curator.typeMessage(fullHintMessage, feedbackElement);
+            }
             
             // تحديث العداد بعد طلب التلميح
             this.updateHintCounter();
             
         } catch (error) {
             console.error('Error in askForHint:', error);
+            
+            // إرجاع العداد في حالة الخطأ
+            if (curator.hintCount > 0) {
+                curator.hintCount--;
+                curator.totalHintsUsed--;
+            }
+            
             feedbackElement.innerHTML = "❌ حدث خطأ أثناء تحميل التلميح. حاول مرة أخرى.";
+            this.updateHintCounter();
         }
     }
 
