@@ -1,6 +1,8 @@
+import { Chess } from 'https://unpkg.com/chess.js@1.0.0';
+
 (() => {
   const game = new Chess();
-  const boardEl = document.getElementById('board');
+  const boardEl = document.querySelector('chess-board');
   const statusEl = document.getElementById('status');
   const codeBox = document.getElementById('codeBox');
   const codeText = document.getElementById('theCode');
@@ -33,9 +35,6 @@
     game.move(possibleMoves[randomIdx]);
     boardEl.setPosition(game.fen());
     updateStatus();
-    if (game.isCheckmate() && game.turn() === 'b') {
-      makeRandomMove(); // تأكد إن الكمبيوتر يفوز لو ممكن
-    }
   }
 
   boardEl.addEventListener('move', (e) => {
@@ -43,13 +42,12 @@
     const move = game.move({ from, to, promotion: 'q' });
     if (move) {
       updateStatus();
-      setTimeout(makeRandomMove, 500); // الكمبيوتر يلعب بعد 0.5 ثانية
+      setTimeout(makeRandomMove, 500);
     } else {
-      boardEl.undo(); // إرجاع الحركة غير الصحيحة
+      boardEl.undo();
     }
   });
 
-  // بداية اللعبة
   boardEl.setPosition(game.fen());
   updateStatus();
 })();
