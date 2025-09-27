@@ -5,7 +5,6 @@
   var $codeBox = $('#codeBox');
   var $codeText = $('#theCode');
 
-  // تحقق من وجود jQuery
   if (typeof window.jQuery === 'undefined') {
     console.error('jQuery is not loaded! Please check the script order in HTML.');
     return;
