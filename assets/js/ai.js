@@ -1,74 +1,98 @@
-// نظام الذكاء الاصطناعي - القيّم الغامض
 class CuratorAI {
     constructor() {
-        this.personality = {
-            mystery: 8,
-            wisdom: 9,
-            sarcasm: 6,
-            helpfullness: 7
-        };
         this.playerLevel = 1;
         this.hintCount = 0;
         this.totalHintsUsed = 0;
+        this.consecutiveCorrect = 0;
     }
 
-    // توليد ردود ذكية
     generateResponse(answer, correctAnswer, puzzleNumber) {
-        if (this.checkAnswer(answer, correctAnswer)) {
+        const isCorrect = puzzleSystem.checkAnswer(answer, puzzleNumber);
+        
+        if (isCorrect) {
             this.playerLevel++;
-            const puzzle = puzzleSystem.puzzles[puzzleNumber];
-            const response = this.getSuccessResponse() + 
-                (puzzle.explanation ? `<br><br>💡 ${puzzle.explanation}` : '');
+            this.consecutiveCorrect++;
             this.hintCount = 0;
-            return response;
+            
+            let response = this.getSuccessResponse();
+            
+            // إضافة تشجيع حسب الأداء
+            if (this.consecutiveCorrect >= 2) {
+                response += "<br>🔥 أنت على نار! إجابات متتالية صحيحة!";
+            }
+            
+            if (this.totalHintsUsed === 0 && this.playerLevel > 1) {
+                response += "<br>🎯 ملاحظة: لم تستخدم أي تلميحات! هذا مذهل!";
+            }
+            
+            return response + `<br><br>💡 ${puzzleSystem.puzzles[puzzleNumber].explanation}`;
+            
         } else {
             this.hintCount++;
             this.totalHintsUsed++;
-            return this.getHintResponse(puzzleNumber);
+            this.consecutiveCorrect = 0;
+            
+            let response = this.getHintResponse(puzzleNumber);
+            
+            // تحذير بعد عدة محاولات خاطئة
+            if (this.hintCount >= 3) {
+                response += "<br><br>⚠️ نصيحة: حاول أخذ استراحة قصيرة ثم العودة بنظرة جديدة";
+            }
+            
+            return response;
         }
-    }
-
-    checkAnswer(answer, correctAnswer) {
-        const userAnswer = answer.toLowerCase().trim();
-        const solutions = [correctAnswer.toLowerCase()];
-        
-        // إجابات بديلة مقبولة
-        if (correctAnswer === '32') solutions.push('اثنان وثلاثون', '٢٣', '32');
-        if (correctAnswer === 'nur') solutions.push('نور', 'noor');
-        if (correctAnswer === 'circle') solutions.push('دائرة', 'circle');
-        
-        return solutions.includes(userAnswer);
     }
 
     getSuccessResponse() {
         const responses = [
-            "👏 ممتاز! لقد وجدت الحل الصحيح.",
-            "🎯 إصابة مباشرة! عقلك متقد ذكاءً.",
-            "💎 براعة فائقة! الحل كان دقيقاً.",
-            "🚀 مذهل! لقد تجاوزت التوقع."
+            "👏 إبداع! لقد حللت اللغز ببراعة",
+            "🎯 دقة متناهية! عقلك يعمل بكفاءة عالية",
+            "💎 استثنائي! طريقة تفكيرك جديرة بالإعجاب",
+            "🚀 مذهل! تجاوزت التوقع مرة أخرى"
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
 
     getHintResponse(puzzleNumber) {
-        return puzzleSystem.getHint(puzzleNumber, this.hintCount);
+        if (this.hintCount >= 5) {
+            return "❌ لقد استنفذت جميع التلميحات. جرب كتابة الإجابة بطريقة مختلفة.";
+        }
+        
+        const hint = puzzleSystem.getHint(puzzleNumber, this.hintCount - 1);
+        
+        const hintIntros = [
+            "💡 فكرة: ",
+            "🧠 زاوية تفكير: ",
+            "🔍 وجهة نظر: ",
+            "🎯 توجيه: ",
+            "⚡ إضاءة: "
+        ];
+        
+        const intro = hintIntros[Math.min(this.hintCount - 1, hintIntros.length - 1)];
+        return intro + hint;
     }
 
-    // تأثير كتابة الرسائل
-    async typeMessage(message, element, speed = 40) {
+    async typeMessage(message, element, speed = 35) {
         if (!element) return;
         
         element.innerHTML = '';
         element.classList.add('typing-animation');
         
-        // إضافة تأثير كتابة لكل حرف
-        for (let i = 0; i < message.length; i++) {
-            element.innerHTML += message.charAt(i);
-            await this.sleep(speed);
+        // تقسيم الرسالة إلى أجزاء للتحكم بالسرعة
+        const parts = message.split('<br>');
+        
+        for (let partIndex = 0; partIndex < parts.length; partIndex++) {
+            if (partIndex > 0) {
+                element.innerHTML += '<br>';
+            }
             
-            // تسريع الكتابة عند المسافات
-            if (message.charAt(i) === ' ') {
-                await this.sleep(speed / 2);
+            const part = parts[partIndex];
+            for (let i = 0; i < part.length; i++) {
+                element.innerHTML += part.charAt(i);
+                
+                // سرعة كتابة مختلفة للرموز والنص
+                const charSpeed = part.charAt(i).match(/[👏🎯💎🚀💡🧠🔍🎯⚡❌⚠️🎊👑⭐]/) ? speed * 0.5 : speed;
+                await this.sleep(charSpeed);
             }
         }
         
@@ -80,5 +104,4 @@ class CuratorAI {
     }
 }
 
-// إنشاء نسخة من الذكاء الاصطناعي
 const curator = new CuratorAI();
