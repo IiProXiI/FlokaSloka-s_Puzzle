@@ -3,47 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المتحف الافتراضي - تحدي الألغاز</title>
+    <title>متحف الألغاز الغامض - التحدي النهائي</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <meta name="description" content="تحدي ألغاز متقدم مع شفرات فريدة وألغاز صوتية ومتاهة تفاعلية">
+    <meta name="keywords" content="ألغاز, شفرات, متاهة, ألغاز صوتية, تحدي ذكاء">
 </head>
 <body class="cyber-theme">
     <div class="hologram-container">
-        <!-- شاشة الترحيب -->
-        <div class="welcome-screen" id="welcomeScreen">
+        <!-- شاشة التسجيل -->
+        <div class="register-screen" id="registerScreen">
             <div class="ai-avatar">
                 <img src="assets/images/img1.png" alt="شعار المتحف" class="logo-image">
                 <div class="hologram-effect"></div>
             </div>
             
-            <h1 class="neon-title">المتحف الافتراضي</h1>
-            <p class="subtitle">حيث يتحدى العقل والمنطق</p>
+            <h1 class="neon-title">متحف الألغاز الغامض</h1>
+            <p class="subtitle">التحدي الذي سيختبر حدود قدراتك</p>
             
-            <div class="dialogue-box">
-                <div class="ai-message">
-                    <span id="typingText"></span>
-                </div>
+            <div class="register-form">
+                <input type="text" id="playerName" placeholder="أدخل اسمك..." maxlength="20">
+                <button onclick="registerPlayer()" class="start-btn">بدء التحدي</button>
             </div>
             
-            <button class="start-btn" onclick="startJourney()">بدء التحدي</button>
-            
-            <div class="welcome-info">
-                <p>🏆 4 ألغاز ذكية تنتظرك</p>
-                <p>🧠 صعوبة متدرجة من ★ إلى ★★★★</p>
-                <p>💡 نظام تلميحات ذكي</p>
+            <div class="leaderboard-preview">
+                <h3>🏆 أقرب المتصدرين</h3>
+                <div id="topPlayers"></div>
             </div>
         </div>
 
         <!-- شاشة اللغز -->
         <div class="puzzle-screen" id="puzzleScreen" style="display: none;">
+            <div class="game-header">
+                <div class="player-info">
+                    <span id="currentPlayer">اللاعب: </span>
+                    <span id="timer">⏱️ 00:00</span>
+                </div>
+                <div class="puzzle-progress">
+                    <span>اللغز <span id="currentPuzzleNum">1</span> من 4</span>
+                </div>
+            </div>
+            
             <div class="puzzle-content" id="puzzleContent">
                 <!-- محتوى اللغز سيتم تحميله هنا -->
             </div>
+        </div>
+
+        <!-- شاشة النهاية -->
+        <div class="ending-screen" id="endingScreen" style="display: none;">
+            <!-- سيتم تعبئتها بالجافاسكريبت -->
         </div>
     </div>
 
     <!-- ملفات JavaScript -->
     <script src="assets/js/ai.js"></script>
     <script src="assets/js/puzzles.js"></script>
+    <script src="assets/js/maze.js"></script>
     <script src="assets/js/game.js"></script>
 </body>
 </html>
