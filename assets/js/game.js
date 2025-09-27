@@ -196,25 +196,38 @@ class GameManager {
         if (!feedbackElement) return;
         
         try {
-            // زيادة عداد التلميحات أولاً
+            // الحصول على التلميح باستخدام العداد الحالي
+            const hint = puzzleSystem.getHint(puzzleSystem.currentPuzzle, curator.hintCount);
+            
+            if (!hint || typeof hint !== 'string') {
+                feedbackElement.innerHTML = "❌ <strong>خطأ:</strong> لا يمكن تحميل التلميح في الوقت الحالي. حاول مرة أخرى.";
+                return;
+            }
+            
+            // زيادة عداد التلميحات بعد الحصول على التلميح
             curator.hintCount++;
             curator.totalHintsUsed++;
             
-            const hint = curator.getHintResponse(puzzleSystem.currentPuzzle);
-            await curator.typeMessage(hint, feedbackElement);
+            // إنشاء رسالة التلميح مع المقدمة
+            const hintIntros = [
+                "💡 <strong>فكرة:</strong> ",
+                "🧠 <strong>زاوية تفكير:</strong> ",
+                "🔍 <strong>وجهة نظر:</strong> ",
+                "🎯 <strong>توجيه:</strong> ",
+                "⚡ <strong>إضاءة:</strong> "
+            ];
+            
+            const intro = hintIntros[Math.min(curator.hintCount - 1, hintIntros.length - 1)];
+            const fullHintMessage = intro + hint;
+            
+            await curator.typeMessage(fullHintMessage, feedbackElement);
             
             // تحديث العداد بعد طلب التلميح
             this.updateHintCounter();
             
         } catch (error) {
             console.error('Error in askForHint:', error);
-            
-            // إرجاع العداد في حالة الخطأ
-            curator.hintCount--;
-            curator.totalHintsUsed--;
-            
             feedbackElement.innerHTML = "❌ حدث خطأ أثناء تحميل التلميح. حاول مرة أخرى.";
-            this.updateHintCounter();
         }
     }
 
