@@ -82,6 +82,11 @@ class CuratorAI {
         
         const hint = puzzleSystem.getHint(puzzleNumber, this.hintCount - 1);
         
+        // التأكد من أن التلميح هو نص صالح
+        if (!hint || typeof hint !== 'string') {
+            return "❌ <strong>خطأ:</strong> لا يمكن تحميل التلميح في الوقت الحالي. حاول مرة أخرى.";
+        }
+        
         const hintIntros = [
             "💡 <strong>فكرة:</strong> ",
             "🧠 <strong>زاوية تفكير:</strong> ",
@@ -97,6 +102,12 @@ class CuratorAI {
     // تأثير كتابة الرسائل
     async typeMessage(message, element, speed = 35) {
         if (!element) return;
+        
+        // التأكد من أن الرسالة هي نص صالح
+        if (typeof message !== 'string') {
+            console.error('Message must be a string:', message);
+            message = String(message || 'خطأ في عرض الرسالة');
+        }
         
         element.innerHTML = '';
         element.classList.add('typing-animation');
