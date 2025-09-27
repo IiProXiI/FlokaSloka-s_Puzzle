@@ -24,8 +24,8 @@
   </header>
 
   <main class="container">
-    <ul class="puzzle-list">
-      <li class="puzzle-item"><a href="puzzle-1-bank.html">لغز 1: سرقة البنك</a></li>
+    <ul class="puzzle-list" id="puzzleList">
+      <li class="puzzle-item"><a href="puzzle-1-bank.html" id="puzzleLink">لغز 1: سرقة البنك</a></li>
     </ul>
   </main>
 
@@ -34,13 +34,15 @@
   </footer>
 
   <script>
-    // تحقق من التقدم وتحديث الرابط بناءً على الحل
     document.addEventListener('DOMContentLoaded', () => {
       const progress = localStorage.getItem('progress');
+      const puzzleLink = document.getElementById('puzzleLink');
       if (progress) {
-        const nextPuzzle = document.querySelector('.puzzle-item a');
-        nextPuzzle.href = progress;
-        nextPuzzle.textContent = `اللغز التالي: ${progress.replace('puzzle-', 'لغز ').replace('.html', '')}`;
+        puzzleLink.href = progress;
+        puzzleLink.textContent = `اللغز التالي: ${progress.replace('puzzle-', 'لغز ').replace('.html', '')}`;
+      } else {
+        puzzleLink.href = 'puzzle-1-bank.html';
+        puzzleLink.textContent = 'لغز 1: سرقة البنك';
       }
     });
   </script>
