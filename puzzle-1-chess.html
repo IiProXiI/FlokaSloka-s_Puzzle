@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>لغز 1 — شطرنج</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script type="module" src="https://unpkg.com/chessboard-element/bundled.js"></script>
+  <script src="https://unpkg.com/chess.js@1.0.0"></script>
+</head>
+<body>
+  <div class="header"><h1>لغز 1 — الشطرنج</h1><div class="small">اسحب بالحركة (يدعم اللمس)</div></div>
+  <div class="container">
+    <div class="card">
+      <h2>اهزم الخصم</h2>
+      <p>العب بالأبيض. عند تحقيق كش مات ضد الخصم، سيظهر لك الرمز.</p>
+      <div class="responsive-embed">
+        <chess-board id="board" draggable-pieces></chess-board>
+      </div>
+      <div id="status" class="notice"></div>
+      <div id="codeBox" class="card" style="margin-top:12px; display:none;">
+        <strong>رمز هذه المرحلة:</strong>
+        <div id="theCode" class="ok" style="margin-top:6px; font-size: 18px;"></div>
+      </div>
+      <hr>
+      <h3>أدخل الرمز للانتقال للمرحلة التالية</h3>
+      <div class="input-row">
+        <input id="codeInput" type="text" placeholder="مثال: C1-9QX7">
+        <button class="primary" id="verifyBtn">تحقق وانتقل</button>
+      </div>
+      <div id="msg" class="notice"></div>
+    </div>
+  </div>
+  <div class="footer">تلميح: لا تعتمد على النقلات العشوائية للخصم 😉</div>
+
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/puzzle1.js"></script>
+  <script>initHashesIfEmpty();</script>
+</body>
+</html>
