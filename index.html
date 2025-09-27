@@ -11,6 +11,7 @@
         <!-- شاشة الترحيب -->
         <div class="welcome-screen" id="welcomeScreen">
             <div class="ai-avatar">
+                <img src="assets/images/img1.png" alt="شعار المتحف" class="logo-image">
                 <div class="hologram-effect"></div>
             </div>
             
@@ -36,5 +37,36 @@
 
     <script src="assets/js/ai.js"></script>
     <script src="assets/js/puzzles.js"></script>
+    
+    <script>
+        // دالة بدء الرحلة (مؤقتة حتى ننشئ ملفات JavaScript)
+        function startJourney() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('puzzleScreen').style.display = 'block';
+            document.getElementById('puzzleContent').innerHTML = `
+                <h2>اللغز الأول قريباً...</h2>
+                <p>جاري تحميل التحدي الأول</p>
+            `;
+        }
+        
+        // تأثير الكتابة على النص
+        document.addEventListener('DOMContentLoaded', function() {
+            const text = "مرحباً أيها الباحث... لطالما انتظرت وصولك. هل أنت مستعد لاختبار قدراتك؟";
+            const typingElement = document.getElementById('typingText');
+            let i = 0;
+            
+            typingElement.textContent = '';
+            
+            function typeWriter() {
+                if (i < text.length) {
+                    typingElement.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            }
+            
+            setTimeout(typeWriter, 1000);
+        });
+    </script>
 </body>
 </html>
