@@ -331,6 +331,44 @@ body.cyber-theme {
     color: var(--secondary);
     font-size: 0.9rem;
     opacity: 0.8;
+    margin: 5px 0;
+}
+
+.audio-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.audio-btn {
+    padding: 10px 20px;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.audio-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 245, 255, 0.3);
+}
+
+.audio-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.play-count {
+    color: var(--accent);
+    font-size: 0.9rem;
+    margin: 10px 0;
+    text-align: center;
 }
 
 .solution-input {
@@ -457,6 +495,11 @@ body.cyber-theme {
     .solution-input input {
         min-width: 200px;
     }
+    
+    .audio-controls {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -476,5 +519,31 @@ body.cyber-theme {
     
     .cipher-text {
         font-size: 1.1rem;
+    }
+    
+    .solution-input input {
+        min-width: 150px;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
     }
 }
