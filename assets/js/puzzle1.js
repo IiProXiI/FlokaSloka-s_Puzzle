@@ -19,7 +19,7 @@
   };
 
   var onDragStart = function(source, piece, position, orientation) {
-    if (game.game_over() === true ||
+    if (game.game_over() === true || 
         (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
         (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
       return false;
@@ -99,12 +99,13 @@
   var cfg = {
     draggable: true,
     position: 'start',
+    pieceTheme: '/assets/images/{piece}.png', // أضفنا المسار للصور
     onDragStart: onDragStart,
     onDrop: onDrop,
     onMouseoutSquare: onMouseoutSquare,
     onMouseoverSquare: onMouseoverSquare,
     onSnapEnd: onSnapEnd
   };
-  board = new ChessBoard('board', cfg);
+  board = Chessboard('board', cfg); // استخدمنا Chessboard بدل ChessBoard
   updateStatus();
 })();
