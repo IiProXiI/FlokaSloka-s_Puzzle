@@ -89,7 +89,6 @@ class PuzzleSystem {
         };
     }
 
-    // عرض اللغز الحالي
     displayPuzzle(puzzleNumber) {
         const puzzle = this.puzzles[puzzleNumber];
         if (!puzzle) return this.displayEnding();
@@ -135,30 +134,25 @@ class PuzzleSystem {
 
     getHint(puzzleNumber, hintLevel) {
         const puzzle = this.puzzles[puzzleNumber];
-        if (!puzzle || !puzzle.hints) {
-            return "حاول التفكير بطريقة مختلفة...";
+        if (!puzzle || !puzzle.hints) return "حاول التفكير بطريقة مختلفة...";
+        
+        hintLevel = parseInt(hintLevel) || 0;
+        
+        if (hintLevel >= 3) {
+            const advancedHints = [
+                "أنت قريب جداً من الحل... فكر خارج الصندوق",
+                "الجواب أمامك لكنه يحتاج نظرة مختلفة وزاوية جديدة",
+                "آخر تلميح: حاول كتابة الإجابة بطريقة مختلفة أو مرادفات"
+            ];
+            return advancedHints[Math.min(hintLevel - 3, advancedHints.length - 1)];
+        }
+        
+        if (hintLevel < puzzle.hints.length) {
+            return puzzle.hints[hintLevel];
+        } else {
+            return puzzle.hints[puzzle.hints.length - 1];
+        }
     }
-    
-    // التأكد أن hintLevel رقم صحيح
-    hintLevel = parseInt(hintLevel) || 0;
-    
-    // بعد التلميح الثالث، تبدأ التلميحات تكون أكثر تحديًا
-    if (hintLevel >= 3) {
-        const advancedHints = [
-            "أنت قريب جداً من الحل... فكر خارج الصندوق",
-            "الجواب أمامك لكنه يحتاج نظرة مختلفة وزاوية جديدة",
-            "آخر تلميح: حاول كتابة الإجابة بطريقة مختلفة أو مرادفات"
-        ];
-        return advancedHints[Math.min(hintLevel - 3, advancedHints.length - 1)];
-    }
-    
-    // التأكد أننا لا نتجاوز حدود المصفوفة
-    if (hintLevel < puzzle.hints.length) {
-        return puzzle.hints[hintLevel];
-    } else {
-        return puzzle.hints[puzzle.hints.length - 1];
-    }
-}
 
     checkAnswer(answer, puzzleNumber) {
         const puzzle = this.puzzles[puzzleNumber];
@@ -167,7 +161,6 @@ class PuzzleSystem {
         const userAnswer = this.normalizeAnswer(answer);
         const correctAnswer = this.normalizeAnswer(puzzle.solution);
         
-        // قبول إجابات متعددة لكل لغز
         const acceptedAnswers = {
             1: ['شاهد', 'شهد', 'رأى', 'راي', 'راى', 'viewed', 'saw', 'see'],
             2: ['360', '٣٦٠', 'ثلاثمائة وستون', 'ثلاثمائة وستين', '360'],
@@ -182,12 +175,11 @@ class PuzzleSystem {
     normalizeAnswer(answer) {
         return answer.toLowerCase()
             .trim()
-            .replace(/[َُِّ٠-٩]/g, '') // إزالة التشكيل والأرقام العربية
+            .replace(/[َُِّ٠-٩]/g, '')
             .replace(/\s+/g, ' ')
-            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''); // إزالة علامات الترقيم
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
     }
 
-    // نهاية اللعبة
     displayEnding() {
         const finalRating = curator.getFinalRating();
         const percentage = Math.round((curator.playerScore / 400) * 100);
@@ -227,7 +219,6 @@ class PuzzleSystem {
                 
                 <div class="ending-actions">
                     <button onclick="restartGame()" class="restart-btn">تحدي جديد</button>
-                    <button onclick="shareResults()" class="share-btn">مشاركة النتائج</button>
                 </div>
             </div>
         `;
@@ -235,19 +226,3 @@ class PuzzleSystem {
 }
 
 const puzzleSystem = new PuzzleSystem();
-
-// دالة مشاركة النتائج
-function shareResults() {
-    const rating = curator.getFinalRating();
-    const text = `حللت ${curator.playerLevel - 1} من 4 ألغاز في المتحف الافتراضي بنتيجة ${Math.round((curator.playerScore / 400) * 100)}%! ${rating.level}`;
-    
-    if (navigator.share) {
-        navigator.share({
-            title: 'نتيجة تحدي الألغاز',
-            text: text,
-            url: window.location.href
-        });
-    } else {
-        alert(text + '\n\nانسخ النص ومشاركته مع أصدقائك!');
-    }
-}
