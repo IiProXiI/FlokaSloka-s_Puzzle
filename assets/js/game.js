@@ -6,13 +6,18 @@ class GameManager {
     }
 
     async init() {
-        await this.showWelcomeMessage();
+        // انتظر قليلاً لضمان تحميل العناصر
+        setTimeout(async () => {
+            await this.showWelcomeMessage();
+        }, 500);
     }
 
     async showWelcomeMessage() {
         const typingElement = document.getElementById('typingText');
-        const welcomeMessage = "مرحباً أيها الباحث... لطالما انتظرت وصولك. هل أنت مستعد لاختبار قدراتك؟";
-        await curator.typeMessage(welcomeMessage, typingElement);
+        if (typingElement && typingElement.innerHTML === '') {
+            const welcomeMessage = "مرحباً أيها الباحث... لطالما انتظرت وصولك. هل أنت مستعد لاختبار قدراتك؟";
+            await curator.typeMessage(welcomeMessage, typingElement);
+        }
     }
 
     // بدء الرحلة
@@ -88,22 +93,32 @@ class GameManager {
     }
 }
 
-// تهيئة اللعبة
-const gameManager = new GameManager();
+// تهيئة اللعبة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    window.gameManager = new GameManager();
+});
 
 // دالات عامة للاستخدام في HTML
 function startJourney() {
-    gameManager.startJourney();
+    if (window.gameManager) {
+        gameManager.startJourney();
+    }
 }
 
 function checkPuzzleAnswer() {
-    gameManager.checkPuzzleAnswer();
+    if (window.gameManager) {
+        gameManager.checkPuzzleAnswer();
+    }
 }
 
 function askForHint() {
-    gameManager.askForHint();
+    if (window.gameManager) {
+        gameManager.askForHint();
+    }
 }
 
 function restartGame() {
-    gameManager.restartGame();
+    if (window.gameManager) {
+        gameManager.restartGame();
+    }
 }
