@@ -10,6 +10,7 @@ class GameManager {
         this.maxAudioPlays = 3;
         this.leaderboard = this.loadLeaderboard();
         this.audioElement = null;
+        this.mazeGame = null;
         this.init();
     }
 
@@ -40,6 +41,26 @@ class GameManager {
         if (restartButton) {
             restartButton.addEventListener('click', () => this.restartGame());
         }
+
+        // أحداث الحركة للمتاهة
+        document.addEventListener('keydown', (e) => {
+            if (this.currentPuzzle === 3 && this.mazeGame) {
+                switch(e.key) {
+                    case 'ArrowUp': case 'w': case 'W':
+                        this.mazeGame.movePlayer('up');
+                        break;
+                    case 'ArrowDown': case 's': case 'S':
+                        this.mazeGame.movePlayer('down');
+                        break;
+                    case 'ArrowLeft': case 'a': case 'A':
+                        this.mazeGame.movePlayer('left');
+                        break;
+                    case 'ArrowRight': case 'd': case 'D':
+                        this.mazeGame.movePlayer('right');
+                        break;
+                }
+            }
+        });
     }
 
     showRegisterScreen() {
@@ -124,6 +145,12 @@ class GameManager {
         
         puzzleContent.innerHTML = puzzles[puzzleNumber] || '<p>اللغز غير متوفر</p>';
         
+        if (puzzleNumber === 3) {
+            setTimeout(() => {
+                this.mazeGame = new MazeGame();
+            }, 100);
+        }
+        
         setTimeout(() => {
             this.setupPuzzleEventListeners();
         }, 100);
@@ -186,7 +213,7 @@ class GameManager {
         }
         
         if (this.currentPuzzle === 3) {
-            const submitBtn = document.querySelector('.puzzle-3 .submit-btn');
+            const submitBtn = document.getElementById('submitPuzzle3');
             const input = document.getElementById('puzzle3Answer');
             
             if (submitBtn) {
@@ -200,6 +227,9 @@ class GameManager {
                     }
                 });
             }
+
+            // أزرار التحكم للموبايل
+            this.setupMobileControls();
         }
         
         if (this.currentPuzzle === 4) {
@@ -218,6 +248,33 @@ class GameManager {
                 });
             }
         }
+    }
+
+    setupMobileControls() {
+        const controlsContainer = document.getElementById('mobileControls');
+        if (!controlsContainer) return;
+
+        // إزالة أي أزرار موجودة مسبقاً
+        controlsContainer.innerHTML = '';
+
+        const directions = [
+            { dir: 'up', symbol: '↑', label: 'أعلى' },
+            { dir: 'left', symbol: '←', label: 'يسار' },
+            { dir: 'right', symbol: '→', label: 'يمين' },
+            { dir: 'down', symbol: '↓', label: 'أسفل' }
+        ];
+
+        directions.forEach(({ dir, symbol, label }) => {
+            const btn = document.createElement('button');
+            btn.className = 'mobile-control-btn';
+            btn.innerHTML = `${symbol}<span>${label}</span>`;
+            btn.addEventListener('click', () => {
+                if (this.mazeGame) {
+                    this.mazeGame.movePlayer(dir);
+                }
+            });
+            controlsContainer.appendChild(btn);
+        });
     }
 
     getPuzzle1Content() {
@@ -269,13 +326,32 @@ class GameManager {
             <div class="puzzle-3">
                 <h3>🧩 اللغز الثالث: متاهة الحروف</h3>
                 <div class="cipher-box">
-                    <p>🎮 استخدم مفاتيح الأسهم للتحرك في المتاهة</p>
-                    <p class="hint">💡 اجمع الحروف لتكوين جملة مفيدة</p>
+                    <p>🎮 حرك اللاعب لجمع الحروف المخفية في المتاهة</p>
+                    <p class="hint">💡 الجملة النهائية: "الحكمة ضالة المؤمن"</p>
+                    
+                    <div class="maze-container">
+                        <div id="mazeDisplay" class="maze-display"></div>
+                        <div class="maze-info">
+                            <div class="collected-letters">
+                                <span>الحروف المجموعة:</span>
+                                <span id="collectedLetters"></span>
+                            </div>
+                            <div class="maze-stats">
+                                <span>اللاعب: <span class="player-pos" id="playerPos">0,0</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="mobileControls" class="mobile-controls"></div>
+                    
+                    <div class="controls-help">
+                        <p>🕹️ استخدم مفاتيح الأسهم أو الأزرار أعلاه للتحرك</p>
+                    </div>
                 </div>
                 
                 <div class="solution-input">
                     <input type="text" id="puzzle3Answer" placeholder="اكتب الجملة التي جمعتها">
-                    <button class="submit-btn">تحقق</button>
+                    <button class="submit-btn" id="submitPuzzle3">تحقق</button>
                 </div>
                 
                 <div class="attempts">المحاولات: <span>${this.attempts[3]}</span>/${this.maxAttempts}</div>
@@ -533,6 +609,7 @@ class GameManager {
         this.currentPuzzle = 1;
         this.attempts = {1: 0, 2: 0, 3: 0, 4: 0};
         this.audioPlayCount = 0;
+        this.mazeGame = null;
         this.stopTimer();
         this.showRegisterScreen();
         
@@ -540,6 +617,182 @@ class GameManager {
         if (nameInput) nameInput.value = '';
         
         this.showMessage('🔄 ابدأ تحدياً جديداً!');
+    }
+}
+
+class MazeGame {
+    constructor() {
+        this.size = 10;
+        this.playerPos = { x: 0, y: 0 };
+        this.collectedLetters = [];
+        this.targetLetters = "الحكمة ضالة المؤمن".split('');
+        this.letterPositions = [];
+        this.maze = [];
+        this.init();
+    }
+
+    init() {
+        this.generateMaze();
+        this.placeLetters();
+        this.renderMaze();
+        this.updateDisplay();
+    }
+
+    generateMaze() {
+        // إنشاء متاهة بسيطة
+        this.maze = [];
+        for (let y = 0; y < this.size; y++) {
+            this.maze[y] = [];
+            for (let x = 0; x < this.size; x++) {
+                // جعل 70% من الخلايا طرقاً و30% جدراناً
+                this.maze[y][x] = Math.random() < 0.7 ? 'path' : 'wall';
+            }
+        }
+        
+        // التأكد من أن نقطة البداية والنهاية طرق
+        this.maze[0][0] = 'path';
+        this.maze[this.size-1][this.size-1] = 'path';
+    }
+
+    placeLetters() {
+        this.letterPositions = [];
+        const usedPositions = new Set();
+        
+        this.targetLetters.forEach((letter, index) => {
+            if (letter === ' ') return; // تخطي المسافات
+            
+            let pos;
+            let attempts = 0;
+            
+            do {
+                pos = {
+                    x: Math.floor(Math.random() * this.size),
+                    y: Math.floor(Math.random() * this.size)
+                };
+                attempts++;
+            } while (
+                (usedPositions.has(`${pos.x},${pos.y}`) || 
+                 this.maze[pos.y][pos.x] !== 'path' ||
+                 (pos.x === 0 && pos.y === 0)) && attempts < 50
+            );
+            
+            if (attempts < 50) {
+                usedPositions.add(`${pos.x},${pos.y}`);
+                this.letterPositions.push({ ...pos, letter, collected: false });
+            }
+        });
+    }
+
+    renderMaze() {
+        const container = document.getElementById('mazeDisplay');
+        if (!container) return;
+
+        container.innerHTML = '';
+        container.style.gridTemplateColumns = `repeat(${this.size}, 30px)`;
+        
+        for (let y = 0; y < this.size; y++) {
+            for (let x = 0; x < this.size; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'maze-cell';
+                
+                if (this.maze[y][x] === 'wall') {
+                    cell.classList.add('wall');
+                    cell.textContent = '█';
+                } else {
+                    cell.classList.add('path');
+                    
+                    // التحقق من وجود لاعب
+                    if (x === this.playerPos.x && y === this.playerPos.y) {
+                        cell.classList.add('player');
+                        cell.textContent = '😊';
+                    }
+                    // التحقق من وجود حرف
+                    else {
+                        const letterPos = this.letterPositions.find(pos => 
+                            pos.x === x && pos.y === y && !pos.collected
+                        );
+                        if (letterPos) {
+                            cell.classList.add('letter');
+                            cell.textContent = letterPos.letter;
+                            cell.title = `حرف: ${letterPos.letter}`;
+                        } else {
+                            cell.textContent = '·';
+                        }
+                    }
+                }
+                
+                container.appendChild(cell);
+            }
+        }
+    }
+
+    movePlayer(direction) {
+        const newPos = { ...this.playerPos };
+        
+        switch(direction) {
+            case 'up': newPos.y = Math.max(0, newPos.y - 1); break;
+            case 'down': newPos.y = Math.min(this.size - 1, newPos.y + 1); break;
+            case 'left': newPos.x = Math.max(0, newPos.x - 1); break;
+            case 'right': newPos.x = Math.min(this.size - 1, newPos.x + 1); break;
+        }
+        
+        if (this.isValidMove(newPos)) {
+            this.playerPos = newPos;
+            this.checkLetterCollection();
+            this.renderMaze();
+            this.updateDisplay();
+            
+            if (this.checkGameComplete()) {
+                this.onGameComplete();
+            }
+        }
+    }
+
+    isValidMove(pos) {
+        return pos.x >= 0 && pos.x < this.size && 
+               pos.y >= 0 && pos.y < this.size && 
+               this.maze[pos.y][pos.x] === 'path';
+    }
+
+    checkLetterCollection() {
+        const letterIndex = this.letterPositions.findIndex(pos => 
+            pos.x === this.playerPos.x && 
+            pos.y === this.playerPos.y && 
+            !pos.collected
+        );
+        
+        if (letterIndex !== -1) {
+            this.letterPositions[letterIndex].collected = true;
+            this.collectedLetters.push(this.letterPositions[letterIndex].letter);
+            this.showLetterPopup(this.letterPositions[letterIndex].letter);
+        }
+    }
+
+    showLetterPopup(letter) {
+        gameManager.showMessage(`🎉 وجدت حرف: ${letter}`);
+    }
+
+    updateDisplay() {
+        const collectedElement = document.getElementById('collectedLetters');
+        const playerPosElement = document.getElementById('playerPos');
+        
+        if (collectedElement) {
+            collectedElement.textContent = this.collectedLetters.join(' ') || '---';
+        }
+        
+        if (playerPosElement) {
+            playerPosElement.textContent = `${this.playerPos.x}, ${this.playerPos.y}`;
+        }
+    }
+
+    checkGameComplete() {
+        return this.collectedLetters.length >= this.letterPositions.length;
+    }
+
+    onGameComplete() {
+        setTimeout(() => {
+            gameManager.showMessage('🎊 مبروك! جمعت جميع الحروف. الجملة هي: "الحكمة ضالة المؤمن"');
+        }, 500);
     }
 }
 
