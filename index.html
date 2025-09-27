@@ -1,76 +1,92 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متحف الألغاز الغامض - التحدي النهائي</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Cyber Hacking Device</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
-<body class="cyber-theme">
-    <div class="hologram-container">
-        <!-- شاشة التسجيل -->
-        <div class="register-screen" id="registerScreen">
-            <div class="ai-avatar">
-                <img src="assets/images/img1.png" alt="شعار المتحف" class="logo-image">
-                <div class="hologram-effect"></div>
-            </div>
-            
-            <h1 class="neon-title">🚀 متحف الألغاز</h1>
-            <p class="subtitle">اخترق الشفرات.. اكتشف الأسرار</p>
-            
-            <div class="register-form">
-                <div class="input-group">
-                    <input type="text" id="playerName" placeholder="اكتب اسمك هنا..." maxlength="20">
-                    <div class="input-border"></div>
-                </div>
-                <button class="start-btn" id="startButton">
-                    <span>بدء التحدي</span>
-                    <div class="btn-glow"></div>
-                </button>
-            </div>
-            
-            <div class="leaderboard-preview">
-                <h3>🏆 قائمة المتصدرين</h3>
-                <div id="topPlayers" class="players-list">
-                    <!-- سيتم تعبئتها تلقائيا -->
-                </div>
-            </div>
-        </div>
-
-        <!-- شاشة اللغز -->
-        <div class="puzzle-screen" id="puzzleScreen" style="display: none;">
-            <div class="game-header">
-                <div class="player-info">
-                    <span class="player-name" id="currentPlayer">اللاعب: </span>
-                    <span class="timer" id="timer">⏱️ 00:00</span>
-                </div>
-                <div class="puzzle-progress">
-                    <div class="progress-steps">
-                        <span class="step active">1</span>
-                        <span class="step">2</span>
-                        <span class="step">3</span>
-                        <span class="step">4</span>
+<body>
+    <div class="container">
+        <!-- الشاشة الرئيسية -->
+        <div class="device-frame">
+            <!-- الشاشة العليا -->
+            <div class="screen-container">
+                <div class="screen" id="mainScreen">
+                    <div class="screen-header">
+                        <span class="logo">CYBER-SEC v2.1</span>
+                        <span class="battery">🔋 98%</span>
+                    </div>
+                    
+                    <div class="content" id="screenContent">
+                        <!-- المحتوى يتغير ديناميكياً -->
+                        <div class="welcome-screen">
+                            <div class="hacker-text">>_ INITIALIZING SYSTEM...</div>
+                            <div class="loading-bar">
+                                <div class="progress"></div>
+                            </div>
+                            <div class="status">CONNECTING TO NETWORK...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="screen-footer">
+                        <span class="timestamp" id="timestamp">23:45:17</span>
+                        <span class="signal">📶 5G</span>
                     </div>
                 </div>
             </div>
-            
-            <div class="puzzle-content" id="puzzleContent">
-                <!-- سيتم تحميل المحتوى هنا -->
-            </div>
-        </div>
 
-        <!-- شاشة النهاية -->
-        <div class="ending-screen" id="endingScreen" style="display: none;">
-            <div class="ending-content">
-                <h2>🎉 تهانينا! لقد أكملت التحدي</h2>
-                <div class="final-stats" id="finalStats">
-                    <!-- سيتم تعبئتها بالجافاسكريبت -->
+            <!-- لوحة المفاتيح -->
+            <div class="keyboard">
+                <div class="row">
+                    <button class="key num" data-key="1">1</button>
+                    <button class="key num" data-key="2">2</button>
+                    <button class="key num" data-key="3">3</button>
+                    <button class="key func" data-key="clear">CLR</button>
                 </div>
-                <button class="restart-btn" id="restartButton">لعب مرة أخرى</button>
+                <div class="row">
+                    <button class="key num" data-key="4">4</button>
+                    <button class="key num" data-key="5">5</button>
+                    <button class="key num" data-key="6">6</button>
+                    <button class="key func" data-key="enter">ENTER</button>
+                </div>
+                <div class="row">
+                    <button class="key num" data-key="7">7</button>
+                    <button class="key num" data-key="8">8</button>
+                    <button class="key num" data-key="9">9</button>
+                    <button class="key func" data-key="backspace">⌫</button>
+                </div>
+                <div class="row">
+                    <button class="key func wide" data-key="0">0</button>
+                    <button class="key func" data-key="power">PWR</button>
+                </div>
+                
+                <!-- أزرار الملاحة -->
+                <div class="nav-buttons">
+                    <button class="nav-btn up" data-action="up">↑</button>
+                    <div class="nav-middle">
+                        <button class="nav-btn left" data-action="left">←</button>
+                        <button class="nav-btn center" data-action="select">OK</button>
+                        <button class="nav-btn right" data-action="right">→</button>
+                    </div>
+                    <button class="nav-btn down" data-action="down">↓</button>
+                </div>
+            </div>
+
+            <!-- المؤشرات -->
+            <div class="indicators">
+                <div class="indicator wifi"></div>
+                <div class="indicator bluetooth"></div>
+                <div class="indicator power"></div>
             </div>
         </div>
     </div>
 
-    <script src="assets/js/game.js"></script>
+    <!-- الأصوات -->
+    <audio id="keySound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
+    <audio id="beepSound" src="https://assets.mixkit.co/sfx/preview/mixkit-beep-space-alarm-3084.mp3"></audio>
+    
+    <script src="script.js"></script>
 </body>
 </html>
