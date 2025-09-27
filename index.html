@@ -1,72 +1,39 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>لغز متعدد المراحل</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ألغاز الفلوقا سلوكا</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72, #2a5298); margin: 0; padding: 0; color: #fff; }
+    .header { text-align: center; padding: 20px; background: #1a2a44; border-bottom: 2px solid #2a5298; }
+    .header h1 { margin: 0; font-size: 2.5em; color: #f0f0f0; text-shadow: 1px 1px 5px #000; }
+    .container { max-width: 800px; margin: 20px auto; padding: 20px; background: rgba(26, 42, 68, 0.9); border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); }
+    .puzzle-list { list-style: none; padding: 0; }
+    .puzzle-item { background: #2a5298; margin: 10px 0; padding: 15px; border-radius: 5px; transition: transform 0.3s; }
+    .puzzle-item:hover { transform: scale(1.05); background: #3e6cb7; }
+    .puzzle-item a { color: #fff; text-decoration: none; font-size: 1.2em; }
+    .puzzle-item a:hover { color: #ffd700; }
+    .footer { text-align: center; padding: 10px; background: #1a2a44; position: fixed; bottom: 0; width: 100%; color: #ccc; }
+  </style>
 </head>
 <body>
-  <div class="header">
-    <h1>لعبة الألغاز</h1>
-    <div class="small">متوافقة مع الجوال والكمبيوتر</div>
-  </div>
-  <div class="container">
-    <div class="card">
-      <h2>التعليمات</h2>
-      <p>حل كل لغز لتحصل على رمز. أدخل الرمز أسفل كل صفحة لفتح المرحلة التالية.</p>
-      <p class="small">يتطلب: ذهن صافي، ملاحظة قوية، وتجربة 😉</p>
-      <div class="actions">
-        <button class="primary" onclick="goNext('puzzle-1-chess.html')">ابدأ</button>
-        <button onclick="localStorage.clear(); alert('تم تصفير التقدم'); location.reload();">تصفير التقدم</button>
-      </div>
-    </div>
-  </div>
-  <div class="footer">© مشروع الألغاز — مستضاف على GitHub Pages</div>
-  <script src="assets/js/common.js"></script>
-  <script>
-    window.onload = async () => {
-      await initHashesIfEmpty().catch(console.error);
-    };
-  </script>
+  <header class="header">
+    <h1>ألغاز الفلوقا سلوكا</h1>
+    <p>استعد لتجربة مليئة بالتحدي والمتعة!</p>
+  </header>
+
+  <main class="container">
+    <ul class="puzzle-list">
+      <li class="puzzle-item"><a href="puzzle-1-magic.html">لغز 1: الأرقام السحرية</a></li>
+      <li class="puzzle-item"><a href="puzzle-2-cipher.html">لغز 2: الشيفرة السرية</a></li>
+      <li class="puzzle-item"><a href="puzzle-3-riddle.html">لغز 3: اللغز المركب</a></li>
+      <li class="puzzle-item"><a href="puzzle-4-pattern.html">لغز 4: نمط التحدي</a></li>
+    </ul>
+  </main>
+
+  <footer class="footer">
+    <small>© 2025 ألغاز الفلوقا سلوكا - بالتوفيق! 🍀</small>
+  </footer>
 </body>
 </html>
