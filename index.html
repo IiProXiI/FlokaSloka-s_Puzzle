@@ -35,14 +35,16 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const progress = localStorage.getItem('progress');
       const puzzleLink = document.getElementById('puzzleLink');
-      if (progress) {
+      // ابدأ دائمًا بلغز 1 كخيار افتراضي
+      puzzleLink.href = 'puzzle-1-bank.html';
+      puzzleLink.textContent = 'لغز 1: سرقة البنك';
+
+      // تحقق من التقدم فقط إذا تم حفظ الرمز الصحيح
+      const progress = localStorage.getItem('progress');
+      if (progress === 'puzzle-2-cipher.html') {
         puzzleLink.href = progress;
-        puzzleLink.textContent = `اللغز التالي: ${progress.replace('puzzle-', 'لغز ').replace('.html', '')}`;
-      } else {
-        puzzleLink.href = 'puzzle-1-bank.html';
-        puzzleLink.textContent = 'لغز 1: سرقة البنك';
+        puzzleLink.textContent = 'اللغز التالي: لغز 2: الشيفرة السرية';
       }
     });
   </script>
