@@ -252,13 +252,12 @@ class PuzzleSystem {
                 title: 'نتيجة تحدي الألغاز',
                 text: text,
                 url: window.location.href
+            }).catch((err) => {
+                // فشل في استخدام Web Share API
+                console.log('Share failed:', err);
+                this.fallbackShare(text);
             });
-        } catch(err) {
-            // فشل في استخدام Web Share API
-            this.fallbackShare(text);
-        }
-        
-        if (!navigator.share) {
+        } else {
             this.fallbackShare(text);
         }
     }
