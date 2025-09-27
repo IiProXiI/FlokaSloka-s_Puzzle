@@ -1,78 +1,117 @@
-/* تصميم الألغاز الجديدة */
-.number-sequence {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+/* تصميمات الألغاز المحسنة */
+.puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
     margin: 20px 0;
-    font-size: 2rem;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.number {
-    background: linear-gradient(45deg, var(--cyber-blue), var(--hologram-pink));
+.word-box {
+    background: linear-gradient(45deg, var(--cyber-blue), var(--neon-purple));
     padding: 15px;
     border-radius: 10px;
-    min-width: 60px;
-    text-align: center;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.word-puzzle {
     text-align: center;
     font-size: 1.3rem;
-    line-height: 2;
-    margin: 20px 0;
-}
-
-.word-puzzle div {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-
-.shapes-pattern {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin: 20px 0;
-    font-size: 3rem;
-}
-
-.shape {
-    animation: rotate 4s linear infinite;
-}
-
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.puzzle-explanation {
-    text-align: center;
-    font-style: italic;
-    margin-top: 15px;
-}
-
-.ending-screen .level {
-    color: var(--hologram-pink);
-    font-size: 2rem;
     font-weight: bold;
 }
 
-.stats {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 10px;
+.sequence {
+    font-size: 2rem;
+    text-align: center;
+    margin: 20px 0;
+    font-family: 'Courier New', monospace;
+}
+
+.visual-code {
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 20px 0;
+    line-height: 2;
+}
+
+.riddle-list {
+    text-align: right;
+    list-style: none;
+    padding: 0;
     margin: 20px 0;
 }
 
-.stats p {
-    margin: 5px 0;
+.riddle-list li {
+    padding: 10px;
+    margin: 10px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-right: 3px solid var(--matrix-green);
+    border-radius: 5px;
+}
+
+.difficulty {
+    color: var(--hologram-pink);
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+.hint-counter {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--cyber-blue);
+    opacity: 0.8;
+}
+
+/* بطاقة النتيجة */
+.score-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.score-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.final-score {
     color: var(--matrix-green);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.ending-message {
+    font-size: 1.3rem;
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 10px;
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid var(--matrix-green);
+}
+
+/* تحسينات التلميحات */
+.puzzle-interaction button:last-of-type {
+    position: relative;
+}
+
+.puzzle-interaction button:last-of-type::after {
+    content: attr(data-hints);
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--hologram-pink);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
