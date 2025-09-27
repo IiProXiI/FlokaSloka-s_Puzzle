@@ -1,1 +1,456 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    font-family: 'Share Tech Mono', monospace;
+    color: #00ff41;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    perspective: 1000px;
+}
+
+.device-frame {
+    width: 400px;
+    height: 700px;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    border-radius: 30px;
+    padding: 20px;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 20px rgba(0, 255, 65, 0.3);
+    border: 2px solid #333;
+    position: relative;
+    transform-style: preserve-3d;
+}
+
+/* الشاشة */
+.screen-container {
+    background: #000;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 2px solid #00ff41;
+    box-shadow: 
+        inset 0 0 20px rgba(0, 255, 65, 0.1),
+        0 0 30px rgba(0, 255, 65, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.screen-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        45deg,
+        transparent 0%,
+        rgba(0, 255, 65, 0.05) 50%,
+        transparent 100%
+    );
+    animation: scan 3s linear infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+.screen {
+    background: #001100;
+    border-radius: 10px;
+    padding: 15px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.screen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 65, 0.03) 0px,
+        rgba(0, 255, 65, 0.03) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+}
+
+.screen-header, .screen-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-bottom: 10px;
+}
+
+.screen-footer {
+    margin-bottom: 0;
+    margin-top: auto;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* شاشة الترحيب */
+.welcome-screen {
+    text-align: center;
+    width: 100%;
+}
+
+.hacker-text {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #00ff41;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.loading-bar {
+    width: 100%;
+    height: 4px;
+    background: #003300;
+    border-radius: 2px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: #00ff41;
+    width: 0%;
+    animation: load 3s ease-in-out infinite;
+    box-shadow: 0 0 10px #00ff41;
+}
+
+@keyframes load {
+    0% { width: 0%; }
+    50% { width: 100%; }
+    100% { width: 0%; }
+}
+
+.status {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* لوحة المفاتيح */
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.key {
+    width: 70px;
+    height: 60px;
+    background: linear-gradient(145deg, #333, #222);
+    border: none;
+    border-radius: 8px;
+    color: #00ff41;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid #444;
+}
+
+.key:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+    box-shadow: 
+        0 6px 12px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.key:active {
+    transform: translateY(0);
+    background: linear-gradient(145deg, #222, #333);
+}
+
+.key.wide {
+    width: 150px;
+}
+
+.key.func {
+    background: linear-gradient(145deg, #004400, #002200);
+    color: #00ff41;
+    text-shadow: 0 0 5px #00ff41;
+}
+
+.key.func:hover {
+    background: linear-gradient(145deg, #005500, #003300);
+}
+
+/* أزرار الملاحة */
+.nav-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.nav-middle {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.nav-btn {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(145deg, #333, #222);
+    border: none;
+    border-radius: 50%;
+    color: #00ff41;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid #444;
+}
+
+.nav-btn:hover {
+    transform: scale(1.1);
+    background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+}
+
+.nav-btn.center {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(145deg, #004400, #002200);
+    font-size: 1rem;
+}
+
+/* المؤشرات */
+.indicators {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #333;
+    position: relative;
+}
+
+.indicator::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00ff41;
+    box-shadow: 0 0 10px #00ff41;
+    animation: pulse 2s infinite;
+}
+
+.indicator.wifi::after { animation-delay: 0s; }
+.indicator.bluetooth::after { animation-delay: 0.5s; }
+.indicator.power::after { animation-delay: 1s; }
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* شاشات الألعاب */
+.game-screen {
+    width: 100%;
+    height: 100%;
+}
+
+.game-title {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #00ff41;
+}
+
+.menu-list {
+    list-style: none;
+    width: 100%;
+}
+
+.menu-item {
+    padding: 12px 15px;
+    margin: 8px 0;
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.menu-item:hover {
+    background: rgba(0, 255, 65, 0.2);
+    transform: translateX(5px);
+}
+
+.menu-item.active {
+    background: rgba(0, 255, 65, 0.3);
+    border-color: #00ff41;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+}
+
+.menu-item::before {
+    content: '>';
+    position: absolute;
+    left: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-item.active::before {
+    opacity: 1;
+}
+
+/* لعبة الهكر */
+.hack-game {
+    text-align: center;
+}
+
+.code-display {
+    font-size: 2rem;
+    letter-spacing: 3px;
+    margin: 20px 0;
+    text-shadow: 0 0 10px #00ff41;
+}
+
+.input-display {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    margin: 15px 0;
+    min-height: 30px;
+}
+
+.timer {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    color: #ff4444;
+}
+
+.result {
+    font-size: 1.3rem;
+    margin: 15px 0;
+    text-shadow: 0 0 10px #00ff41;
+}
+
+/* تأثيرات النص */
+.typing {
+    border-right: 2px solid #00ff41;
+    animation: blink-caret 1s step-end infinite;
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #00ff41; }
+}
+
+/* التجاوب مع الجوال */
+@media (max-width: 480px) {
+    .device-frame {
+        width: 350px;
+        height: 650px;
+        padding: 15px;
+    }
+    
+    .key {
+        width: 60px;
+        height: 50px;
+        font-size: 1rem;
+    }
+    
+    .key.wide {
+        width: 130px;
+    }
+    
+    .nav-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+    
+    .nav-btn.center {
+        width: 55px;
+        height: 55px;
+    }
+}
+
+/* تأثيرات CSS جديدة */
+.glow {
+    text-shadow: 0 0 10px currentColor;
+}
+
+.matrix-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(0, 255, 65, 0.02) 1px,
+        rgba(0, 255, 65, 0.02) 2px
+    );
+    pointer-events: none;
+    animation: matrix 20s linear infinite;
+}
+
+@keyframes matrix {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+}
