@@ -19,21 +19,19 @@ class CuratorAI {
             this.playerLevel++;
             this.consecutiveCorrect++;
             this.hintCount = 0;
-            this.playerScore += this.calculateScore(puzzleNumber);
+            this.playerScore += this.getScore(puzzleNumber);
             
             let response = this.getSuccessResponse();
             
-            // إضافة تشجيع حسب الأداء
             if (this.consecutiveCorrect >= 2) {
-                response += "<br>🔥 أنت على نار! إجابات متتالية صحيحة!";
+                response += "\n🔥 أنت على نار! إجابات متتالية صحيحة!";
             }
             
             if (this.totalHintsUsed === 0 && this.playerLevel > 1) {
-                response += "<br>🎯 ملاحظة: لم تستخدم أي تلميحات! هذا مذهل!";
+                response += "\n🎯 ملاحظة: لم تستخدم أي تلميحات! هذا مذهل!";
             }
             
-            // إضافة الشرح بعد الإجابة الصحيحة
-            response += `<br><br>💡 <strong>الشرح:</strong> ${puzzle.explanation}`;
+            response += `\n\n💡 الشرح: ${puzzle.explanation}`;
             
             return response;
             
@@ -42,106 +40,72 @@ class CuratorAI {
             this.totalHintsUsed++;
             this.consecutiveCorrect = 0;
             
-            let response = this.getHintResponse(puzzleNumber);
-            
-            // تحذير بعد عدة محاولات خاطئة
-            if (this.hintCount >= 3) {
-                response += "<br><br>⚠️ <strong>نصيحة:</strong> حاول أخذ استراحة قصيرة ثم العودة بنظرة جديدة";
-            }
-            
-            return response;
+            return this.getHintResponse(puzzleNumber);
         }
     }
 
-    // حساب النقاط بناءً على الأداء
-    calculateScore(puzzleNumber) {
-        let baseScore = puzzleNumber * 25; // نقاط أساسية حسب صعوبة اللغز
-        let hintPenalty = this.hintCount * 5; // خصم على التلميحات
-        
-        // مكافأة على الإجابات المتتالية الصحيحة
+    getScore(puzzleNumber) {
+        let baseScore = puzzleNumber * 25;
+        let hintPenalty = this.hintCount * 5;
         let streakBonus = this.consecutiveCorrect * 10;
-        
         return Math.max(0, baseScore - hintPenalty + streakBonus);
     }
 
     getSuccessResponse() {
         const responses = [
-            "👏 <strong>إبداع!</strong> لقد حللت اللغز ببراعة",
-            "🎯 <strong>دقة متناهية!</strong> عقلك يعمل بكفاءة عالية",
-            "💎 <strong>استثنائي!</strong> طريقة تفكيرك جديرة بالإعجاب",
-            "🚀 <strong>مذهل!</strong> تجاوزت التوقع مرة أخرى",
-            "🧠 <strong>عبقري!</strong> حل مميز يستحق الإشادة"
+            "👏 إبداع! لقد حللت اللغز ببراعة",
+            "🎯 دقة متناهية! عقلك يعمل بكفاءة عالية", 
+            "💎 استثنائي! طريقة تفكيرك جديرة بالإعجاب",
+            "🚀 مذهل! تجاوزت التوقع مرة أخرى",
+            "🧠 عبقري! حل مميز يستحق الإشادة"
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
 
     getHintResponse(puzzleNumber) {
         if (this.hintCount >= 5) {
-            return "❌ <strong>انتبه:</strong> لقد استنفذت جميع التلميحات. جرب كتابة الإجابة بطريقة مختلفة أو فكر من زاوية جديدة.";
+            return "❌ انتهت التلميحات: لقد استخدمت جميع التلميحات المتاحة. جرب كتابة الإجابة بطريقة مختلفة.";
         }
         
         const hint = puzzleSystem.getHint(puzzleNumber, this.hintCount - 1);
         
         const hintIntros = [
-            "💡 <strong>فكرة:</strong> ",
-            "🧠 <strong>زاوية تفكير:</strong> ",
-            "🔍 <strong>وجهة نظر:</strong> ",
-            "🎯 <strong>توجيه:</strong> ",
-            "⚡ <strong>إضاءة:</strong> "
+            "💡 فكرة: ",
+            "🧠 زاوية تفكير: ",
+            "🔍 وجهة نظر: ",
+            "🎯 توجيه: ",
+            "⚡ إضاءة: "
         ];
         
         const intro = hintIntros[Math.min(this.hintCount - 1, hintIntros.length - 1)];
         return intro + hint;
     }
 
-    // تأثير كتابة الرسائل - الإصلاح هنا
+    // تأثير كتابة الرسائل - مبسط بدون وسوم HTML
     async typeMessage(message, element, speed = 35) {
-        if (!element) {
-            console.error('Element not found for typing message');
-            return;
-        }
+        if (!element) return;
         
-        // التأكد أن message هو نص
+        // التأكد أن message هو نص بدون وسوم HTML
         if (typeof message !== 'string') {
-            console.warn('Message is not a string, converting...', message);
             message = String(message);
         }
+        
+        // إزالة أي وسوم HTML قد تسبب مشاكل
+        message = message.replace(/<[^>]*>/g, '');
         
         element.innerHTML = '';
         element.classList.add('typing-animation');
         
-        try {
-            // تقسيم الرسالة إلى أجزاء للتحكم بالسرعة
-            const parts = message.split('<br>');
-            
-            for (let partIndex = 0; partIndex < parts.length; partIndex++) {
-                if (partIndex > 0) {
-                    element.innerHTML += '<br>';
-                    await this.sleep(speed * 2);
-                }
-                
-                const part = parts[partIndex];
-                for (let i = 0; i < part.length; i++) {
-                    element.innerHTML += part.charAt(i);
-                    
-                    // سرعة كتابة مختلفة للرموز والنص
-                    const isEmoji = /[👏🎯💎🚀🧠💡🔍🎯⚡❌⚠️🎊👑⭐🏆🔥💡]/.test(part.charAt(i));
-                    const charSpeed = isEmoji ? speed * 0.3 : speed;
-                    await this.sleep(charSpeed);
-                }
-            }
-        } catch (error) {
-            console.error('Error in typeMessage:', error);
-            // إذا فشل التأثير، عرض الرسالة مباشرة
-            element.innerHTML = message;
+        for (let i = 0; i < message.length; i++) {
+            element.innerHTML += message.charAt(i);
+            await this.sleep(speed);
         }
         
         element.classList.remove('typing-animation');
     }
 
-    // الحصول على التقييم النهائي
     getFinalRating() {
-        const totalPossibleScore = 400; // 4 ألغاز × 100 نقطة
+        const totalPossibleScore = 400;
         const percentage = (this.playerScore / totalPossibleScore) * 100;
         
         if (percentage >= 90) return { level: "👑 عبقرية فذة", color: "#FFD700" };
@@ -156,5 +120,4 @@ class CuratorAI {
     }
 }
 
-// إنشاء نسخة من الذكاء الاصطناعي
 const curator = new CuratorAI();
