@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المتحف الافتراضي - اللغز الغامض</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="cyber-theme">
+    <div class="hologram-container">
+        <!-- شاشة الترحيب -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="ai-avatar">
+                <div class="hologram-effect"></div>
+            </div>
+            
+            <h1 class="neon-title">المتحف الافتراضي</h1>
+            <p class="subtitle">حيث تصبح الأسرار ذكية...</p>
+            
+            <div class="dialogue-box">
+                <div class="ai-message">
+                    <span id="typingText">مرحباً أيها الباحث... لطالما انتظرت وصولك. هل أنت مستعد لاختبار قدراتك؟</span>
+                </div>
+            </div>
+            
+            <button class="start-btn" onclick="startJourney()">بدء الرحلة</button>
+        </div>
+
+        <!-- شاشة اللغز (ستظهر لاحقاً) -->
+        <div class="puzzle-screen" id="puzzleScreen" style="display: none;">
+            <div class="puzzle-content" id="puzzleContent">
+                <!-- محتوى اللغز سيتم تحميله هنا -->
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/ai.js"></script>
+    <script src="assets/js/puzzles.js"></script>
+</body>
+</html>
