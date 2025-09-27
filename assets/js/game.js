@@ -9,17 +9,6 @@ class GameManager {
     async init() {
         if (this.isInitialized) return;
         
-        // التأكد من تحميل جميع الأنظمة المطلوبة
-        if (typeof puzzleSystem === 'undefined') {
-            console.error('puzzleSystem not loaded');
-            return;
-        }
-        
-        if (typeof curator === 'undefined') {
-            console.error('curator not loaded');
-            return;
-        }
-        
         setTimeout(async () => {
             await this.showWelcomeMessage();
             this.isInitialized = true;
@@ -44,13 +33,6 @@ class GameManager {
     // تحميل اللغز
     async loadPuzzle(puzzleNumber) {
         const puzzleContent = document.getElementById('puzzleContent');
-        
-        // التأكد من وجود النظام والألغاز
-        if (!puzzleSystem || !puzzleSystem.displayPuzzle) {
-            puzzleContent.innerHTML = '<p class="error">خطأ: لا يمكن تحميل نظام الألغاز</p>';
-            return;
-        }
-        
         puzzleContent.innerHTML = puzzleSystem.displayPuzzle(puzzleNumber);
         
         // تحديث عداد التلميحات
@@ -58,7 +40,7 @@ class GameManager {
         
         const feedbackElement = document.getElementById('aiFeedback');
         if (feedbackElement) {
-            const puzzle = puzzleSystem.puzzles && puzzleSystem.puzzles[puzzleNumber];
+            const puzzle = puzzleSystem.puzzles[puzzleNumber];
             const messages = {
                 1: "أهلاً بك في التحدي الأول. هذا لغز لغوي يتطلب فهم الأنماط اللغوية...",
                 2: "تحدي رياضي! المتتاليات تحتاج عقلًا تحليليًا دقيقًا...", 
@@ -67,13 +49,7 @@ class GameManager {
             };
             
             const welcomeMessage = messages[puzzleNumber] || `مرحبًا بك في اللغز ${puzzleNumber}`;
-            
-            try {
-                await curator.typeMessage(welcomeMessage, feedbackElement);
-            } catch (error) {
-                console.error('Error typing welcome message:', error);
-                feedbackElement.innerHTML = welcomeMessage;
-            }
+            await curator.typeMessage(welcomeMessage, feedbackElement);
         }
         
         // تركيز على حقل الإجابة
@@ -87,24 +63,19 @@ class GameManager {
     updateHintCounter() {
         const hintCountElement = document.getElementById('hintCount');
         if (hintCountElement) {
-            hintCountElement.textContent = curator.hintCount || 0;
+            hintCountElement.textContent = curator.hintCount;
         }
         
         // تحديث زر التلميح
         const hintButton = document.querySelector('.hint-btn');
         if (hintButton) {
-            const currentHintCount = curator.hintCount || 0;
-            hintButton.textContent = `طلب تلميح (${currentHintCount + 1}/5)`;
+            hintButton.textContent = `طلب تلميح (${curator.hintCount + 1}/5)`;
             
             // تعطيل الزر إذا تجاوز الحد
-            if (currentHintCount >= 5) {
+            if (curator.hintCount >= 5) {
                 hintButton.disabled = true;
                 hintButton.style.opacity = '0.6';
                 hintButton.style.cursor = 'not-allowed';
-            } else {
-                hintButton.disabled = false;
-                hintButton.style.opacity = '1';
-                hintButton.style.cursor = 'pointer';
             }
         }
     }
@@ -119,144 +90,73 @@ class GameManager {
             return;
         }
         
-        if (!puzzleSystem || !curator) {
-            console.error('الأنظمة المطلوبة غير متوفرة');
-            return;
-        }
-        
         const answer = answerInput.value.trim();
         if (!answer) {
-            try {
-                await curator.typeMessage("❌ <strong>انتبه:</strong> يجب أن تدخل إجابة أولاً...", feedbackElement);
-            } catch (error) {
-                console.error('Error typing message:', error);
-                feedbackElement.innerHTML = "❌ <strong>انتبه:</strong> يجب أن تدخل إجابة أولاً...";
-            }
+            await curator.typeMessage("❌ <strong>انتبه:</strong> يجب أن تدخل إجابة أولاً...", feedbackElement);
             answerInput.focus();
             return;
         }
 
-        try {
-            const isCorrect = puzzleSystem.checkAnswer(answer, puzzleSystem.currentPuzzle);
-            const response = curator.generateResponse(answer, puzzleSystem.currentPuzzle);
+        const isCorrect = puzzleSystem.checkAnswer(answer, puzzleSystem.currentPuzzle);
+        const response = curator.generateResponse(answer, puzzleSystem.currentPuzzle);
+        
+        await curator.typeMessage(response, feedbackElement);
+        
+        if (isCorrect) {
+            // إعادة تعيين حقل الإجابة
+            answerInput.value = '';
             
-            await curator.typeMessage(response, feedbackElement);
-            
-            if (isCorrect) {
-                // إعادة تعيين حقل الإجابة
-                answerInput.value = '';
-                
-                setTimeout(async () => {
-                    puzzleSystem.currentPuzzle++;
-                    if (puzzleSystem.puzzles[puzzleSystem.currentPuzzle]) {
-                        await this.loadPuzzle(puzzleSystem.currentPuzzle);
-                    } else {
-                        // نهاية اللعبة
-                        const puzzleContent = document.getElementById('puzzleContent');
-                        if (puzzleContent && puzzleSystem.displayEnding) {
-                            puzzleContent.innerHTML = puzzleSystem.displayEnding();
-                        }
-                    }
-                }, 4500);
-            } else {
-                // إعادة التركيز على حقل الإجابة بعد الخطأ
-                setTimeout(() => answerInput.focus(), 1000);
-            }
-            
-            // تحديث العداد بعد التحقق
-            this.updateHintCounter();
-            
-        } catch (error) {
-            console.error('Error in checkPuzzleAnswer:', error);
-            feedbackElement.innerHTML = "❌ حدث خطأ أثناء التحقق من الإجابة. حاول مرة أخرى.";
+            setTimeout(async () => {
+                puzzleSystem.currentPuzzle++;
+                if (puzzleSystem.puzzles[puzzleSystem.currentPuzzle]) {
+                    await this.loadPuzzle(puzzleSystem.currentPuzzle);
+                } else {
+                    // نهاية اللعبة
+                    puzzleContent.innerHTML = puzzleSystem.displayEnding();
+                }
+            }, 4500);
+        } else {
+            // إعادة التركيز على حقل الإجابة بعد الخطأ
+            setTimeout(() => answerInput.focus(), 1000);
         }
+        
+        // تحديث العداد بعد التحقق
+        this.updateHintCounter();
     }
 
-    // طلب تلميح
+    // طلب تلميح - الإصلاح هنا
     async askForHint() {
-        if (!curator || !puzzleSystem) {
-            console.error('الأنظمة المطلوبة غير متوفرة');
+        if (curator.hintCount >= 5) {
+            const feedbackElement = document.getElementById('aiFeedback');
+            if (feedbackElement) {
+                await curator.typeMessage("❌ <strong>انتهت التلميحات:</strong> لقد استخدمت جميع التلميحات المتاحة. حاول حل اللغز بطريقتك الخاصة.", feedbackElement);
+            }
             return;
         }
         
         const feedbackElement = document.getElementById('aiFeedback');
-        if (!feedbackElement) return;
-        
-        if (curator.hintCount >= 5) {
-            try {
-                const limitMessage = "❌ <strong>انتهت التلميحات:</strong> لقد استخدمت جميع التلميحات المتاحة. حاول حل اللغز بطريقتك الخاصة.";
-                await curator.typeMessage(limitMessage, feedbackElement);
-            } catch (error) {
-                console.error('Error typing hint limit message:', error);
-                feedbackElement.innerHTML = "❌ <strong>انتهت التلميحات:</strong> لقد استخدمت جميع التلميحات المتاحة. حاول حل اللغز بطريقتك الخاصة.";
-            }
+        if (!feedbackElement) {
+            console.error('Feedback element not found');
             return;
         }
         
-        try {
-            // الحصول على التلميح باستخدام العداد الحالي
-            const hint = puzzleSystem.getHint(puzzleSystem.currentPuzzle, curator.hintCount);
-            
-            console.log('Hint received:', hint, 'Type:', typeof hint); // للتشخيص
-            
-            // التأكد من أن التلميح صالح
-            if (!hint || typeof hint !== 'string' || hint.trim() === '') {
-                console.error('Invalid hint received:', hint);
-                feedbackElement.innerHTML = "❌ <strong>خطأ:</strong> لا يمكن تحميل التلميح في الوقت الحالي. حاول مرة أخرى.";
-                return;
-            }
-            
-            // زيادة عداد التلميحات بعد التأكد من صحة التلميح
-            curator.hintCount++;
-            curator.totalHintsUsed++;
-            
-            // إنشاء رسالة التلميح مع المقدمة
-            const hintIntros = [
-                "💡 <strong>فكرة:</strong> ",
-                "🧠 <strong>زاوية تفكير:</strong> ",
-                "🔍 <strong>وجهة نظر:</strong> ",
-                "🎯 <strong>توجيه:</strong> ",
-                "⚡ <strong>إضاءة:</strong> "
-            ];
-            
-            const introIndex = Math.min(curator.hintCount - 1, hintIntros.length - 1);
-            const intro = hintIntros[introIndex];
-            const fullHintMessage = intro + hint.trim();
-            
-            console.log('Full hint message:', fullHintMessage, 'Type:', typeof fullHintMessage); // للتشخيص
-            
-            // التأكد من أن الرسالة النهائية صالحة
-            if (typeof fullHintMessage !== 'string') {
-                console.error('Invalid final message:', fullHintMessage);
-                feedbackElement.innerHTML = intro + "حاول التفكير بطريقة مختلفة...";
-            } else {
-                await curator.typeMessage(fullHintMessage, feedbackElement);
-            }
-            
-            // تحديث العداد بعد طلب التلميح
-            this.updateHintCounter();
-            
-        } catch (error) {
-            console.error('Error in askForHint:', error);
-            
-            // إرجاع العداد في حالة الخطأ
-            if (curator.hintCount > 0) {
-                curator.hintCount--;
-                curator.totalHintsUsed--;
-            }
-            
-            feedbackElement.innerHTML = "❌ حدث خطأ أثناء تحميل التلميح. حاول مرة أخرى.";
-            this.updateHintCounter();
+        // التأكد من أننا نحصل على نص وليس كائن
+        let hint = curator.getHintResponse(puzzleSystem.currentPuzzle);
+        
+        // إذا كان hint ليس نصاً، نحوله إلى نص
+        if (typeof hint !== 'string') {
+            console.warn('Hint is not a string, converting...', hint);
+            hint = String(hint);
         }
+        
+        await curator.typeMessage(hint, feedbackElement);
+        
+        // تحديث العداد بعد طلب التلميح
+        this.updateHintCounter();
     }
 
     // إعادة اللعبة
     restartGame() {
-        if (!puzzleSystem || !curator) {
-            console.error('لا يمكن إعادة تشغيل اللعبة - الأنظمة المطلوبة غير متوفرة');
-            return;
-        }
-        
         puzzleSystem.currentPuzzle = 1;
         curator.playerLevel = 1;
         curator.hintCount = 0;
@@ -273,21 +173,7 @@ class GameManager {
 
 // تهيئة اللعبة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
-    // انتظار تحميل جميع الملفات قبل بدء اللعبة
-    setTimeout(() => {
-        if (typeof puzzleSystem !== 'undefined' && typeof curator !== 'undefined') {
-            window.gameManager = new GameManager();
-        } else {
-            console.error('Required systems not loaded. Retrying...');
-            setTimeout(() => {
-                if (typeof puzzleSystem !== 'undefined' && typeof curator !== 'undefined') {
-                    window.gameManager = new GameManager();
-                } else {
-                    console.error('Failed to load required systems');
-                }
-            }, 1000);
-        }
-    }, 100);
+    window.gameManager = new GameManager();
 });
 
 // دالات عامة للاستخدام في HTML
@@ -296,11 +182,6 @@ function startJourney() {
         gameManager.startJourney();
     } else {
         console.error('Game manager not initialized');
-        // محاولة إعادة التهيئة
-        if (typeof puzzleSystem !== 'undefined' && typeof curator !== 'undefined') {
-            window.gameManager = new GameManager();
-            setTimeout(() => gameManager.startJourney(), 100);
-        }
     }
 }
 
@@ -329,18 +210,16 @@ function restartGame() {
 }
 
 function shareResults() {
-    if (window.puzzleSystem && typeof window.puzzleSystem.shareResults === 'function') {
+    if (window.puzzleSystem) {
         puzzleSystem.shareResults();
-    } else {
-        console.error('Share results function not available');
     }
 }
 
 // دعم الإدخال بالزر Enter
 document.addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
-        const puzzleScreen = document.getElementById('puzzleScreen');
-        if (puzzleScreen && puzzleScreen.style.display !== 'none') {
+        const activeScreen = document.getElementById('puzzleScreen').style.display;
+        if (activeScreen !== 'none') {
             checkPuzzleAnswer();
         }
     }
