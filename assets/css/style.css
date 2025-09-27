@@ -118,24 +118,33 @@ body.cyber-theme {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
-.ai-avatar::before {
-    content: 'AI';
-    font-size: 2rem;
-    font-weight: bold;
-    color: white;
-    z-index: 2;
-}
-
-.ai-avatar::after {
-    content: '';
-    position: absolute;
+.ai-avatar .logo-image {
     width: 110px;
     height: 110px;
-    background: var(--dark-space);
     border-radius: 50%;
-    z-index: 1;
+    object-fit: cover;
+    z-index: 2;
+    position: relative;
+    border: 2px solid transparent;
+    animation: logo-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes logo-glow {
+    0% { 
+        border-color: var(--cyber-blue);
+        filter: drop-shadow(0 0 5px var(--cyber-blue));
+    }
+    50% { 
+        border-color: var(--hologram-pink);
+        filter: drop-shadow(0 0 15px var(--hologram-pink));
+    }
+    100% { 
+        border-color: var(--matrix-green);
+        filter: drop-shadow(0 0 10px var(--matrix-green));
+    }
 }
 
 @keyframes avatar-rotate {
@@ -167,6 +176,9 @@ body.cyber-theme {
 .ai-message {
     font-size: 1.1rem;
     line-height: 1.8;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
 }
 
 /* تأثير الكتابة */
@@ -208,6 +220,32 @@ body.cyber-theme {
     to { box-shadow: 0 5px 30px rgba(255, 0, 255, 0.7); }
 }
 
+/* شاشة اللغز */
+.puzzle-screen {
+    animation: fadeIn 0.5s ease-in;
+}
+
+.puzzle-content {
+    text-align: center;
+    padding: 20px;
+}
+
+.puzzle-content h2 {
+    color: var(--matrix-green);
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+}
+
+.puzzle-content p {
+    font-size: 1.2rem;
+    color: var(--cyber-blue);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* التجاوب مع الجوال */
 @media (max-width: 768px) {
     .hologram-container {
@@ -223,5 +261,19 @@ body.cyber-theme {
     .ai-avatar {
         width: 100px;
         height: 100px;
+    }
+    
+    .ai-avatar .logo-image {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .dialogue-box {
+        padding: 15px;
+        margin: 20px 0;
+    }
+    
+    .ai-message {
+        font-size: 1rem;
     }
 }
