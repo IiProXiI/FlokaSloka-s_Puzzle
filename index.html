@@ -20,14 +20,14 @@
             
             <div class="dialogue-box">
                 <div class="ai-message">
-                    <span id="typingText">مرحباً أيها الباحث... لطالما انتظرت وصولك. هل أنت مستعد لاختبار قدراتك؟</span>
+                    <span id="typingText"></span>
                 </div>
             </div>
             
             <button class="start-btn" onclick="startJourney()">بدء الرحلة</button>
         </div>
 
-        <!-- شاشة اللغز (ستظهر لاحقاً) -->
+        <!-- شاشة اللغز -->
         <div class="puzzle-screen" id="puzzleScreen" style="display: none;">
             <div class="puzzle-content" id="puzzleContent">
                 <!-- محتوى اللغز سيتم تحميله هنا -->
@@ -35,41 +35,9 @@
         </div>
     </div>
 
-    <script src="assets/js/ai.js"></script>
-    <script src="assets/js/puzzles.js"></script>
+    <!-- ملفات JavaScript -->
     <script src="assets/js/ai.js"></script>
     <script src="assets/js/puzzles.js"></script>
     <script src="assets/js/game.js"></script>
-    
-    <script>
-        // دالة بدء الرحلة (مؤقتة حتى ننشئ ملفات JavaScript)
-        function startJourney() {
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('puzzleScreen').style.display = 'block';
-            document.getElementById('puzzleContent').innerHTML = `
-                <h2>اللغز الأول قريباً...</h2>
-                <p>جاري تحميل التحدي الأول</p>
-            `;
-        }
-        
-        // تأثير الكتابة على النص
-        document.addEventListener('DOMContentLoaded', function() {
-            const text = "مرحباً أيها الباحث... لطالما انتظرت وصولك. هل أنت مستعد لاختبار قدراتك؟";
-            const typingElement = document.getElementById('typingText');
-            let i = 0;
-            
-            typingElement.textContent = '';
-            
-            function typeWriter() {
-                if (i < text.length) {
-                    typingElement.textContent += text.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 50);
-                }
-            }
-            
-            setTimeout(typeWriter, 1000);
-        });
-    </script>
 </body>
 </html>
