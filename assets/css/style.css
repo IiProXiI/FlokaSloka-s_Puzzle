@@ -1,4 +1,3 @@
-/* أساسيات التصميم الحديث */
 :root {
     --primary: #00f5ff;
     --secondary: #ff00ff;
@@ -17,24 +16,23 @@
 
 body.cyber-theme {
     background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #1a1a2e 100%);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', system-ui, sans-serif;
     color: white;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    line-height: 1.6;
+    padding: 20px;
 }
 
-/* الحاوية الرئيسية */
 .hologram-container {
-    width: 95%;
-    max-width: 1200px;
+    width: 100%;
+    max-width: 800px;
     background: var(--glass);
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
-    border-radius: 24px;
-    padding: 40px;
+    border-radius: 20px;
+    padding: 30px;
     position: relative;
     overflow: hidden;
 }
@@ -46,47 +44,40 @@ body.cyber-theme {
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
     z-index: -1;
-    border-radius: 26px;
-    animation: border-rotate 3s linear infinite;
+    border-radius: 22px;
+    animation: border-rotate 4s linear infinite;
+    opacity: 0.5;
 }
 
 @keyframes border-rotate {
-    0% { filter: hue-rotate(0deg) blur(10px); opacity: 0.7; }
-    100% { filter: hue-rotate(360deg) blur(10px); opacity: 0.7; }
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
 }
 
-/* العنوان */
 .neon-title {
-    font-size: 3.5rem;
-    font-weight: 800;
+    font-size: 2.5rem;
+    font-weight: 700;
     background: linear-gradient(45deg, var(--primary), var(--secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align: center;
     margin-bottom: 10px;
-    animation: title-glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes title-glow {
-    from { text-shadow: 0 0 20px var(--primary); }
-    to { text-shadow: 0 0 30px var(--secondary), 0 0 40px var(--primary); }
 }
 
 .subtitle {
     text-align: center;
     color: var(--accent);
-    font-size: 1.3rem;
-    margin-bottom: 40px;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
     opacity: 0.9;
 }
 
-/* الصورة */
 .ai-avatar {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 30px;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 25px;
     position: relative;
 }
 
@@ -95,55 +86,48 @@ body.cyber-theme {
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid transparent;
-    animation: logo-spin 8s linear infinite;
-    background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary));
-    padding: 3px;
-}
-
-@keyframes logo-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    border: 2px solid transparent;
+    background: conic-gradient(var(--primary), var(--secondary), var(--accent), var(--primary));
+    padding: 2px;
 }
 
 .hologram-effect {
     position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    background: conic-gradient(from 0deg, transparent, var(--primary), transparent);
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: conic-gradient(transparent, var(--primary), transparent);
     border-radius: 50%;
-    animation: hologram-pulse 2s ease-in-out infinite;
-    opacity: 0.5;
+    animation: hologram-pulse 3s ease-in-out infinite;
+    opacity: 0.3;
 }
 
 @keyframes hologram-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.3; }
-    50% { transform: scale(1.1); opacity: 0.7; }
+    0%, 100% { transform: scale(1); opacity: 0.2; }
+    50% { transform: scale(1.05); opacity: 0.4; }
 }
 
-/* نموذج التسجيل */
 .register-form {
     text-align: center;
-    margin: 40px 0;
+    margin: 30px 0;
 }
 
 .input-group {
     position: relative;
-    margin-bottom: 30px;
-    max-width: 400px;
+    margin-bottom: 25px;
+    max-width: 300px;
     margin-left: auto;
     margin-right: auto;
 }
 
 #playerName {
     width: 100%;
-    padding: 18px 20px;
-    font-size: 1.2rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid transparent;
-    border-radius: 15px;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
     color: white;
     text-align: center;
     transition: all 0.3s ease;
@@ -152,17 +136,18 @@ body.cyber-theme {
 #playerName:focus {
     outline: none;
     border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
 }
 
 .input-border {
     position: absolute;
     bottom: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    background: var(--primary);
     transition: width 0.3s ease;
 }
 
@@ -170,25 +155,24 @@ body.cyber-theme {
     width: 100%;
 }
 
-/* زر البدء */
 .start-btn {
     position: relative;
-    padding: 18px 50px;
-    font-size: 1.3rem;
+    padding: 15px 40px;
+    font-size: 1.2rem;
     font-weight: 600;
     background: linear-gradient(45deg, var(--primary), var(--secondary));
     border: none;
-    border-radius: 50px;
+    border-radius: 25px;
     color: white;
     cursor: pointer;
     overflow: hidden;
     transition: all 0.3s ease;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .start-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0, 245, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 245, 255, 0.3);
 }
 
 .btn-glow {
@@ -197,102 +181,101 @@ body.cyber-theme {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
 }
 
 .start-btn:hover .btn-glow {
     left: 100%;
 }
 
-/* لوحة الصدارة */
 .leaderboard-preview {
     background: var(--glass);
-    border-radius: 20px;
-    padding: 25px;
-    margin-top: 40px;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 30px;
     border: 1px solid var(--glass-border);
 }
 
 .leaderboard-preview h3 {
     color: var(--accent);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-align: center;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
 }
 
 .players-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .player-rank {
     display: flex;
     justify-content: space-between;
-    padding: 12px 20px;
+    padding: 10px 15px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
 }
 
 .player-rank:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .player-rank:nth-child(1) {
-    background: linear-gradient(45deg, rgba(255, 215, 0, 0.2), transparent);
-    border-left: 3px solid gold;
+    background: rgba(255, 215, 0, 0.1);
+    border-right: 3px solid gold;
 }
 
 .player-rank:nth-child(2) {
-    background: linear-gradient(45deg, rgba(192, 192, 192, 0.2), transparent);
-    border-left: 3px solid silver;
+    background: rgba(192, 192, 192, 0.1);
+    border-right: 3px solid silver;
 }
 
 .player-rank:nth-child(3) {
-    background: linear-gradient(45deg, rgba(205, 127, 50, 0.2), transparent);
-    border-left: 3px solid #cd7f32;
+    background: rgba(205, 127, 50, 0.1);
+    border-right: 3px solid #cd7f32;
 }
 
-/* رأس اللعبة */
 .game-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 40px;
-    padding: 20px;
+    margin-bottom: 30px;
+    padding: 15px;
     background: var(--glass);
-    border-radius: 15px;
+    border-radius: 12px;
     border: 1px solid var(--glass-border);
 }
 
 .player-info {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
 }
 
 .player-name {
     color: var(--accent);
     font-weight: 600;
+    font-size: 1.1rem;
 }
 
 .timer {
     color: var(--primary);
     font-weight: 700;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .progress-steps {
     display: flex;
-    gap: 15px;
+    gap: 10px;
 }
 
 .step {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -309,34 +292,157 @@ body.cyber-theme {
     transform: scale(1.1);
 }
 
-/* محتوى الألغاز */
 .puzzle-content {
-    min-height: 500px;
+    min-height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* تصميم متجاوب */
+.puzzle-1, .puzzle-2, .puzzle-3, .puzzle-4 {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.puzzle-1 h3, .puzzle-2 h3, .puzzle-3 h3, .puzzle-4 h3 {
+    color: var(--primary);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.cipher-box {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border: 1px solid var(--glass-border);
+}
+
+.cipher-text {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    color: var(--accent);
+}
+
+.hint {
+    color: var(--secondary);
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.solution-input {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.solution-input input {
+    padding: 12px 15px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: white;
+    min-width: 250px;
+    text-align: center;
+}
+
+.solution-input input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.submit-btn {
+    padding: 12px 25px;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 245, 255, 0.3);
+}
+
+.attempts {
+    color: var(--secondary);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.ending-content {
+    text-align: center;
+    padding: 30px;
+}
+
+.ending-content h2 {
+    color: var(--accent);
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.final-stats {
+    background: var(--glass);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 25px 0;
+    border: 1px solid var(--glass-border);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.restart-btn {
+    padding: 15px 40px;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.restart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 245, 255, 0.3);
+}
+
 @media (max-width: 768px) {
     .hologram-container {
-        width: 98%;
         padding: 20px;
         margin: 10px;
     }
     
     .neon-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
     
     .ai-avatar {
-        width: 120px;
-        height: 120px;
+        width: 80px;
+        height: 80px;
     }
     
     .game-header {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
         text-align: center;
     }
     
@@ -344,74 +450,31 @@ body.cyber-theme {
         justify-content: center;
     }
     
-    .start-btn {
-        padding: 15px 30px;
-        font-size: 1.1rem;
+    .solution-input {
+        flex-direction: column;
+    }
+    
+    .solution-input input {
+        min-width: 200px;
     }
 }
 
 @media (max-width: 480px) {
     .neon-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .subtitle {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     
     .step {
-        width: 40px;
-        height: 40px;
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
     }
-}
-
-/* تأثيرات إضافية */
-::selection {
-    background: var(--primary);
-    color: black;
-}
-
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
-    border-radius: 10px;
-}
-
-/* تأثيرات الدخول */
-.register-screen {
-    animation: slide-in 0.8s ease-out;
-}
-
-@keyframes slide-in {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
+    
+    .cipher-text {
+        font-size: 1.1rem;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* تأثيرات النص */
-.typing-animation {
-    display: inline-block;
-}
-
-.typing-animation::after {
-    content: '|';
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
 }
