@@ -1,52 +1,125 @@
 :root {
   --bg: #0f1226;
-  --card: #171a33;
-  --text: #e8e9f1;
-  --accent: #6ee7b7;
-  --muted: #9aa0b4;
+  --card: #171a34;
+  --text: #e6e8ff;
+  --muted: #a9add6;
+  --primary: #6c7bff;
+  --primary-700: #5a68e6;
   --danger: #ff6b6b;
+  --success: #28c76f;
+  --warning: #f5a524;
+  --border: #2a2e57;
 }
+
 * { box-sizing: border-box; }
-body {
-  margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  background: radial-gradient(1200px 600px at 10% 10%, #1c2145 0%, var(--bg) 60%);
-  color: var(--text); min-height: 100vh; display: flex; flex-direction: column;
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
 }
-.header {
-  padding: 18px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #252a4d;
+
+.site-header, .site-footer {
+  padding: 24px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
 }
-.header h1 { margin:0; font-size: 20px; letter-spacing: 0.5px; }
+
 .container {
-  width: 100%; max-width: 980px; margin: 24px auto; padding: 0 16px; flex: 1;
+  max-width: 880px;
+  margin: 24px auto;
+  padding: 16px;
 }
-.card {
-  background: linear-gradient(180deg, #1a1e3a 0%, var(--card) 100%);
-  border: 1px solid #23274c; border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+.actions, .nav-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 16px 0 24px;
+  flex-wrap: wrap;
 }
-h2 { margin-top: 0; }
-.actions { display:flex; gap:12px; flex-wrap: wrap; }
-button, .btn {
-  background: linear-gradient(180deg, #2b2f58, #22264a);
-  color: var(--text); border:1px solid #2e3563; border-radius: 10px; padding: 10px 14px;
-  cursor: pointer; transition: 0.2s transform, 0.2s background, 0.2s border;
+
+.btn {
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.06s ease, background 0.2s ease, border-color 0.2s ease;
 }
-button:hover, .btn:hover { transform: translateY(-1px); border-color: #3c4585; }
-button.primary, .btn.primary {
-  background: linear-gradient(180deg, #1f7a61, #175e4a); border-color:#1f8a6f;
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn.primary {
+  background: var(--primary);
+  border-color: var(--primary-700);
+  color: white;
 }
-.input-row { display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap; }
-input[type="text"] {
-  flex:1; min-width: 200px; background:#121533; color:var(--text); border:1px solid #2b3161;
-  border-radius: 10px; padding:10px 12px; outline:none;
+
+.btn.danger {
+  background: var(--danger);
+  color: white;
+  border-color: #e85b5b;
 }
-.notice { color: var(--muted); margin-top: 8px; font-size: 14px; }
-.ok { color: var(--accent); }
-.err { color: var(--danger); }
-.footer { padding:16px; text-align:center; color:#8e93ad; font-size: 13px; border-top:1px solid #252a4d; }
-.responsive-embed { position: relative; width: 100%; aspect-ratio: 1 / 1; }
-@media (max-width: 640px) {
-  .header h1 { font-size: 18px; }
-  .card { padding: 14px; }
-  button, .btn { width: 100%; }
+
+.btn.success {
+  background: var(--success);
+  color: #071b0e;
+  border-color: #1faa62;
 }
-.small { font-size: 13px; color: var(--muted); }
+
+.status {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.board {
+  background: var(--card);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 220px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.code-entry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin: 18px 0;
+}
+
+.code-entry label {
+  grid-column: 1 / -1;
+  color: var(--muted);
+}
+
+#puzzle1-code {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #0e1130;
+  color: var(--text);
+  outline: none;
+}
+
+.message {
+  grid-column: 1 / -1;
+  min-height: 22px;
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.message.ok { color: var(--success); }
+.message.err { color: var(--danger); }
