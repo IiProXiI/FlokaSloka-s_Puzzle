@@ -1,53 +1,110 @@
-import { Chess } from 'https://unpkg.com/chess.js@1.1.0';
+(function() {
+  var board = null;
+  var game = new Chess();
+  var $status = $('#status');
+  var $codeBox = $('#codeBox');
+  var $codeText = $('#theCode');
 
-(() => {
-  const game = new Chess();
-  const boardEl = document.querySelector('chess-board');
-  const statusEl = document.getElementById('status');
-  const codeBox = document.getElementById('codeBox');
-  const codeText = document.getElementById('theCode');
-  const verifyBtn = document.getElementById('verifyBtn');
-  const codeInput = document.getElementById('codeInput');
-  const msg = document.getElementById('msg');
+  var removeGreySquares = function() {
+    $('#board .square-55d63').css('background', '');
+  };
 
-  function updateStatus() {
-    if (game.isGameOver()) {
-      if (game.isCheckmate()) {
-        statusEl.textContent = 'كش مات! حصلت على الرمز.';
-        const thisCode = DEFAULT_CODES['p1'];
-        codeBox.style.display = 'block';
-        codeText.textContent = thisCode;
-        GameProgress.markSolved('p1');
-      } else if (game.isDraw()) {
-        statusEl.textContent = 'تعادل. حاول مرة أخرى.';
-      }
-      return;
+  var greySquare = function(square) {
+    var $square = $('#board .square-' + square);
+    var background = '#a9a9a9';
+    if ($square.hasClass('black-3c85d') === true) {
+      background = '#696969';
     }
-    statusEl.textContent = game.inCheck()
-      ? 'تحذير: كش!'
-      : 'دورك — حرّك أي قطعة.';
-  }
+    $square.css('background', background);
+  };
 
-  function makeRandomMove() {
-    const possibleMoves = game.moves();
-    if (possibleMoves.length === 0 || game.isGameOver()) return;
-    const randomIdx = Math.floor(Math.random() * possibleMoves.length);
-    game.move(possibleMoves[randomIdx]);
-    boardEl.setPosition(game.fen());
+  var onDragStart = function(source, piece, position, orientation) {
+    if (game.game_over() === true ||
+        (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+      return false;
+    }
+  };
+
+  var onDrop = function(source, target) {
+    removeGreySquares();
+
+    var move = game.move({
+      from: source,
+      to: target,
+      promotion: 'q'
+    });
+
+    if (move === null) return 'snapback';
+
     updateStatus();
-  }
+    window.setTimeout(makeRandomMove, 250);
+  };
 
-  boardEl.addEventListener('move', (e) => {
-    const { from, to } = e.detail;
-    const move = game.move({ from, to, promotion: 'q' });
-    if (move) {
-      updateStatus();
-      setTimeout(makeRandomMove, 500);
-    } else {
-      boardEl.undo();
+  var onMouseoverSquare = function(square, piece) {
+    var moves = game.moves({
+      square: square,
+      verbose: true
+    });
+
+    if (moves.length === 0) return;
+
+    greySquare(square);
+
+    for (var i = 0; i < moves.length; i++) {
+      greySquare(moves[i].to);
     }
-  });
+  };
 
-  boardEl.setPosition(game.fen());
+  var onMouseoutSquare = function(square, piece) {
+    removeGreySquares();
+  };
+
+  var onSnapEnd = function() {
+    board.position(game.fen());
+  };
+
+  var updateStatus = function() {
+    var status = '';
+    var moveColor = 'White';
+
+    if (game.in_checkmate() === true) {
+      status = 'فزت! الرمز: C1-9QX7';
+      $codeBox.show();
+      $codeText.text('C1-9QX7');
+      GameProgress.markSolved('p1');
+    } else if (game.in_draw() === true) {
+      status = 'تعادل. حاول مرة أخرى.';
+    } else {
+      status = moveColor + ' to move';
+
+      if (game.in_check() === true) {
+        status += ', ' + moveColor + ' is in check';
+      }
+    }
+
+    $status.html(status);
+  };
+
+  var makeRandomMove = function() {
+    var possibleMoves = game.moves();
+    if (possibleMoves.length === 0) return;
+
+    var randomIdx = Math.floor(Math.random() * possibleMoves.length);
+    game.move(possibleMoves[randomIdx]);
+    board.position(game.fen());
+    updateStatus();
+  };
+
+  var cfg = {
+    draggable: true,
+    position: 'start',
+    onDragStart: onDragStart,
+    onDrop: onDrop,
+    onMouseoutSquare: onMouseoutSquare,
+    onMouseoverSquare: onMouseoverSquare,
+    onSnapEnd: onSnapEnd
+  };
+  board = new ChessBoard('board', cfg);
   updateStatus();
 })();
