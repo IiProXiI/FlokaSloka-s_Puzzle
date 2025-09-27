@@ -1,549 +1,160 @@
-:root {
-    --primary: #00f5ff;
-    --secondary: #ff00ff;
-    --accent: #00ff88;
-    --dark: #0a0a0f;
-    --darker: #050508;
-    --glass: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body.cyber-theme {
-    background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #1a1a2e 100%);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    color: white;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.hologram-container {
-    width: 100%;
-    max-width: 800px;
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 30px;
-    position: relative;
-    overflow: hidden;
-}
-
-.hologram-container::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
-    z-index: -1;
-    border-radius: 22px;
-    animation: border-rotate 4s linear infinite;
-    opacity: 0.5;
-}
-
-@keyframes border-rotate {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
-}
-
-.neon-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.subtitle {
-    text-align: center;
-    color: var(--accent);
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-    opacity: 0.9;
-}
-
-.ai-avatar {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 25px;
-    position: relative;
-}
-
-.logo-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid transparent;
-    background: conic-gradient(var(--primary), var(--secondary), var(--accent), var(--primary));
-    padding: 2px;
-}
-
-.hologram-effect {
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    background: conic-gradient(transparent, var(--primary), transparent);
-    border-radius: 50%;
-    animation: hologram-pulse 3s ease-in-out infinite;
-    opacity: 0.3;
-}
-
-@keyframes hologram-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.2; }
-    50% { transform: scale(1.05); opacity: 0.4; }
-}
-
-.register-form {
-    text-align: center;
-    margin: 30px 0;
-}
-
-.input-group {
-    position: relative;
-    margin-bottom: 25px;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#playerName {
-    width: 100%;
-    padding: 15px 20px;
-    font-size: 1.1rem;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    color: white;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-#playerName:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.12);
-    transform: translateY(-2px);
-}
-
-.input-border {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 2px;
-    background: var(--primary);
-    transition: width 0.3s ease;
-}
-
-#playerName:focus + .input-border {
-    width: 100%;
-}
-
-.start-btn {
-    position: relative;
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
-    border: none;
-    border-radius: 25px;
-    color: white;
-    cursor: pointer;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-}
-
-.start-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 245, 255, 0.3);
-}
-
-.btn-glow {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s ease;
-}
-
-.start-btn:hover .btn-glow {
-    left: 100%;
-}
-
-.leaderboard-preview {
-    background: var(--glass);
+/* أنماط المتاهة */
+.maze-container {
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 15px;
     padding: 20px;
-    margin-top: 30px;
+    margin: 20px 0;
     border: 1px solid var(--glass-border);
 }
 
-.leaderboard-preview h3 {
-    color: var(--accent);
-    margin-bottom: 15px;
-    text-align: center;
-    font-size: 1.2rem;
+.maze-display {
+    display: grid;
+    gap: 2px;
+    margin: 0 auto;
+    justify-content: center;
 }
 
-.players-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.player-rank {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-.player-rank:hover {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.player-rank:nth-child(1) {
-    background: rgba(255, 215, 0, 0.1);
-    border-right: 3px solid gold;
-}
-
-.player-rank:nth-child(2) {
-    background: rgba(192, 192, 192, 0.1);
-    border-right: 3px solid silver;
-}
-
-.player-rank:nth-child(3) {
-    background: rgba(205, 127, 50, 0.1);
-    border-right: 3px solid #cd7f32;
-}
-
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    padding: 15px;
-    background: var(--glass);
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-}
-
-.player-info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.player-name {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-.timer {
-    color: var(--primary);
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-.progress-steps {
-    display: flex;
-    gap: 10px;
-}
-
-.step {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+.maze-cell {
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid transparent;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    font-weight: bold;
+    font-size: 0.8rem;
+    border-radius: 3px;
+    transition: all 0.2s ease;
 }
 
-.step.active {
+.maze-cell.path {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent);
+}
+
+.maze-cell.wall {
+    background: rgba(255, 0, 0, 0.3);
+    color: #ff4444;
+}
+
+.maze-cell.player {
     background: linear-gradient(45deg, var(--primary), var(--secondary));
-    border-color: var(--accent);
+    color: white;
     transform: scale(1.1);
 }
 
-.puzzle-content {
-    min-height: 400px;
+.maze-cell.letter {
+    background: rgba(255, 215, 0, 0.3);
+    color: gold;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.maze-info {
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.puzzle-1, .puzzle-2, .puzzle-3, .puzzle-4 {
-    text-align: center;
-    width: 100%;
-    max-width: 600px;
-}
-
-.puzzle-1 h3, .puzzle-2 h3, .puzzle-3 h3, .puzzle-4 h3 {
-    color: var(--primary);
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-}
-
-.cipher-box {
+    justify-content: space-between;
+    margin-top: 15px;
+    padding: 10px;
     background: rgba(255, 255, 255, 0.05);
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px 0;
-    border: 1px solid var(--glass-border);
-}
-
-.cipher-text {
-    font-family: 'Courier New', monospace;
-    font-size: 1.4rem;
-    letter-spacing: 2px;
-    margin-bottom: 15px;
-    color: var(--accent);
-}
-
-.hint {
-    color: var(--secondary);
+    border-radius: 8px;
     font-size: 0.9rem;
-    opacity: 0.8;
-    margin: 5px 0;
 }
 
-.audio-controls {
-    display: flex;
+.collected-letters {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.maze-stats {
+    color: var(--primary);
+}
+
+/* تحكمات الموبايل */
+.mobile-controls {
+    display: grid;
+    grid-template-areas: 
+        ". up ."
+        "left . right"
+        ". down .";
     gap: 10px;
     justify-content: center;
-    margin: 15px 0;
-    flex-wrap: wrap;
+    margin: 20px auto;
+    max-width: 200px;
 }
 
-.audio-btn {
-    padding: 10px 20px;
+.mobile-control-btn {
+    width: 60px;
+    height: 60px;
     background: linear-gradient(45deg, var(--primary), var(--secondary));
     border: none;
-    border-radius: 8px;
+    border-radius: 50%;
     color: white;
-    font-weight: 600;
+    font-size: 1.5rem;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-}
-
-.audio-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 245, 255, 0.3);
-}
-
-.audio-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.play-count {
-    color: var(--accent);
-    font-size: 0.9rem;
-    margin: 10px 0;
-    text-align: center;
-}
-
-.solution-input {
     display: flex;
-    gap: 10px;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    margin: 20px 0;
-    flex-wrap: wrap;
-}
-
-.solution-input input {
-    padding: 12px 15px;
-    font-size: 1rem;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    color: white;
-    min-width: 250px;
-    text-align: center;
-}
-
-.solution-input input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-.submit-btn {
-    padding: 12px 25px;
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
+    justify-content: center;
     transition: all 0.3s ease;
 }
 
-.submit-btn:hover {
-    transform: translateY(-2px);
+.mobile-control-btn:hover {
+    transform: scale(1.1);
     box-shadow: 0 5px 15px rgba(0, 245, 255, 0.3);
 }
 
-.attempts {
+.mobile-control-btn span {
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+.controls-help {
+    text-align: center;
     color: var(--secondary);
     font-size: 0.9rem;
     margin-top: 10px;
+    opacity: 0.8;
 }
 
-.ending-content {
-    text-align: center;
-    padding: 30px;
-}
-
-.ending-content h2 {
-    color: var(--accent);
-    margin-bottom: 30px;
-    font-size: 2rem;
-}
-
-.final-stats {
-    background: var(--glass);
-    border-radius: 15px;
-    padding: 25px;
-    margin: 25px 0;
-    border: 1px solid var(--glass-border);
-}
-
-.stat-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 15px 0;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.restart-btn {
-    padding: 15px 40px;
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
-    border: none;
-    border-radius: 25px;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 20px;
-}
-
-.restart-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 245, 255, 0.3);
-}
-
+/* تحسينات للجوال */
 @media (max-width: 768px) {
-    .hologram-container {
-        padding: 20px;
-        margin: 10px;
+    .maze-cell {
+        width: 25px;
+        height: 25px;
+        font-size: 0.7rem;
     }
     
-    .neon-title {
-        font-size: 2rem;
+    .mobile-controls {
+        max-width: 180px;
     }
     
-    .ai-avatar {
-        width: 80px;
-        height: 80px;
+    .mobile-control-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
     }
     
-    .game-header {
+    .maze-info {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
         text-align: center;
-    }
-    
-    .progress-steps {
-        justify-content: center;
-    }
-    
-    .solution-input {
-        flex-direction: column;
-    }
-    
-    .solution-input input {
-        min-width: 200px;
-    }
-    
-    .audio-controls {
-        flex-direction: column;
-        align-items: center;
     }
 }
 
 @media (max-width: 480px) {
-    .neon-title {
-        font-size: 1.8rem;
+    .maze-cell {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
     }
     
-    .subtitle {
+    .mobile-control-btn {
+        width: 45px;
+        height: 45px;
         font-size: 1rem;
-    }
-    
-    .step {
-        width: 35px;
-        height: 35px;
-        font-size: 0.9rem;
-    }
-    
-    .cipher-text {
-        font-size: 1.1rem;
-    }
-    
-    .solution-input input {
-        min-width: 150px;
-    }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
     }
 }
