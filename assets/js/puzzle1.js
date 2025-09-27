@@ -99,13 +99,13 @@
   var cfg = {
     draggable: true,
     position: 'start',
-    pieceTheme: '/assets/images/{piece}.png', // أضفنا المسار للصور
+    pieceTheme: 'https://chessboardjs.com/chesspieces/wikipedia/{piece}.png', // مسار خارجي للصور
     onDragStart: onDragStart,
     onDrop: onDrop,
     onMouseoutSquare: onMouseoutSquare,
     onMouseoverSquare: onMouseoverSquare,
     onSnapEnd: onSnapEnd
   };
-  board = Chessboard('board', cfg); // استخدمنا Chessboard بدل ChessBoard
+  board = Chessboard('board', cfg); // استخدمنا Chessboard
   updateStatus();
 })();
