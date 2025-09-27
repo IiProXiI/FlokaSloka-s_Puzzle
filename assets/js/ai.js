@@ -82,11 +82,6 @@ class CuratorAI {
         
         const hint = puzzleSystem.getHint(puzzleNumber, this.hintCount - 1);
         
-        // التأكد من أن التلميح هو نص صالح
-        if (!hint || typeof hint !== 'string') {
-            return "❌ <strong>خطأ:</strong> لا يمكن تحميل التلميح في الوقت الحالي. حاول مرة أخرى.";
-        }
-        
         const hintIntros = [
             "💡 <strong>فكرة:</strong> ",
             "🧠 <strong>زاوية تفكير:</strong> ",
@@ -99,30 +94,18 @@ class CuratorAI {
         return intro + hint;
     }
 
-    // تأثير كتابة الرسائل
+    // تأثير كتابة الرسائل - الإصلاح هنا
     async typeMessage(message, element, speed = 35) {
         if (!element) {
-            console.error('No element provided to typeMessage');
+            console.error('Element not found for typing message');
             return;
         }
         
-        // التأكد من أن الرسالة هي نص صالح
-        if (message === null || message === undefined) {
-            console.error('Message is null or undefined:', message);
-            message = 'خطأ في عرض الرسالة';
-        }
-        
+        // التأكد أن message هو نص
         if (typeof message !== 'string') {
-            console.error('Message is not a string:', message, 'Type:', typeof message);
-            message = String(message || 'خطأ في عرض الرسالة');
+            console.warn('Message is not a string, converting...', message);
+            message = String(message);
         }
-        
-        if (message.trim() === '') {
-            console.error('Message is empty');
-            message = 'لا توجد رسالة لعرضها';
-        }
-        
-        console.log('TypeMessage called with:', message, 'Type:', typeof message); // للتشخيص
         
         element.innerHTML = '';
         element.classList.add('typing-animation');
@@ -138,20 +121,18 @@ class CuratorAI {
                 }
                 
                 const part = parts[partIndex];
-                if (typeof part === 'string') {
-                    for (let i = 0; i < part.length; i++) {
-                        element.innerHTML += part.charAt(i);
-                        
-                        // سرعة كتابة مختلفة للرموز والنص
-                        const isEmoji = part.charAt(i).match(/[👏🎯💎🚀🧠💡🔍🎯⚡❌⚠️🎊👑⭐🏆🔥💡]/);
-                        const charSpeed = isEmoji ? speed * 0.3 : speed;
-                        await this.sleep(charSpeed);
-                    }
+                for (let i = 0; i < part.length; i++) {
+                    element.innerHTML += part.charAt(i);
+                    
+                    // سرعة كتابة مختلفة للرموز والنص
+                    const isEmoji = /[👏🎯💎🚀🧠💡🔍🎯⚡❌⚠️🎊👑⭐🏆🔥💡]/.test(part.charAt(i));
+                    const charSpeed = isEmoji ? speed * 0.3 : speed;
+                    await this.sleep(charSpeed);
                 }
             }
         } catch (error) {
             console.error('Error in typeMessage:', error);
-            // في حالة فشل التأثير، عرض الرسالة مباشرة
+            // إذا فشل التأثير، عرض الرسالة مباشرة
             element.innerHTML = message;
         }
         
