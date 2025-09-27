@@ -23,7 +23,7 @@
 
   var SYMBOLS = 'pnbrqkPNBRQK';
 
-  var DEFAULT_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKB1R w KQkq - 0 1';
+  var DEFAULT_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
   var POSSIBLE_RESULTS = ['1-0', '0-1', '1/2-1/2', '*'];
 
@@ -54,7 +54,7 @@
      0, 0, 0, 0,20, 0, 0, 24,  0,  0, 20,  0,  0,  0,  0, 0,
      0, 0, 0,20, 0, 0, 0, 24,  0,  0,  0, 20,  0,  0,  0, 0,
      0, 0,20, 0, 0, 0, 0, 24,  0,  0,  0,  0, 20,  0,  0, 0,
-     0,20, 0, 0, 0, 0, 0, 24,  0,  0,  0,  0,  0, 20,  0, 0,
+     0,20, 0, 0, 0, 0, 0, 24,  0, 0,  0,  0,  0, 20,  0, 0,
     20, 0, 0, 0, 0, 0, 0, 24,  0, 0,  0,  0,  0,  0, 20
   ];
 
@@ -338,8 +338,7 @@
       if (i & 0x88) { i += 7; continue; }
 
       var piece = board[i];
-      if (piece === null) continue;
-      if (piece.color !== us) continue;
+      if (piece === null || piece.color !== us) continue;
 
       var from = SQUARE_MAP[i];
       var type = piece.type;
@@ -877,34 +876,46 @@
     return moveString;
   }
 
-  return {
-    load: load,
-    fen: fen,
-    pgn: pgn,
-    header: header,
-    ascii: ascii,
-    turn: turn,
-    move: move,
-    undo: undo,
-    moves: moves,
-    inCheck: inCheck,
-    inCheckmate: inCheckmate,
-    inStalemate: inStalemate,
-    inDraw: inDraw,
-    gameOver: gameOver,
-    validateFen: validFen,
-    perft: perft,
-    get: get,
-    put: put,
-    remove: remove,
-    board: board,
-    history: history
-  };
-};
+  function push(move) {
+    var moveObj = makeMove(move);
+    if (moveObj) {
+      history.push({
+        move: moveObj.move,
+        kings: {w: kings.w, b: kings.b},
+        turn: turn,
+        castling: {w: kingsideCastling.w, b: kingsideCastling.b},
+        epSquare: epSquare,
+        halfMoves: halfMoves,
+        moveNumber: moveNumber
+      });
+    }
+    return moveObj;
+  }
 
-if (typeof exports !== 'undefined') {
-  exports.Chess = Chess;
-}
-if (typeof define !== 'undefined') {
-  define(function() { return Chess; });
-}
+  window.Chess = function(fen) {
+    return {
+      load: function(f) { return load(f || fen); },
+      fen: fen,
+      pgn: pgn,
+      header: header,
+      ascii: ascii,
+      turn: turn,
+      move: move,
+      undo: undo,
+      moves: function(options) { return generateMoves(options); },
+      inCheck: inCheck,
+      inCheckmate: inCheckmate,
+      inStalemate: inStalemate,
+      inDraw: inDraw,
+      gameOver: gameOver,
+      validateFen: validFen,
+      perft: perft,
+      get: get,
+      put: put,
+      remove: remove,
+      board: board,
+      history: history
+    };
+  };
+
+}());
