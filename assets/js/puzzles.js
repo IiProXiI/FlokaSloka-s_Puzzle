@@ -135,7 +135,15 @@ class PuzzleSystem {
 
     getHint(puzzleNumber, hintLevel) {
         const puzzle = this.puzzles[puzzleNumber];
-        if (!puzzle || !puzzle.hints) return "حاول التفكير بطريقة مختلفة...";
+        if (!puzzle || !puzzle.hints) {
+            return "حاول التفكير بطريقة مختلفة...";
+        }
+        
+        // التأكد من أن hintLevel هو رقم صالح
+        if (typeof hintLevel !== 'number' || hintLevel < 0) {
+            console.error('Invalid hint level:', hintLevel);
+            return "حاول التفكير بطريقة مختلفة...";
+        }
         
         // بعد التلميح الثالث، تبدأ التلميحات تكون أكثر تحديًا
         if (hintLevel >= 3) {
@@ -144,10 +152,17 @@ class PuzzleSystem {
                 "الجواب أمامك لكنه يحتاج نظرة مختلفة وزاوية جديدة",
                 "آخر تلميح: حاول كتابة الإجابة بطريقة مختلفة أو مرادفات"
             ];
-            return advancedHints[Math.min(hintLevel - 3, advancedHints.length - 1)];
+            const advancedIndex = Math.min(hintLevel - 3, advancedHints.length - 1);
+            return advancedHints[advancedIndex];
         }
         
-        return hintLevel < puzzle.hints.length ? puzzle.hints[hintLevel] : puzzle.hints[puzzle.hints.length - 1];
+        // إرجاع التلميح المناسب أو آخر تلميح متاح
+        if (hintLevel < puzzle.hints.length) {
+            return puzzle.hints[hintLevel];
+        } else {
+            // إرجاع آخر تلميح متاح إذا تجاوز العدد المتاح
+            return puzzle.hints[puzzle.hints.length - 1];
+        }
     }
 
     checkAnswer(answer, puzzleNumber) {
@@ -170,6 +185,10 @@ class PuzzleSystem {
     }
 
     normalizeAnswer(answer) {
+        if (typeof answer !== 'string') {
+            return '';
+        }
+        
         return answer.toLowerCase()
             .trim()
             .replace(/[َُِّ٠-٩]/g, '') // إزالة التشكيل والأرقام العربية
@@ -222,22 +241,41 @@ class PuzzleSystem {
             </div>
         `;
     }
-}
 
-const puzzleSystem = new PuzzleSystem();
-
-// دالة مشاركة النتائج
-function shareResults() {
-    const rating = curator.getFinalRating();
-    const text = `حللت ${curator.playerLevel - 1} من 4 ألغاز في المتحف الافتراضي بنتيجة ${Math.round((curator.playerScore / 400) * 100)}%! ${rating.level}`;
+    // دالة مشاركة النتائج
+    shareResults() {
+        const rating = curator.getFinalRating();
+        const text = `حللت ${curator.playerLevel - 1} من 4 ألغاز في المتحف الافتراضي بنتيجة ${Math.round((curator.playerScore / 400) * 100)}%! ${rating.level}`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'نتيجة تحدي الألغاز',
+                text: text,
+                url: window.location.href
+            });
+        } catch(err) {
+            // فشل في استخدام Web Share API
+            this.fallbackShare(text);
+        }
+        
+        if (!navigator.share) {
+            this.fallbackShare(text);
+        }
+    }
     
-    if (navigator.share) {
-        navigator.share({
-            title: 'نتيجة تحدي الألغاز',
-            text: text,
-            url: window.location.href
-        });
-    } else {
-        alert(text + '\n\nانسخ النص ومشاركته مع أصدقائك!');
+    fallbackShare(text) {
+        // نسخ النص إلى clipboard إذا أمكن
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('تم نسخ النتيجة! شاركها مع أصدقائك.');
+            }).catch(() => {
+                alert(text + '\n\nانسخ النص ومشاركته مع أصدقائك!');
+            });
+        } else {
+            alert(text + '\n\nانسخ النص ومشاركته مع أصدقائك!');
+        }
     }
 }
+
+// إنشاء نسخة من نظام الألغاز
+const puzzleSystem = new PuzzleSystem();
