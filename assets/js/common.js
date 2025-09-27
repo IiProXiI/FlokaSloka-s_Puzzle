@@ -22,7 +22,6 @@ async function sha256Hex(str) {
   return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// مخرجات الهاش للرموز (سيتم ملؤها في initHashesIfEmpty)
 const PUZZLE_HASHES = {
   'p1': '',
   'p2': '',
