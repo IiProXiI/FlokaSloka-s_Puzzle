@@ -4,25 +4,63 @@ class GameManager {
         this.startTime = null;
         this.timerInterval = null;
         this.currentPuzzle = 1;
+        this.attempts = {1: 0, 2: 0, 3: 0, 4: 0};
+        this.maxAttempts = 5;
+        this.leaderboard = this.loadLeaderboard();
         this.init();
     }
 
     init() {
-        console.log('🎮 Game Manager initialized');
         this.showRegisterScreen();
-        this.updateProgressSteps();
+        this.updateLeaderboard();
+        this.setupEventListeners();
+        console.log('🎮 نظام الألغاز جاهز!');
+    }
+
+    setupEventListeners() {
+        const startButton = document.getElementById('startButton');
+        const playerNameInput = document.getElementById('playerName');
+        const restartButton = document.getElementById('restartButton');
+
+        if (startButton) {
+            startButton.addEventListener('click', () => this.registerPlayer());
+        }
+
+        if (playerNameInput) {
+            playerNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.registerPlayer();
+                }
+            });
+        }
+
+        if (restartButton) {
+            restartButton.addEventListener('click', () => this.restartGame());
+        }
     }
 
     showRegisterScreen() {
+        this.hideAllScreens();
         document.getElementById('registerScreen').style.display = 'block';
-        document.getElementById('puzzleScreen').style.display = 'none';
-        document.getElementById('endingScreen').style.display = 'none';
     }
 
     showPuzzleScreen() {
-        document.getElementById('registerScreen').style.display = 'none';
+        this.hideAllScreens();
         document.getElementById('puzzleScreen').style.display = 'block';
-        document.getElementById('endingScreen').style.display = 'none';
+    }
+
+    showEndingScreen() {
+        this.hideAllScreens();
+        document.getElementById('endingScreen').style.display = 'block';
+        this.showFinalStats();
+    }
+
+    hideAllScreens() {
+        const screens = ['registerScreen', 'puzzleScreen', 'endingScreen'];
+        screens.forEach(screen => {
+            const element = document.getElementById(screen);
+            if (element) element.style.display = 'none';
+        });
     }
 
     registerPlayer() {
@@ -40,11 +78,15 @@ class GameManager {
         this.showPuzzleScreen();
         this.loadPuzzle(1);
         
-        // تحديث اسم اللاعب
         document.getElementById('currentPlayer').textContent = `اللاعب: ${name}`;
+        this.showMessage(`🎯 مرحباً ${name}! ابدأ حل الألغاز`);
     }
 
     startTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+        }
+        
         this.timerInterval = setInterval(() => {
             this.updateTimer();
         }, 1000);
@@ -66,8 +108,6 @@ class GameManager {
         this.updateProgressSteps();
         
         const puzzleContent = document.getElementById('puzzleContent');
-        
-        // محتوى مؤقت للألغاز
         const puzzles = {
             1: this.getPuzzle1Content(),
             2: this.getPuzzle2Content(),
@@ -76,16 +116,37 @@ class GameManager {
         };
         
         puzzleContent.innerHTML = puzzles[puzzleNumber] || '<p>اللغز غير متوفر</p>';
+        
+        this.setupPuzzleEventListeners();
     }
 
     updateProgressSteps() {
         const steps = document.querySelectorAll('.step');
         steps.forEach((step, index) => {
-            if (index + 1 <= this.currentPuzzle) {
+            if (index + 1 === this.currentPuzzle) {
                 step.classList.add('active');
             } else {
                 step.classList.remove('active');
             }
+        });
+    }
+
+    setupPuzzleEventListeners() {
+        const submitButtons = document.querySelectorAll('.submit-btn');
+        submitButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const puzzleNum = this.currentPuzzle;
+                this.checkAnswer(puzzleNum);
+            });
+        });
+
+        const inputs = document.querySelectorAll('.solution-input input');
+        inputs.forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.checkAnswer(this.currentPuzzle);
+                }
+            });
         });
     }
 
@@ -100,10 +161,10 @@ class GameManager {
                 
                 <div class="solution-input">
                     <input type="text" id="puzzle1Answer" placeholder="اكتب الجملة بعد فك الشفرة...">
-                    <button onclick="gameManager.checkAnswer(1)" class="submit-btn">تحقق</button>
+                    <button class="submit-btn">تحقق</button>
                 </div>
                 
-                <div class="attempts">المحاولات: <span id="attempts1">0</span>/10</div>
+                <div class="attempts">المحاولات: <span>${this.attempts[1]}</span>/${this.maxAttempts}</div>
             </div>
         `;
     }
@@ -112,18 +173,17 @@ class GameManager {
         return `
             <div class="puzzle-2">
                 <h3>🎵 اللغز الثاني: الرسالة الصوتية</h3>
-                <div class="audio-box">
-                    <p>استمع إلى الصوت وحاول فهم الرسالة المخفية</p>
-                    <div class="audio-controls">
-                        <button class="audio-btn">▶ تشغيل</button>
-                        <span class="play-count">عدد التشغيل: 0/5</span>
-                    </div>
+                <div class="cipher-box">
+                    <p>🔊 استمع جيداً للكلمات المخفية في الصوت</p>
+                    <p class="hint">💡 الرسالة تتكون من 5 كلمات</p>
                 </div>
                 
                 <div class="solution-input">
                     <input type="text" id="puzzle2Answer" placeholder="ما هي الرسالة التي سمعتها؟">
-                    <button onclick="gameManager.checkAnswer(2)" class="submit-btn">تحقق</button>
+                    <button class="submit-btn">تحقق</button>
                 </div>
+                
+                <div class="attempts">المحاولات: <span>${this.attempts[2]}</span>/${this.maxAttempts}</div>
             </div>
         `;
     }
@@ -132,17 +192,17 @@ class GameManager {
         return `
             <div class="puzzle-3">
                 <h3>🧩 اللغز الثالث: متاهة الحروف</h3>
-                <div class="maze-box">
-                    <p>استخدم مفاتيح الأسهم للتحرك وجمع الحروف</p>
-                    <div class="maze-placeholder">
-                        🎮 المتاهة ستظهر هنا
-                    </div>
+                <div class="cipher-box">
+                    <p>🎮 استخدم مفاتيح الأسهم للتحرك في المتاهة</p>
+                    <p class="hint">💡 اجمع الحروف لتكوين جملة مفيدة</p>
                 </div>
                 
                 <div class="solution-input">
                     <input type="text" id="puzzle3Answer" placeholder="اكتب الجملة التي جمعتها">
-                    <button onclick="gameManager.checkAnswer(3)" class="submit-btn">تحقق</button>
+                    <button class="submit-btn">تحقق</button>
                 </div>
+                
+                <div class="attempts">المحاولات: <span>${this.attempts[3]}</span>/${this.maxAttempts}</div>
             </div>
         `;
     }
@@ -151,15 +211,17 @@ class GameManager {
         return `
             <div class="puzzle-4">
                 <h3>🚫 اللغز الرابع: التحدي النهائي</h3>
-                <div class="final-puzzle">
-                    <p>ما هو الرقم الذي يمثل إجابة السؤال النهائي عن الحياة والكون وكل شيء؟</p>
-                    <div class="hint">💡 إجابة فلسفية مشهورة</div>
+                <div class="cipher-box">
+                    <p>🤔 ما هو الرقم الذي يمثل إجابة السؤال النهائي؟</p>
+                    <p class="hint">💡 إجابة فلسفية مشهورة من أدب الخيال العلمي</p>
                 </div>
                 
                 <div class="solution-input">
                     <input type="text" id="puzzle4Answer" placeholder="الإجابة النهائية...">
-                    <button onclick="gameManager.checkAnswer(4)" class="submit-btn">تحقق</button>
+                    <button class="submit-btn">تحقق</button>
                 </div>
+                
+                <div class="attempts">المحاولات: <span>${this.attempts[4]}</span>/${this.maxAttempts}</div>
             </div>
         `;
     }
@@ -173,25 +235,154 @@ class GameManager {
         };
         
         const input = document.getElementById(`puzzle${puzzleNumber}Answer`);
-        const userAnswer = input ? input.value.trim().toUpperCase() : '';
+        if (!input) return;
         
-        if (userAnswer === answers[puzzleNumber].toUpperCase()) {
+        const userAnswer = input.value.trim().toUpperCase();
+        const correctAnswer = answers[puzzleNumber].toUpperCase();
+        
+        this.attempts[puzzleNumber]++;
+        
+        if (userAnswer === correctAnswer) {
             this.showMessage('🎉 إجابة صحيحة! تقدم إلى اللغز التالي');
             
             if (puzzleNumber < 4) {
                 setTimeout(() => {
                     this.loadPuzzle(puzzleNumber + 1);
-                }, 2000);
+                }, 1500);
             } else {
-                this.showEnding();
+                this.completeGame();
             }
         } else {
-            this.showMessage('❌ إجابة خاطئة، حاول مرة أخرى');
+            if (this.attempts[puzzleNumber] >= this.maxAttempts) {
+                this.showMessage('❌ لقد استنفذت جميع المحاولات! الجواب الصحيح: ' + answers[puzzleNumber]);
+                setTimeout(() => {
+                    if (puzzleNumber < 4) {
+                        this.loadPuzzle(puzzleNumber + 1);
+                    } else {
+                        this.completeGame();
+                    }
+                }, 2000);
+            } else {
+                this.showMessage('❌ إجابة خاطئة، حاول مرة أخرى');
+                this.updateAttemptsDisplay(puzzleNumber);
+            }
         }
     }
 
+    updateAttemptsDisplay(puzzleNumber) {
+        const attemptsElement = document.querySelector(`.puzzle-${puzzleNumber} .attempts span`);
+        if (attemptsElement) {
+            attemptsElement.textContent = this.attempts[puzzleNumber];
+        }
+    }
+
+    completeGame() {
+        this.stopTimer();
+        this.saveToLeaderboard();
+        this.showEndingScreen();
+    }
+
+    showFinalStats() {
+        const finalStats = document.getElementById('finalStats');
+        if (!finalStats) return;
+        
+        const timeSpent = this.getElapsedTime();
+        const totalAttempts = Object.values(this.attempts).reduce((a, b) => a + b, 0);
+        
+        finalStats.innerHTML = `
+            <div class="stat-item">
+                <span>اللاعب:</span>
+                <span>${this.playerName}</span>
+            </div>
+            <div class="stat-item">
+                <span>الوقت المستغرق:</span>
+                <span>${timeSpent}</span>
+            </div>
+            <div class="stat-item">
+                <span>إجمالي المحاولات:</span>
+                <span>${totalAttempts}</span>
+            </div>
+            <div class="stat-item">
+                <span>المستوى:</span>
+                <span>${totalAttempts <= 10 ? '👑 ممتاز' : totalAttempts <= 15 ? '⭐ جيد جداً' : '👍 جيد'}</span>
+            </div>
+        `;
+    }
+
+    getElapsedTime() {
+        if (!this.startTime) return '00:00';
+        const end = new Date();
+        const diff = Math.floor((end - this.startTime) / 1000);
+        const minutes = Math.floor(diff / 60).toString().padStart(2, '0');
+        const seconds = (diff % 60).toString().padStart(2, '0');
+        return `${minutes}:${seconds}`;
+    }
+
+    stopTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+    }
+
+    loadLeaderboard() {
+        try {
+            const saved = localStorage.getItem('puzzleLeaderboard');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    }
+
+    saveToLeaderboard() {
+        const playerData = {
+            name: this.playerName,
+            time: this.getElapsedTime(),
+            timestamp: new Date().toISOString(),
+            attempts: Object.values(this.attempts).reduce((a, b) => a + b, 0)
+        };
+        
+        this.leaderboard.push(playerData);
+        this.leaderboard.sort((a, b) => {
+            const timeA = this.timeToSeconds(a.time);
+            const timeB = this.timeToSeconds(b.time);
+            return timeA - timeB;
+        });
+        
+        this.leaderboard = this.leaderboard.slice(0, 10);
+        
+        try {
+            localStorage.setItem('puzzleLeaderboard', JSON.stringify(this.leaderboard));
+        } catch (error) {
+            console.log('⚠️ لا يمكن حفظ البيانات');
+        }
+        
+        this.updateLeaderboard();
+    }
+
+    timeToSeconds(timeStr) {
+        const [minutes, seconds] = timeStr.split(':').map(Number);
+        return minutes * 60 + seconds;
+    }
+
+    updateLeaderboard() {
+        const topPlayers = document.getElementById('topPlayers');
+        if (!topPlayers) return;
+        
+        if (this.leaderboard.length === 0) {
+            topPlayers.innerHTML = '<div class="player-rank">لا توجد نتائج سابقة</div>';
+            return;
+        }
+        
+        topPlayers.innerHTML = this.leaderboard.slice(0, 5).map((player, index) => `
+            <div class="player-rank">
+                <span>${index + 1}. ${player.name}</span>
+                <span>${player.time}</span>
+            </div>
+        `).join('');
+    }
+
     showMessage(text) {
-        // إنشاء رسالة عائمة
         const message = document.createElement('div');
         message.style.cssText = `
             position: fixed;
@@ -199,29 +390,34 @@ class GameManager {
             right: 20px;
             background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
+            padding: 12px 20px;
+            border-radius: 8px;
             z-index: 1000;
+            font-weight: 600;
             animation: slideIn 0.3s ease;
         `;
         message.textContent = text;
         document.body.appendChild(message);
         
         setTimeout(() => {
-            message.remove();
+            message.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => message.remove(), 300);
         }, 3000);
     }
 
-    showEnding() {
-        this.showMessage('🏆 تهانينا! لقد أكملت جميع الألغاز');
-        // هنا سيتم إضافة شاشة النهاية الكاملة
+    restartGame() {
+        this.playerName = '';
+        this.startTime = null;
+        this.currentPuzzle = 1;
+        this.attempts = {1: 0, 2: 0, 3: 0, 4: 0};
+        this.stopTimer();
+        this.showRegisterScreen();
+        
+        const nameInput = document.getElementById('playerName');
+        if (nameInput) nameInput.value = '';
+        
+        this.showMessage('🔄 ابدأ تحدياً جديداً!');
     }
 }
 
-// إنشاء نسخة من المدير عند تحميل الصفحة
-let gameManager;
-
-document.addEventListener('DOMContentLoaded', function() {
-    gameManager = new GameManager();
-    console.log('🎯 Game ready!');
-});
+const gameManager = new GameManager();
