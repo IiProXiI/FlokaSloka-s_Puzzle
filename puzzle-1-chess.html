@@ -1,47 +1,8 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>لغز 1 — شطرنج</title>
   <link rel="stylesheet" href="assets/css/chessboard-1.0.0.min.css">
   <script src="assets/js/jquery-3.5.1.min.js" defer></script>
@@ -49,48 +10,11 @@
   <script src="assets/js/chessboard-1.0.0.min.js" defer></script>
 </head>
 <body>
-  <div class="header"><h1>لغز 1 — الشطرنج</h1><div class="small">اسحب بالحركة (يدعم اللمس)</div></div>
-  <div class="container">
-    <div class="card">
-      <h2>اهزم الخصم</h2>
-      <p>العب بالأبيض. عند تحقيق كش مات ضد الخصم، سيظهر لك الرمز.</p>
-      <div id="board" style="width: 400px; margin: 0 auto;"></div>
-      <div id="status" class="notice"></div>
-      <div id="codeBox" class="card" style="margin-top:12px; display:none;">
-        <strong>رمز هذه المرحلة:</strong>
-        <div id="theCode" class="ok" style="margin-top:6px; font-size: 18px;"></div>
-      </div>
-      <hr>
-      <h3>أدخل الرمز للانتقال للمرحلة التالية</h3>
-      <div class="input-row">
-        <input id="codeInput" type="text" placeholder="مثال: C1-9QX7">
-        <button class="primary" id="verifyBtn">تحقق وانتقل</button>
-      </div>
-      <div id="msg" class="notice"></div>
-    </div>
+  <div id="board" style="width: 400px"></div>
+  <p id="status" style="margin-left: 5px"></p>
+  <div id="codeBox" style="margin-left: 5px; display: none;">
+    الرمز: <span id="theCode"></span>
   </div>
-  <div class="footer">تلميح: لا تعتمد على النقلات العشوائية للخصم 😉</div>
-
-  <script src="assets/js/common.js" defer></script>
   <script src="assets/js/puzzle1.js" defer></script>
-  <script>
-    window.onload = async () => {
-      await initHashesIfEmpty().catch(console.error);
-      document.getElementById('verifyBtn').addEventListener('click', async () => {
-        const result = await verifyCode('p1', document.getElementById('codeInput').value);
-        const msgEl = document.getElementById('msg');
-        if (result.ok) {
-          msgEl.className = 'notice ok';
-          msgEl.textContent = 'صحيح! يمكنك المتابعة.';
-          goNext('puzzle-2-cipher.html');
-        } else {
-          msgEl.className = 'notice err';
-          msgEl.textContent = 'خطأ! جرب مرة أخرى.';
-        }
-      });
-    };
-  </script>
 </body>
 </html>
-
-
