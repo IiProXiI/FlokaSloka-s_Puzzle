@@ -1,11 +1,12 @@
+/* أساسيات التصميم الحديث */
 :root {
-    --cyber-blue: #00f0ff;
-    --matrix-green: #00ff41;
-    --hologram-pink: #ff00ff;
-    --neon-purple: #9d00ff;
-    --dark-space: #0a0a0a;
-    --space-blue: #16213e;
-    --gold: #FFD700;
+    --primary: #00f5ff;
+    --secondary: #ff00ff;
+    --accent: #00ff88;
+    --dark: #0a0a0f;
+    --darker: #050508;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -15,8 +16,8 @@
 }
 
 body.cyber-theme {
-    background: radial-gradient(circle at center, var(--dark-space) 0%, var(--space-blue) 70%, #0f3460 100%);
-    font-family: 'Courier New', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #1a1a2e 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
     min-height: 100vh;
     display: flex;
@@ -25,95 +26,234 @@ body.cyber-theme {
     line-height: 1.6;
 }
 
+/* الحاوية الرئيسية */
 .hologram-container {
     width: 95%;
-    max-width: 1000px;
-    background: rgba(10, 10, 20, 0.9);
+    max-width: 1200px;
+    background: var(--glass);
     backdrop-filter: blur(20px);
-    border-radius: 20px;
-    border: 1px solid var(--cyber-blue);
-    box-shadow: 0 0 50px rgba(0, 240, 255, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 40px;
     position: relative;
     overflow: hidden;
-    padding: 30px;
 }
 
-/* تأثير الحدود المتوهجة */
 .hologram-container::before {
     content: '';
     position: absolute;
-    top: -3px; left: -3px; right: -3px; bottom: -3px;
-    background: linear-gradient(45deg, var(--cyber-blue), var(--matrix-green), var(--hologram-pink), var(--neon-purple));
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
     z-index: -1;
-    border-radius: 23px;
-    animation: border-glow 4s linear infinite;
-    filter: blur(5px);
+    border-radius: 26px;
+    animation: border-rotate 3s linear infinite;
 }
 
-@keyframes border-glow {
-    0% { filter: hue-rotate(0deg) blur(5px); opacity: 0.8; }
-    50% { opacity: 1; }
-    100% { filter: hue-rotate(360deg) blur(5px); opacity: 0.8; }
+@keyframes border-rotate {
+    0% { filter: hue-rotate(0deg) blur(10px); opacity: 0.7; }
+    100% { filter: hue-rotate(360deg) blur(10px); opacity: 0.7; }
 }
 
+/* العنوان */
 .neon-title {
     font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     text-align: center;
-    color: var(--cyber-blue);
-    text-shadow: 0 0 10px currentColor;
-    animation: title-pulse 2s ease-in-out infinite alternate;
     margin-bottom: 10px;
+    animation: title-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes title-glow {
+    from { text-shadow: 0 0 20px var(--primary); }
+    to { text-shadow: 0 0 30px var(--secondary), 0 0 40px var(--primary); }
 }
 
 .subtitle {
     text-align: center;
-    color: var(--matrix-green);
-    font-size: 1.2rem;
-    margin-bottom: 30px;
+    color: var(--accent);
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
 }
 
-/* شاشة التسجيل */
+/* الصورة */
+.ai-avatar {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 30px;
+    position: relative;
+}
+
+.logo-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid transparent;
+    animation: logo-spin 8s linear infinite;
+    background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+    padding: 3px;
+}
+
+@keyframes logo-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.hologram-effect {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: conic-gradient(from 0deg, transparent, var(--primary), transparent);
+    border-radius: 50%;
+    animation: hologram-pulse 2s ease-in-out infinite;
+    opacity: 0.5;
+}
+
+@keyframes hologram-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+/* نموذج التسجيل */
 .register-form {
     text-align: center;
-    margin: 30px 0;
+    margin: 40px 0;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 30px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #playerName {
-    width: 80%;
-    max-width: 300px;
-    padding: 15px;
+    width: 100%;
+    padding: 18px 20px;
     font-size: 1.2rem;
     background: rgba(255, 255, 255, 0.1);
-    border: 2px solid var(--cyber-blue);
-    border-radius: 10px;
+    border: 2px solid transparent;
+    border-radius: 15px;
     color: white;
     text-align: center;
-    margin-bottom: 20px;
+    transition: all 0.3s ease;
 }
 
 #playerName:focus {
     outline: none;
-    border-color: var(--matrix-green);
-    box-shadow: 0 0 15px var(--matrix-green);
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
 }
 
+.input-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 0.3s ease;
+}
+
+#playerName:focus + .input-border {
+    width: 100%;
+}
+
+/* زر البدء */
+.start-btn {
+    position: relative;
+    padding: 18px 50px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.start-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 245, 255, 0.4);
+}
+
+.btn-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.start-btn:hover .btn-glow {
+    left: 100%;
+}
+
+/* لوحة الصدارة */
 .leaderboard-preview {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 30px;
+    background: var(--glass);
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 40px;
+    border: 1px solid var(--glass-border);
 }
 
 .leaderboard-preview h3 {
-    color: var(--gold);
-    margin-bottom: 15px;
+    color: var(--accent);
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.4rem;
+}
+
+.players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .player-rank {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.player-rank:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.player-rank:nth-child(1) {
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.2), transparent);
+    border-left: 3px solid gold;
+}
+
+.player-rank:nth-child(2) {
+    background: linear-gradient(45deg, rgba(192, 192, 192, 0.2), transparent);
+    border-left: 3px solid silver;
+}
+
+.player-rank:nth-child(3) {
+    background: linear-gradient(45deg, rgba(205, 127, 50, 0.2), transparent);
+    border-left: 3px solid #cd7f32;
 }
 
 /* رأس اللعبة */
@@ -121,268 +261,67 @@ body.cyber-theme {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
-.player-info, .puzzle-progress {
-    font-size: 1.1rem;
-}
-
-#timer {
-    color: var(--matrix-green);
-    font-weight: bold;
-}
-
-/* تصميمات الألغاز */
-.puzzle-content {
-    min-height: 400px;
-}
-
-/* اللغز 1: مفكك الشفرات */
-.code-breaker {
-    text-align: center;
-}
-
-.cipher-display {
-    font-family: 'Courier New', monospace;
-    font-size: 1.8rem;
-    letter-spacing: 3px;
-    background: rgba(0, 0, 0, 0.5);
+    margin-bottom: 40px;
     padding: 20px;
-    border-radius: 10px;
-    margin: 20px 0;
-    border: 1px solid var(--neon-purple);
+    background: var(--glass);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
 }
 
-.code-inputs {
+.player-info {
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.code-char {
+.player-name {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.timer {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.progress-steps {
+    display: flex;
+    gap: 15px;
+}
+
+.step {
     width: 50px;
     height: 50px;
-    font-size: 1.5rem;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid var(--cyber-blue);
-    border-radius: 5px;
-    color: white;
-}
-
-.code-char:focus {
-    border-color: var(--matrix-green);
-    outline: none;
-}
-
-.attempts-tracker {
-    margin: 15px 0;
-    color: var(--hologram-pink);
-}
-
-/* اللغز 2: الصوتي */
-.audio-puzzle {
-    text-align: center;
-}
-
-.audio-player {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 20px;
-    margin: 20px 0;
-}
-
-.audio-controls {
+    border-radius: 50%;
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.audio-btn {
-    padding: 12px 25px;
-    background: linear-gradient(45deg, var(--cyber-blue), var(--neon-purple));
-    border: none;
-    border-radius: 25px;
-    color: white;
-    font-size: 1.1rem;
-    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid transparent;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
-.audio-btn:hover {
-    transform: scale(1.05);
-}
-
-.play-count {
-    color: var(--matrix-green);
-    margin: 10px 0;
-}
-
-/* اللغز 3: المتاهة */
-.maze-container {
-    position: relative;
-    margin: 20px auto;
-    border: 3px solid var(--cyber-blue);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.maze-row {
-    display: flex;
-}
-
-.maze-cell {
-    width: 30px;
-    height: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.wall { background: #333; }
-.path { background: #111; }
-.player { background: var(--matrix-green); }
-.collected { background: var(--gold); }
-.end { background: var(--hologram-pink); }
-
-.letter-display {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 3rem;
-    color: var(--gold);
-    text-shadow: 0 0 10px currentColor;
-    animation: letter-pop 2s ease-in-out;
-}
-
-@keyframes letter-pop {
-    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-.collected-letters {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-    font-size: 2rem;
-    letter-spacing: 5px;
-}
-
-/* اللغز 4: المضاد للذكاء الاصطناعي */
-.ai-proof-puzzle {
-    text-align: center;
-}
-
-.visual-riddle {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 30px;
-    border-radius: 15px;
-    margin: 20px 0;
-    border: 1px solid var(--hologram-pink);
-}
-
-.pattern-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin: 20px auto;
-    max-width: 400px;
-}
-
-.pattern-cell {
-    width: 80px;
-    height: 80px;
-    border: 2px solid var(--cyber-blue);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.pattern-cell:hover {
+.step.active {
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    border-color: var(--accent);
     transform: scale(1.1);
 }
 
-/* شاشة النهاية */
-.ending-screen {
-    text-align: center;
-    padding: 40px;
-}
-
-.final-stats {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 30px;
-    margin: 20px 0;
-}
-
-.stat-item {
+/* محتوى الألغاز */
+.puzzle-content {
+    min-height: 500px;
     display: flex;
-    justify-content: space-between;
-    margin: 15px 0;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
 }
 
-.leaderboard {
-    max-height: 300px;
-    overflow-y: auto;
-    margin: 20px 0;
-}
-
-.leaderboard-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    margin: 5px 0;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-}
-
-.leaderboard-item:nth-child(1) { background: rgba(255, 215, 0, 0.2); }
-.leaderboard-item:nth-child(2) { background: rgba(192, 192, 192, 0.2); }
-.leaderboard-item:nth-child(3) { background: rgba(205, 127, 50, 0.2); }
-
-/* الأزرار */
-.btn {
-    padding: 12px 30px;
-    border: none;
-    border-radius: 25px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 5px;
-}
-
-.btn-primary {
-    background: linear-gradient(45deg, var(--cyber-blue), var(--neon-purple));
-    color: white;
-}
-
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--matrix-green);
-    border: 1px solid var(--matrix-green);
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 240, 255, 0.3);
-}
-
-/* التجاوب مع الجوال */
+/* تصميم متجاوب */
 @media (max-width: 768px) {
     .hologram-container {
         width: 98%;
-        padding: 15px;
+        padding: 20px;
         margin: 10px;
     }
     
@@ -390,33 +329,89 @@ body.cyber-theme {
         font-size: 2.5rem;
     }
     
+    .ai-avatar {
+        width: 120px;
+        height: 120px;
+    }
+    
     .game-header {
         flex-direction: column;
-        gap: 10px;
+        gap: 20px;
+        text-align: center;
     }
     
-    .maze-cell {
-        width: 20px;
-        height: 20px;
+    .progress-steps {
+        justify-content: center;
     }
     
-    .pattern-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .start-btn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
     }
 }
 
-/* تأثيرات الكتابة */
+@media (max-width: 480px) {
+    .neon-title {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .step {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* تأثيرات إضافية */
+::selection {
+    background: var(--primary);
+    color: black;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    border-radius: 10px;
+}
+
+/* تأثيرات الدخول */
+.register-screen {
+    animation: slide-in 0.8s ease-out;
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* تأثيرات النص */
 .typing-animation {
-    border-right: 2px solid var(--matrix-green);
-    animation: blink-caret 1s step-end infinite;
+    display: inline-block;
 }
 
-@keyframes blink-caret {
-    from, to { border-color: transparent; }
-    50% { border-color: var(--matrix-green); }
+.typing-animation::after {
+    content: '|';
+    animation: blink 1s infinite;
 }
 
-@keyframes title-pulse {
-    from { text-shadow: 0 0 10px var(--cyber-blue); }
-    to { text-shadow: 0 0 20px var(--cyber-blue), 0 0 30px var(--hologram-pink); }
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
