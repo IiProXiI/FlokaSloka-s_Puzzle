@@ -1,6 +1,13 @@
-var Chess = function(fen) {
+/**
+ * Module: chess.js
+ * Version: 0.12.0
+ * Author: Jeff Hlywa
+ * License: MIT
+ */
 
-  /* jshint indent: false */
+(function() {
+
+  'use strict';
 
   var BLACK = 'b';
   var WHITE = 'w';
@@ -16,7 +23,7 @@ var Chess = function(fen) {
 
   var SYMBOLS = 'pnbrqkPNBRQK';
 
-  var DEFAULT_POSITION = 'rnbqkbnr/pppppppp/5n2/5p2/5P2/5N2/PPPPPPPP/RNBQKB1R w KQkq - 0 1';
+  var DEFAULT_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKB1R w KQkq - 0 1';
 
   var POSSIBLE_RESULTS = ['1-0', '0-1', '1/2-1/2', '*'];
 
@@ -26,29 +33,29 @@ var Chess = function(fen) {
   };
 
   var PIECE_OFFSETS = {
-    n: [-18, -33, -31, -14, 18, 33, 31, 14],
-    b: [-17, -15, 17, 15],
-    r: [-16, 1, 16, -1],
-    q: [-17, -16, -15, 1, 17, 16, 15, -1],
-    k: [-17, -16, -15, 1, 17, 16, 15, -1]
+    n: [-18, -33, -31, -14,  18, 33,  31,  14],
+    b: [-17, -15,  17,  15],
+    r: [-16,   1,  16,  -1],
+    q: [-17, -16, -15,   1,  17, 16,  15,  -1],
+    k: [-17, -16, -15,   1,  17, 16,  15,  -1]
   };
 
   var ATTACKS = [
-    20, 0, 0, 0, 0, 0, 0, 24,  0, 0, 0, 0, 0, 0,20, 0,
-     0,20, 0, 0, 0, 0, 0, 24,  0, 0, 0, 0, 0,20, 0, 0,
-     0, 0,20, 0, 0, 0, 0, 24,  0, 0, 0, 0,20, 0, 0, 0,
-     0, 0, 0,20, 0, 0, 0, 24,  0, 0, 0,20, 0, 0, 0, 0,
-     0, 0, 0, 0,20, 0, 0, 24,  0, 0,20, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0,20, 2, 24,  2,20, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 2,53, 56, 53, 2, 0, 0, 0, 0, 0, 0,
-    24,24,24,24,24,24,56,  0, 56,24,24,24,24,24,24, 0,
-     0, 0, 0, 0, 0, 2,53, 56, 53, 2, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0,20, 2, 24,  2,20, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0,20, 0, 0, 24,  0, 0,20, 0, 0, 0, 0, 0,
-     0, 0, 0,20, 0, 0, 0, 24,  0, 0, 0,20, 0, 0, 0, 0,
-     0, 0,20, 0, 0, 0, 0, 24,  0, 0, 0, 0,20, 0, 0, 0,
-     0,20, 0, 0, 0, 0, 0, 24,  0, 0, 0, 0, 0,20, 0, 0,
-    20, 0, 0, 0, 0, 0, 0, 24,  0, 0, 0, 0, 0, 0,20
+    20, 0, 0, 0, 0, 0, 0, 24,  0, 0, 0,  0,  0,  0, 20, 0,
+     0,20, 0, 0, 0, 0, 0, 24,  0, 0, 0,  0,  0, 20,  0, 0,
+     0, 0,20, 0, 0, 0, 0, 24,  0, 0, 0,  0, 20,  0,  0, 0,
+     0, 0, 0,20, 0, 0, 0, 24,  0, 0, 0, 20,  0,  0,  0, 0,
+     0, 0, 0, 0,20, 0, 0, 24,  0, 0, 20,  0,  0,  0,  0, 0,
+     0, 0, 0, 0, 0,20, 2, 24,  2, 20,  0,  0,  0,  0,  0, 0,
+     0, 0, 0, 0, 0, 2,53, 56, 53,  2,  0,  0,  0,  0,  0, 0,
+    24,24,24,24,24,24,56,  0, 56, 24, 24, 24, 24, 24, 24, 0,
+     0, 0, 0, 0, 0, 2,53, 56, 53,  2,  0,  0,  0,  0,  0, 0,
+     0, 0, 0, 0, 0,20, 2, 24,  2, 20,  0,  0,  0,  0,  0, 0,
+     0, 0, 0, 0,20, 0, 0, 24,  0,  0, 20,  0,  0,  0,  0, 0,
+     0, 0, 0,20, 0, 0, 0, 24,  0,  0,  0, 20,  0,  0,  0, 0,
+     0, 0,20, 0, 0, 0, 0, 24,  0,  0,  0,  0, 20,  0,  0, 0,
+     0,20, 0, 0, 0, 0, 0, 24,  0,  0,  0,  0,  0, 20,  0, 0,
+    20, 0, 0, 0, 0, 0, 0, 24,  0, 0,  0,  0,  0,  0, 20
   ];
 
   var RAYS = [
@@ -59,14 +66,14 @@ var Chess = function(fen) {
       0,  0,  0,  0, 17,  0,  0, 16,  0,  0, 15,  0,  0,  0,  0, 0,
       0,  0,  0,  0,  0, 17,  0, 16,  0, 15,  0,  0,  0,  0,  0, 0,
       0,  0,  0,  0,  0,  0, 17, 16, 15,  0,  0,  0,  0,  0,  0, 0,
-     1,   1,  1,  1,  1,  1,  1,  0, -1, -1,  -1,-1, -1, -1, -1, 0,
-      0,  0,  0,  0,  0,  0,-15,-16,-17,  0,  0,  0,  0,  0,  0, 0,
-      0,  0,  0,  0,  0,-15,  0,-16,  0,-17,  0,  0,  0,  0,  0, 0,
-      0,  0,  0,  0,-15,  0,  0,-16,  0,  0,-17,  0,  0,  0,  0, 0,
-      0,  0,  0,-15,  0,  0,  0,-16,  0,  0,  0,-17,  0,  0,  0, 0,
-      0,  0,-15,  0,  0,  0,  0,-16,  0,  0,  0,  0,-17,  0,  0, 0,
-      0,-15,  0,  0,  0,  0,  0,-16,  0,  0,  0,  0,  0,-17,  0, 0,
-    -15,  0,  0,  0,  0,  0,  0,-16,  0,  0,  0,  0,  0,  0,-17
+     1,   1,  1,  1,  1,  1,  1,  0, -1, -1,  -1, -1, -1, -1, -1, 0,
+      0,  0,  0,  0,  0,  0, -15, -16, -17,  0,  0,  0,  0,  0,  0, 0,
+      0,  0,  0,  0,  0, -15,  0, -16,  0, -17,  0,  0,  0,  0,  0, 0,
+      0,  0,  0,  0, -15,  0,  0, -16,  0,  0, -17,  0,  0,  0,  0, 0,
+      0,  0,  0, -15,  0,  0,  0, -16,  0,  0,  0, -17,  0,  0,  0, 0,
+      0,  0, -15,  0,  0,  0,  0, -16,  0,  0,  0,  0, -17,  0,  0, 0,
+      0, -15,  0,  0,  0,  0,  0, -16,  0,  0,  0,  0,  0, -17,  0, 0,
+    -15,  0,  0,  0,  0,  0,  0, -16,  0,  0,  0,  0,  0,  0, -17
   ];
 
   var SHIFTS = { p: 0, n: 1, b: 2, r: 3, q: 4, k: 5 };
@@ -91,14 +98,7 @@ var Chess = function(fen) {
     QSIDE_CASTLE: 64
   };
 
-  var RANK_1 = 7;
-  var RANK_2 = 6;
-  var RANK_3 = 5;
-  var RANK_4 = 4;
-  var RANK_5 = 3;
-  var RANK_6 = 2;
-  var RANK_7 = 1;
-  var RANK_8 = 0;
+  var RANK_1 = 7, RANK_2 = 6, RANK_3 = 5, RANK_4 = 4, RANK_5 = 3, RANK_6 = 2, RANK_7 = 1, RANK_8 = 0;
 
   var SQUARES = {
     a8:   0, b8:   1, c8:   2, d8:   3, e8:   4, f8:   5, g8:   6, h8:   7,
@@ -216,6 +216,8 @@ var Chess = function(fen) {
 
     fen += ' ' + (epSquare === EMPTY ? '-' : SQUARE_MAP[epSquare]);
 
+    fen += ' ' + halfMoves + ' ' + moveNumber;
+
     return fen;
   }
 
@@ -272,7 +274,8 @@ var Chess = function(fen) {
     }
     kings = {w: EMPTY, b: EMPTY};
     turn = WHITE;
-    castling = {w: 0, b: 0};
+    kingsideCastling = {w: 0, b: 0};
+    queensideCastling = {w: 0, b: 0};
     epSquare = EMPTY;
     halfMoves = 0;
     moveNumber = 1;
@@ -332,13 +335,16 @@ var Chess = function(fen) {
     var them = us === WHITE ? BLACK : WHITE;
 
     for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
-      if (board[i] === null) continue;
-      if (board[i].color !== us) continue;
+      if (i & 0x88) { i += 7; continue; }
 
-      var piece = board[i].type;
+      var piece = board[i];
+      if (piece === null) continue;
+      if (piece.color !== us) continue;
+
       var from = SQUARE_MAP[i];
+      var type = piece.type;
 
-      if (piece === PAWN) {
+      if (type === PAWN) {
         var square = i + PAWN_OFFSETS[us][0];
         if (board[square] === null) {
           addMove(board, from, SQUARE_MAP[square], BITS.NORMAL);
@@ -349,7 +355,7 @@ var Chess = function(fen) {
           }
         }
 
-        for (j = 2; j < 4; j++) {
+        for (var j = 2; j < 4; j++) {
           square = i + PAWN_OFFSETS[us][j];
           if (square & 0x88) continue;
 
@@ -360,8 +366,8 @@ var Chess = function(fen) {
           }
         }
       } else {
-        for (var j = 0, len = PIECE_OFFSETS[piece].length; j < len; j++) {
-          var offset = PIECE_OFFSETS[piece][j];
+        for (var j = 0, len = PIECE_OFFSETS[type].length; j < len; j++) {
+          var offset = PIECE_OFFSETS[type][j];
           var square = i;
 
           while (true) {
@@ -376,7 +382,7 @@ var Chess = function(fen) {
               break;
             }
 
-            if (piece === KNIGHT || piece === KING) break;
+            if (type === KNIGHT || type === KING) break;
           }
         }
       }
@@ -384,7 +390,6 @@ var Chess = function(fen) {
 
     if (kings[us] !== EMPTY && castling[us]) {
       if (castling[us] & BITS.KSIDE_CASTLE) {
-        var castling_from = kings[us];
         var castling_to = KING_CASTLE[us === WHITE ? 0 : 2];
         if (board[castling_to + 1] === null &&
             board[castling_to] === null &&
@@ -395,7 +400,6 @@ var Chess = function(fen) {
       }
 
       if (castling[us] & BITS.QSIDE_CASTLE) {
-        var castling_from = kings[us];
         var castling_to = QUEEN_CASTLE[us === WHITE ? 0 : 2];
         if (board[castling_to - 1] === null &&
             board[castling_to] === null &&
@@ -409,7 +413,7 @@ var Chess = function(fen) {
 
     if (options) {
       var legalMoves = [];
-      for (i = 0; i < moves.length; i++) {
+      for (var i = 0; i < moves.length; i++) {
         if (makeMove(moves[i]).in_check) {
           undoMove();
           continue;
@@ -583,20 +587,21 @@ var Chess = function(fen) {
     for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
       if (i & 0x88) { i += 7; continue; }
 
-      if (board[i] === null || board[i].color !== color) continue;
+      var piece = board[i];
+      if (piece === null || piece.color !== color) continue;
 
-      var piece = board[i].type;
+      var type = piece.type;
 
-      if (piece === PAWN && (i + PAWN_OFFSETS[color][2]) === square) {
+      if (type === PAWN && (i + PAWN_OFFSETS[color][2]) === square) {
         return true;
       }
 
-      if (piece === PAWN && (i + PAWN_OFFSETS[color][3]) === square) {
+      if (type === PAWN && (i + PAWN_OFFSETS[color][3]) === square) {
         return true;
       }
 
-      for (var j = 0; j < PIECE_OFFSETS[piece].length; j++) {
-        var offset = PIECE_OFFSETS[piece][j];
+      for (var j = 0; j < PIECE_OFFSETS[type].length; j++) {
+        var offset = PIECE_OFFSETS[type][j];
         var target = i;
 
         while (true) {
@@ -671,15 +676,6 @@ var Chess = function(fen) {
     }
 
     return false;
-  }
-
-  function push(move) {
-    var moveObj = makeMove(move);
-    return moveObj;
-  }
-
-  function moves(options) {
-    return generateMoves(options);
   }
 
   function inDraw() {
@@ -824,14 +820,13 @@ var Chess = function(fen) {
   var board = new Array(128);
   var kings = {w: EMPTY, b: EMPTY};
   var turn = WHITE;
-  var castling = {w: 0, b: 0};
+  var kingsideCastling = {w: 0, b: 0};
+  var queensideCastling = {w: 0, b: 0};
   var epSquare = EMPTY;
   var halfMoves = 0;
   var moveNumber = 1;
   var history = [];
   var header = {};
-  var kingsideCastling = {w: 0, b: 0};
-  var queensideCastling = {w: 0, b: 0};
 
   if (typeof fen === 'undefined') {
     load(DEFAULT_POSITION);
