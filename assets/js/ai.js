@@ -12,8 +12,8 @@ class CuratorAI {
     }
 
     // توليد ردود ذكية
-    generateResponse(answer, correctAnswer, puzzleType) {
-        if (answer === correctAnswer) {
+    generateResponse(answer, correctAnswer) {
+        if (answer.toLowerCase() === correctAnswer.toLowerCase()) {
             this.playerLevel++;
             this.hintCount = 0;
             return this.getSuccessResponse();
@@ -46,11 +46,17 @@ class CuratorAI {
 
     // تأثير كتابة الرسائل
     async typeMessage(message, element, speed = 30) {
+        if (!element) return;
+        
         element.innerHTML = '';
+        element.classList.add('typing-animation');
+        
         for (let i = 0; i < message.length; i++) {
             element.innerHTML += message.charAt(i);
             await this.sleep(speed);
         }
+        
+        element.classList.remove('typing-animation');
     }
 
     sleep(ms) {
