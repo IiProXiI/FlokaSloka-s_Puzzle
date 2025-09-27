@@ -15,26 +15,24 @@
                 <div class="hologram-effect"></div>
             </div>
             
-            <h1 class="neon-title">🚀 متحف الألغاز الغامض</h1>
-            <p class="subtitle">اخترق الشفرات.. اكتشف الأسرار.. كن الأفضل</p>
+            <h1 class="neon-title">🚀 متحف الألغاز</h1>
+            <p class="subtitle">اخترق الشفرات.. اكتشف الأسرار</p>
             
             <div class="register-form">
                 <div class="input-group">
                     <input type="text" id="playerName" placeholder="اكتب اسمك هنا..." maxlength="20">
                     <div class="input-border"></div>
                 </div>
-                <button class="start-btn" onclick="gameManager.registerPlayer()">
+                <button class="start-btn" id="startButton">
                     <span>بدء التحدي</span>
                     <div class="btn-glow"></div>
                 </button>
             </div>
             
             <div class="leaderboard-preview">
-                <h3>🏆 المتصدرون</h3>
+                <h3>🏆 قائمة المتصدرين</h3>
                 <div id="topPlayers" class="players-list">
-                    <div class="player-rank">1. أحمد - 15:30</div>
-                    <div class="player-rank">2. محمد - 18:45</div>
-                    <div class="player-rank">3. فاطمة - 20:12</div>
+                    <!-- سيتم تعبئتها تلقائيا -->
                 </div>
             </div>
         </div>
@@ -63,12 +61,16 @@
 
         <!-- شاشة النهاية -->
         <div class="ending-screen" id="endingScreen" style="display: none;">
-            <!-- سيتم تعبئتها بالجافاسكريبت -->
+            <div class="ending-content">
+                <h2>🎉 تهانينا! لقد أكملت التحدي</h2>
+                <div class="final-stats" id="finalStats">
+                    <!-- سيتم تعبئتها بالجافاسكريبت -->
+                </div>
+                <button class="restart-btn" id="restartButton">لعب مرة أخرى</button>
+            </div>
         </div>
     </div>
 
     <script src="assets/js/game.js"></script>
-    <script src="assets/js/puzzles.js"></script>
-    <script src="assets/js/maze.js"></script>
 </body>
 </html>
