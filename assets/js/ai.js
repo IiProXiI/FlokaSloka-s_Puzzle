@@ -101,35 +101,58 @@ class CuratorAI {
 
     // تأثير كتابة الرسائل
     async typeMessage(message, element, speed = 35) {
-        if (!element) return;
+        if (!element) {
+            console.error('No element provided to typeMessage');
+            return;
+        }
         
         // التأكد من أن الرسالة هي نص صالح
+        if (message === null || message === undefined) {
+            console.error('Message is null or undefined:', message);
+            message = 'خطأ في عرض الرسالة';
+        }
+        
         if (typeof message !== 'string') {
-            console.error('Message must be a string:', message);
+            console.error('Message is not a string:', message, 'Type:', typeof message);
             message = String(message || 'خطأ في عرض الرسالة');
         }
+        
+        if (message.trim() === '') {
+            console.error('Message is empty');
+            message = 'لا توجد رسالة لعرضها';
+        }
+        
+        console.log('TypeMessage called with:', message, 'Type:', typeof message); // للتشخيص
         
         element.innerHTML = '';
         element.classList.add('typing-animation');
         
-        // تقسيم الرسالة إلى أجزاء للتحكم بالسرعة
-        const parts = message.split('<br>');
-        
-        for (let partIndex = 0; partIndex < parts.length; partIndex++) {
-            if (partIndex > 0) {
-                element.innerHTML += '<br>';
-                await this.sleep(speed * 2);
-            }
+        try {
+            // تقسيم الرسالة إلى أجزاء للتحكم بالسرعة
+            const parts = message.split('<br>');
             
-            const part = parts[partIndex];
-            for (let i = 0; i < part.length; i++) {
-                element.innerHTML += part.charAt(i);
+            for (let partIndex = 0; partIndex < parts.length; partIndex++) {
+                if (partIndex > 0) {
+                    element.innerHTML += '<br>';
+                    await this.sleep(speed * 2);
+                }
                 
-                // سرعة كتابة مختلفة للرموز والنص
-                const isEmoji = part.charAt(i).match(/[👏🎯💎🚀🧠💡🔍🎯⚡❌⚠️🎊👑⭐🏆🔥💡]/);
-                const charSpeed = isEmoji ? speed * 0.3 : speed;
-                await this.sleep(charSpeed);
+                const part = parts[partIndex];
+                if (typeof part === 'string') {
+                    for (let i = 0; i < part.length; i++) {
+                        element.innerHTML += part.charAt(i);
+                        
+                        // سرعة كتابة مختلفة للرموز والنص
+                        const isEmoji = part.charAt(i).match(/[👏🎯💎🚀🧠💡🔍🎯⚡❌⚠️🎊👑⭐🏆🔥💡]/);
+                        const charSpeed = isEmoji ? speed * 0.3 : speed;
+                        await this.sleep(charSpeed);
+                    }
+                }
             }
+        } catch (error) {
+            console.error('Error in typeMessage:', error);
+            // في حالة فشل التأثير، عرض الرسالة مباشرة
+            element.innerHTML = message;
         }
         
         element.classList.remove('typing-animation');
