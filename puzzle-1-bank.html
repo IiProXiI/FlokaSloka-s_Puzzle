@@ -191,7 +191,7 @@
       if (userCode === 'B1-HACK') {
         document.getElementById('verify-message').textContent = 'مبروك! الباب مفتوح، انتقل للغز التالي.';
         document.getElementById('btn-next').style.display = 'inline-block';
-        localStorage.setItem('progress', 'puzzle-2-cipher.html');
+        localStorage.setItem('progress', 'puzzle-2-cipher.html'); // حفظ التقدم فقط عند النجاح
       } else {
         document.getElementById('verify-message').textContent = 'الرمز غير صحيح، حاول مرة أخرى.';
       }
