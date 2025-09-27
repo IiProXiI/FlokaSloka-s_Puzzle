@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لغز 1: الأرقام السحرية</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72, #2a5298); margin: 0; padding: 0; color: #fff; }
+    .header { text-align: center; padding: 20px; background: #1a2a44; border-bottom: 2px solid #2a5298; }
+    .header h1 { margin: 0; font-size: 2em; color: #f0f0f0; text-shadow: 1px 1px 5px #000; }
+    .container { max-width: 800px; margin: 20px auto; padding: 20px; background: rgba(26, 42, 68, 0.9); border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); }
+    .puzzle-area { text-align: center; }
+    .grid { display: grid; grid-template-columns: repeat(3, 80px); gap: 5px; margin: 20px auto; justify-content: center; }
+    .grid input { width: 70px; height: 70px; font-size: 1.5em; text-align: center; background: #3e6cb7; border: 2px solid #2a5298; border-radius: 5px; color: #fff; }
+    .hint { color: #ccc; font-style: italic; margin: 10px 0; }
+    .code-entry { text-align: center; margin-top: 20px; }
+    .nav-actions { text-align: center; margin-top: 20px; }
+    .btn { padding: 10px 20px; margin: 5px; border: none; cursor: pointer; background: #007BFF; color: #fff; border-radius: 5px; transition: background 0.3s; }
+    .btn:hover { background: #0056b3; }
+    .success { background: #28a745; }
+    .success:hover { background: #218838; }
+    .message { color: #ff4444; }
+    .footer { text-align: center; padding: 10px; background: #1a2a44; position: fixed; bottom: 0; width: 100%; color: #ccc; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>لغز 1: الأرقام السحرية</h1>
+    <p>أكمل الجدول بحيث يكون مجموع كل صف وعمود وقطر 15، ثم أدخل الرمز.</p>
+  </header>
+
+  <main class="container">
+    <section class="puzzle-area">
+      <div class="grid">
+        <input type="number" id="cell1" min="1" max="9" placeholder="?" onchange="checkMagicSquare()">
+        <input type="number" id="cell2" min="1" max="9" placeholder="?" onchange="checkMagicSquare()">
+        <input type="number" id="cell3" min="1" max="9" placeholder="?" onchange="checkMagicSquare()">
+        <input type="number" id="cell4" min="1" max="9" placeholder="2" readonly>
+        <input type="number" id="cell5" min="1" max="9" placeholder="7" readonly>
+        <input type="number" id="cell6" min="1" max="9" placeholder="6" readonly>
+        <input type="number" id="cell7" min="1" max="9" placeholder="?" onchange="checkMagicSquare()">
+        <input type="number" id="cell8" min="1" max="9" placeholder="?" onchange="checkMagicSquare()">
+        <input type="number" id="cell9" min="1" max="9" placeholder="?" onchange="checkMagicSquare()">
+      </div>
+      <p id="status" class="hint">تلميح: ابحث عن النمط السحري في الأرقام.</p>
+    </section>
+
+    <section class="code-entry">
+      <label for="puzzle1-code">أدخل الرمز:</label>
+      <input id="puzzle1-code" type="text" placeholder="اكتب الرمز هنا" autocomplete="off" style="display:none;">
+      <button id="btn-verify-code" class="btn" style="display:none;" onclick="verifyCode()">تحقق</button>
+      <p id="verify-message" class="message"></p>
+    </section>
+
+    <section class="nav-actions">
+      <button id="btn-next" class="btn success" style="display:none;" onclick="window.location.href='puzzle-2-cipher.html'">التالي</button>
+      <button id="btn-back-home" class="btn" onclick="window.location.href='index.html'">العودة للرئيسية</button>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© 2025 ألغاز الفلوقا سلوكا - بالتوفيق! 🍀</small>
+  </footer>
+
+  <script>
+    function checkMagicSquare() {
+      var cells = [
+        parseInt(document.getElementById('cell1').value) || 0,
+        parseInt(document.getElementById('cell2').value) || 0,
+        parseInt(document.getElementById('cell3').value) || 0,
+        2, // cell4
+        7, // cell5
+        6, // cell6
+        parseInt(document.getElementById('cell7').value) || 0,
+        parseInt(document.getElementById('cell8').value) || 0,
+        parseInt(document.getElementById('cell9').value) || 0
+      ];
+
+      // الحل الصحيح: 8 1 6 / 3 5 7 / 4 9 2
+      var rows = [
+        cells[0] + cells[1] + cells[2],
+        cells[3] + cells[4] + cells[5],
+        cells[6] + cells[7] + cells[8]
+      ];
+      var cols = [
+        cells[0] + cells[3] + cells[6],
+        cells[1] + cells[4] + cells[7],
+        cells[2] + cells[5] + cells[8]
+      ];
+      var diags = [
+        cells[0] + cells[4] + cells[8],
+        cells[2] + cells[4] + cells[6]
+      ];
+
+      var isValid = rows.every(sum => sum === 15) &&
+                    cols.every(sum => sum === 15) &&
+                    diags.every(sum => sum === 15) &&
+                    new Set(cells).size === 9 && // كل رقم من 1 إلى 9 مرة واحدة
+                    cells.every(num => num >= 1 && num <= 9);
+
+      if (isValid) {
+        showCodeInput();
+        document.getElementById('status').textContent = 'مبروك! أدخل الرمز للمتابعة.';
+      } else {
+        document.getElementById('status').textContent = 'تلميح: ابحث عن النمط السحري في الأرقام.';
+      }
+    }
+
+    function showCodeInput() {
+      document.getElementById('puzzle1-code').style.display = 'inline-block';
+      document.getElementById('btn-verify-code').style.display = 'inline-block';
+    }
+
+    async function verifyCode() {
+      const userCode = document.getElementById('puzzle1-code').value.trim();
+      const expectedHash = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5'; // هاش لـ "M1-5MAGIC" (مثال، يمكن تغييره)
+      if (userCode === 'M1-5MAGIC') {
+        document.getElementById('verify-message').textContent = 'مبروك! الرمز صحيح.';
+        document.getElementById('btn-next').style.display = 'inline-block';
+        localStorage.setItem('progress', 'puzzle-2-cipher.html');
+      } else {
+        document.getElementById('verify-message').textContent = 'الرمز غير صحيح، حاول مرة أخرى.';
+      }
+    }
+  </script>
+</body>
+</html>
