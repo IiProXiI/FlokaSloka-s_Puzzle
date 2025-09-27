@@ -1,1 +1,227 @@
+/* أساسيات التصميم السيبراني */
+:root {
+    --cyber-blue: #00f0ff;
+    --matrix-green: #00ff41;
+    --hologram-pink: #ff00ff;
+    --neon-purple: #9d00ff;
+    --dark-space: #0a0a0a;
+    --space-blue: #16213e;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.cyber-theme {
+    background: radial-gradient(circle at center, var(--dark-space) 0%, var(--space-blue) 70%, #0f3460 100%);
+    font-family: 'Courier New', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.6;
+}
+
+.hologram-container {
+    width: 95%;
+    max-width: 900px;
+    background: rgba(10, 10, 20, 0.85);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid var(--cyber-blue);
+    box-shadow: 
+        0 0 50px rgba(0, 240, 255, 0.4),
+        inset 0 0 50px rgba(0, 240, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    padding: 30px;
+}
+
+/* تأثير الحدود المتوهجة */
+.hologram-container::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, 
+        var(--cyber-blue), 
+        var(--matrix-green), 
+        var(--hologram-pink), 
+        var(--neon-purple));
+    z-index: -1;
+    border-radius: 23px;
+    animation: border-glow 4s linear infinite;
+    filter: blur(5px);
+}
+
+@keyframes border-glow {
+    0% { 
+        filter: hue-rotate(0deg) blur(5px);
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% { 
+        filter: hue-rotate(360deg) blur(5px);
+        opacity: 0.8;
+    }
+}
+
+/* العنوان المتوهج */
+.neon-title {
+    font-size: 3.5rem;
+    text-align: center;
+    color: var(--cyber-blue);
+    text-shadow: 
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 30px currentColor;
+    animation: title-pulse 2s ease-in-out infinite alternate;
+    margin-bottom: 10px;
+}
+
+@keyframes title-pulse {
+    from {
+        text-shadow: 0 0 10px var(--cyber-blue);
+    }
+    to {
+        text-shadow: 
+            0 0 20px var(--cyber-blue),
+            0 0 30px var(--hologram-pink),
+            0 0 40px var(--matrix-green);
+    }
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--matrix-green);
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+/* صورة الذكاء الاصطناعي */
+.ai-avatar {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+    background: conic-gradient(from 0deg, var(--cyber-blue), var(--hologram-pink), var(--matrix-green), var(--cyber-blue));
+    border-radius: 50%;
+    position: relative;
+    animation: avatar-rotate 6s linear infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ai-avatar::before {
+    content: 'AI';
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    z-index: 2;
+}
+
+.ai-avatar::after {
+    content: '';
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    background: var(--dark-space);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+@keyframes avatar-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* مربع الحوار */
+.dialogue-box {
+    background: rgba(0, 240, 255, 0.1);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 30px 0;
+    position: relative;
+}
+
+.dialogue-box::before {
+    content: 'القيّم الغامض يقول:';
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background: var(--dark-space);
+    padding: 0 10px;
+    font-size: 0.9rem;
+    color: var(--matrix-green);
+}
+
+.ai-message {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* تأثير الكتابة */
+.typing-animation {
+    border-right: 2px solid var(--matrix-green);
+    animation: blink-caret 1s step-end infinite;
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: var(--matrix-green); }
+}
+
+/* زر البدء */
+.start-btn {
+    background: linear-gradient(45deg, var(--cyber-blue), var(--hologram-pink));
+    border: none;
+    color: white;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 240, 255, 0.5);
+    animation: btn-glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes btn-glow {
+    from { box-shadow: 0 5px 20px rgba(0, 240, 255, 0.5); }
+    to { box-shadow: 0 5px 30px rgba(255, 0, 255, 0.7); }
+}
+
+/* التجاوب مع الجوال */
+@media (max-width: 768px) {
+    .hologram-container {
+        width: 98%;
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .neon-title {
+        font-size: 2.5rem;
+    }
+    
+    .ai-avatar {
+        width: 100px;
+        height: 100px;
+    }
+}
