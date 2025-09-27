@@ -5,6 +5,12 @@
   var $codeBox = $('#codeBox');
   var $codeText = $('#theCode');
 
+  // تحقق من وجود jQuery
+  if (typeof window.jQuery === 'undefined') {
+    console.error('jQuery is not loaded! Please check the script order in HTML.');
+    return;
+  }
+
   var removeGreySquares = function() {
     $('#board .square-55d63').css('background', '');
   };
@@ -99,13 +105,13 @@
   var cfg = {
     draggable: true,
     position: 'start',
-    pieceTheme: 'https://chessboardjs.com/chesspieces/wikipedia/{piece}.png', // مسار خارجي للصور
+    pieceTheme: 'https://chessboardjs.com/chesspieces/wikipedia/{piece}.png',
     onDragStart: onDragStart,
     onDrop: onDrop,
     onMouseoutSquare: onMouseoutSquare,
     onMouseoverSquare: onMouseoverSquare,
     onSnapEnd: onSnapEnd
   };
-  board = Chessboard('board', cfg); // استخدمنا Chessboard
+  board = Chessboard('board', cfg);
   updateStatus();
 })();
