@@ -1,4 +1,4 @@
-import { Chess } from 'https://unpkg.com/chess.js@1.0.0';
+import { Chess } from 'https://unpkg.com/chess.js@1.1.0';
 
 (() => {
   const game = new Chess();
