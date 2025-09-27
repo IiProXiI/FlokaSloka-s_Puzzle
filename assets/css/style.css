@@ -276,4 +276,121 @@ body.cyber-theme {
     .ai-message {
         font-size: 1rem;
     }
+
+
+    /* تصميم شاشة الألغاز */
+.puzzle-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.puzzle-header h2 {
+    color: var(--matrix-green);
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+}
+
+.puzzle-image {
+    font-size: 4rem;
+    margin: 20px 0;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.puzzle-question {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--hologram-pink);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.puzzle-question p {
+    font-size: 1.3rem;
+    color: var(--cyber-blue);
+}
+
+.puzzle-interaction {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+#puzzleAnswer {
+    padding: 15px;
+    border: 2px solid var(--cyber-blue);
+    background: rgba(0, 240, 255, 0.1);
+    color: white;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+#puzzleAnswer:focus {
+    outline: none;
+    border-color: var(--matrix-green);
+    box-shadow: 0 0 10px var(--matrix-green);
+}
+
+.puzzle-interaction button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.puzzle-interaction button:first-of-type {
+    background: linear-gradient(45deg, var(--cyber-blue), var(--neon-purple));
+    color: white;
+}
+
+.puzzle-interaction button:last-of-type {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--matrix-green);
+    border: 1px solid var(--matrix-green);
+}
+
+.puzzle-interaction button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 240, 255, 0.3);
+}
+
+.ai-feedback {
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid var(--matrix-green);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.ending-screen {
+    text-align: center;
+    padding: 40px;
+}
+
+.ending-screen h2 {
+    color: var(--hologram-pink);
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.ending-screen p {
+    font-size: 1.3rem;
+    color: var(--cyber-blue);
+    margin-bottom: 30px;
+}
+    
 }
