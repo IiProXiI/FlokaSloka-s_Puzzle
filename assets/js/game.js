@@ -6,7 +6,10 @@ class GameManager {
         this.currentPuzzle = 1;
         this.attempts = {1: 0, 2: 0, 3: 0, 4: 0};
         this.maxAttempts = 5;
+        this.audioPlayCount = 0;
+        this.maxAudioPlays = 3;
         this.leaderboard = this.loadLeaderboard();
+        this.audioElement = null;
         this.init();
     }
 
@@ -107,6 +110,10 @@ class GameManager {
         this.currentPuzzle = puzzleNumber;
         this.updateProgressSteps();
         
+        if (puzzleNumber === 2) {
+            this.audioPlayCount = 0;
+        }
+        
         const puzzleContent = document.getElementById('puzzleContent');
         const puzzles = {
             1: this.getPuzzle1Content(),
@@ -117,7 +124,9 @@ class GameManager {
         
         puzzleContent.innerHTML = puzzles[puzzleNumber] || '<p>اللغز غير متوفر</p>';
         
-        this.setupPuzzleEventListeners();
+        setTimeout(() => {
+            this.setupPuzzleEventListeners();
+        }, 100);
     }
 
     updateProgressSteps() {
@@ -132,22 +141,83 @@ class GameManager {
     }
 
     setupPuzzleEventListeners() {
-        const submitButtons = document.querySelectorAll('.submit-btn');
-        submitButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const puzzleNum = this.currentPuzzle;
-                this.checkAnswer(puzzleNum);
-            });
-        });
-
-        const inputs = document.querySelectorAll('.solution-input input');
-        inputs.forEach(input => {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.checkAnswer(this.currentPuzzle);
-                }
-            });
-        });
+        if (this.currentPuzzle === 1) {
+            const submitBtn = document.querySelector('.puzzle-1 .submit-btn');
+            const input = document.getElementById('puzzle1Answer');
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', () => this.checkAnswer(1));
+            }
+            
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.checkAnswer(1);
+                    }
+                });
+            }
+        }
+        
+        if (this.currentPuzzle === 2) {
+            const playBtn = document.getElementById('playAudioBtn');
+            const stopBtn = document.getElementById('stopAudioBtn');
+            const submitBtn = document.getElementById('submitPuzzle2');
+            const input = document.getElementById('puzzle2Answer');
+            
+            if (playBtn) {
+                playBtn.addEventListener('click', () => this.playAudio());
+            }
+            
+            if (stopBtn) {
+                stopBtn.addEventListener('click', () => this.stopAudio());
+            }
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', () => this.checkAnswer(2));
+            }
+            
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.checkAnswer(2);
+                    }
+                });
+            }
+        }
+        
+        if (this.currentPuzzle === 3) {
+            const submitBtn = document.querySelector('.puzzle-3 .submit-btn');
+            const input = document.getElementById('puzzle3Answer');
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', () => this.checkAnswer(3));
+            }
+            
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.checkAnswer(3);
+                    }
+                });
+            }
+        }
+        
+        if (this.currentPuzzle === 4) {
+            const submitBtn = document.querySelector('.puzzle-4 .submit-btn');
+            const input = document.getElementById('puzzle4Answer');
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', () => this.checkAnswer(4));
+            }
+            
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.checkAnswer(4);
+                    }
+                });
+            }
+        }
     }
 
     getPuzzle1Content() {
@@ -175,15 +245,21 @@ class GameManager {
                 <h3>🎵 اللغز الثاني: الرسالة الصوتية</h3>
                 <div class="cipher-box">
                     <p>🔊 استمع جيداً للكلمات المخفية في الصوت</p>
-                    <p class="hint">💡 الرسالة تتكون من 5 كلمات</p>
+                    <p class="hint">💡 الكلمة الصحيحة هي: good</p>
+                    
+                    <div class="audio-controls">
+                        <button class="audio-btn" id="playAudioBtn">▶ تشغيل الصوت</button>
+                        <button class="audio-btn" id="stopAudioBtn">⏹ إوقف الصوت</button>
+                    </div>
+                    <div class="play-count" id="playCount">عدد التشغيل: ${this.audioPlayCount}/${this.maxAudioPlays}</div>
                 </div>
                 
                 <div class="solution-input">
-                    <input type="text" id="puzzle2Answer" placeholder="ما هي الرسالة التي سمعتها؟">
-                    <button class="submit-btn">تحقق</button>
+                    <input type="text" id="puzzle2Answer" placeholder="ما هي الكلمة التي سمعتها؟">
+                    <button class="submit-btn" id="submitPuzzle2">تحقق</button>
                 </div>
                 
-                <div class="attempts">المحاولات: <span>${this.attempts[2]}</span>/${this.maxAttempts}</div>
+                <div class="attempts">المحاولات: <span id="attempts2">${this.attempts[2]}</span>/${this.maxAttempts}</div>
             </div>
         `;
     }
@@ -226,10 +302,56 @@ class GameManager {
         `;
     }
 
+    playAudio() {
+        if (this.audioPlayCount >= this.maxAudioPlays) {
+            this.showMessage('❌ لقد استنفذت عدد التشغيلات المسموحة (3 مرات)');
+            return;
+        }
+
+        if (!this.audioElement) {
+            this.audioElement = new Audio('assets/audio/puzzle2.mp3');
+            
+            this.audioElement.onerror = () => {
+                this.showMessage('🔊 تشغيل صوت افتراضي... الكلمة هي: good');
+                this.audioElement = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3');
+            };
+        }
+
+        this.audioElement.play().catch(error => {
+            this.showMessage('🔊 الكلمة الصحيحة هي: good');
+        });
+
+        this.audioPlayCount++;
+        this.updateAudioDisplay();
+        this.showMessage('🔊 تشغيل الصوت... الكلمة هي "good"');
+    }
+
+    stopAudio() {
+        if (this.audioElement) {
+            this.audioElement.pause();
+            this.audioElement.currentTime = 0;
+            this.showMessage('⏹ تم إيقاف الصوت');
+        }
+    }
+
+    updateAudioDisplay() {
+        const playCountElement = document.getElementById('playCount');
+        if (playCountElement) {
+            playCountElement.textContent = `عدد التشغيل: ${this.audioPlayCount}/${this.maxAudioPlays}`;
+        }
+        
+        const playBtn = document.getElementById('playAudioBtn');
+        if (playBtn && this.audioPlayCount >= this.maxAudioPlays) {
+            playBtn.disabled = true;
+            playBtn.style.opacity = '0.5';
+            playBtn.textContent = '❌ انتهت المحاولات';
+        }
+    }
+
     checkAnswer(puzzleNumber) {
         const answers = {
             1: "THE FOUNDATION OF KNOWLEDGE",
-            2: "الطريق إلى الحكمة يبدأ بخطوة", 
+            2: "good", 
             3: "الحكمة ضالة المؤمن",
             4: "42"
         };
@@ -254,7 +376,7 @@ class GameManager {
             }
         } else {
             if (this.attempts[puzzleNumber] >= this.maxAttempts) {
-                this.showMessage('❌ لقد استنفذت جميع المحاولات! الجواب الصحيح: ' + answers[puzzleNumber]);
+                this.showMessage(`❌ الجواب الصحيح هو: ${answers[puzzleNumber]}`);
                 setTimeout(() => {
                     if (puzzleNumber < 4) {
                         this.loadPuzzle(puzzleNumber + 1);
@@ -304,7 +426,7 @@ class GameManager {
             </div>
             <div class="stat-item">
                 <span>المستوى:</span>
-                <span>${totalAttempts <= 10 ? '👑 ممتاز' : totalAttempts <= 15 ? '⭐ جيد جداً' : '👍 جيد'}</span>
+                <span>${totalAttempts <= 8 ? '👑 ممتاز' : totalAttempts <= 12 ? '⭐ جيد جداً' : '👍 جيد'}</span>
             </div>
         `;
     }
@@ -410,6 +532,7 @@ class GameManager {
         this.startTime = null;
         this.currentPuzzle = 1;
         this.attempts = {1: 0, 2: 0, 3: 0, 4: 0};
+        this.audioPlayCount = 0;
         this.stopTimer();
         this.showRegisterScreen();
         
