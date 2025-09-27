@@ -20,20 +20,29 @@
 <body>
   <header class="header">
     <h1>ألغاز الفلوقا سلوكا</h1>
-    <p>استعد لتجربة مليئة بالتحدي والمتعة!</p>
+    <p>ابدأ رحلتك في التحدي!</p>
   </header>
 
   <main class="container">
     <ul class="puzzle-list">
-      <li class="puzzle-item"><a href="puzzle-1-maze.html">لغز 1: المتاهة الزمنية</a></li>
-      <li class="puzzle-item"><a href="puzzle-2-cipher.html">لغز 2: الشيفرة السرية</a></li>
-      <li class="puzzle-item"><a href="puzzle-3-riddle.html">لغز 3: اللغز المركب</a></li>
-      <li class="puzzle-item"><a href="puzzle-4-pattern.html">لغز 4: نمط التحدي</a></li>
+      <li class="puzzle-item"><a href="puzzle-1-bank.html">لغز 1: سرقة البنك</a></li>
     </ul>
   </main>
 
   <footer class="footer">
     <small>© 2025 ألغاز الفلوقا سلوكا - بالتوفيق! 🍀</small>
   </footer>
+
+  <script>
+    // تحقق من التقدم وتحديث الرابط بناءً على الحل
+    document.addEventListener('DOMContentLoaded', () => {
+      const progress = localStorage.getItem('progress');
+      if (progress) {
+        const nextPuzzle = document.querySelector('.puzzle-item a');
+        nextPuzzle.href = progress;
+        nextPuzzle.textContent = `اللغز التالي: ${progress.replace('puzzle-', 'لغز ').replace('.html', '')}`;
+      }
+    });
+  </script>
 </body>
 </html>
