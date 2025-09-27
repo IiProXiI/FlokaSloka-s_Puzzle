@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لغز 1: الغرفة المغلقة</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72, #2a5298); margin: 0; padding: 0; color: #fff; }
+    .header { text-align: center; padding: 20px; background: #1a2a44; border-bottom: 2px solid #2a5298; }
+    .header h1 { margin: 0; font-size: 2em; color: #f0f0f0; text-shadow: 1px 1px 5px #000; }
+    .container { max-width: 800px; margin: 20px auto; padding: 20px; background: rgba(26, 42, 68, 0.9); border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); }
+    .puzzle-area { text-align: center; }
+    .item { display: inline-block; margin: 10px; cursor: pointer; padding: 10px 20px; background: #3e6cb7; border-radius: 5px; transition: background 0.3s; }
+    .item:hover { background: #4d7cd6; }
+    .hint { color: #ccc; font-style: italic; margin: 10px 0; }
+    .code-entry { text-align: center; margin-top: 20px; }
+    .nav-actions { text-align: center; margin-top: 20px; }
+    .btn { padding: 10px 20px; margin: 5px; border: none; cursor: pointer; background: #007BFF; color: #fff; border-radius: 5px; transition: background 0.3s; }
+    .btn:hover { background: #0056b3; }
+    .success { background: #28a745; }
+    .success:hover { background: #218838; }
+    .message { color: #ff4444; }
+    .footer { text-align: center; padding: 10px; background: #1a2a44; position: fixed; bottom: 0; width: 100%; color: #ccc; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>لغز 1: الغرفة المغلقة</h1>
+    <p>اختر أداة لتفكيك اللغز وتخرج من الغرفة.</p>
+  </header>
+
+  <main class="container">
+    <section class="puzzle-area">
+      <div id="items">
+        <div class="item" onclick="interact('candle')">الشمعة</div>
+        <div class="item" onclick="interact('clock')">الساعة</div>
+        <div class="item" onclick="interact('mirror')">المرآة</div>
+      </div>
+      <p id="status" class="hint">اختر أداة لتكتشف التلميح.</p>
+    </section>
+
+    <section class="code-entry">
+      <label for="puzzle1-code">أدخل الرمز:</label>
+      <input id="puzzle1-code" type="text" placeholder="اكتب الرمز هنا" autocomplete="off" style="display:none;">
+      <button id="btn-verify-code" class="btn" style="display:none;" onclick="verifyCode()">تحقق</button>
+      <p id="verify-message" class="message"></p>
+    </section>
+
+    <section class="nav-actions">
+      <button id="btn-next" class="btn success" style="display:none;" onclick="window.location.href='puzzle-2-cipher.html'">التالي</button>
+      <button id="btn-back-home" class="btn" onclick="window.location.href='index.html'">العودة للرئيسية</button>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© 2025 ألغاز الفلوقا سلوكا - بالتوفيق! 🍀</small>
+  </footer>
+
+  <script>
+    let hintShown = false;
+
+    function interact(item) {
+      let hint = '';
+      switch (item) {
+        case 'candle':
+          hint = 'النور يضيء الطريق، فكر في شيء ينير.';
+          break;
+        case 'clock':
+          hint = 'الوقت يمر، لكن الحل ليس في الساعات.';
+          break;
+        case 'mirror':
+          hint = 'انعكاسك يظهر، لكن الحقيقة في النور.';
+          break;
+      }
+      document.getElementById('status').textContent = hint;
+      if (!hintShown && item === 'candle') {
+        hintShown = true;
+        setTimeout(showCodeInput, 2000); // يظهر بعد 2 ثانية
+        document.getElementById('puzzle1-code').value = 'R1-LIGHT'; // يملأ الرمز
+        document.getElementById('status').textContent = 'مبروك! أدخل الرمز للمتابعة.';
+      }
+    }
+
+    function showCodeInput() {
+      document.getElementById('puzzle1-code').style.display = 'inline-block';
+      document.getElementById('btn-verify-code').style.display = 'inline-block';
+      document.getElementById('btn-verify-code').click(); // يضغط تلقائيًا
+    }
+
+    async function verifyCode() {
+      const userCode = document.getElementById('puzzle1-code').value.trim();
+      if (userCode === 'R1-LIGHT') {
+        document.getElementById('verify-message').textContent = 'مبروك! الرمز صحيح.';
+        document.getElementById('btn-next').style.display = 'inline-block';
+        localStorage.setItem('progress', 'puzzle-2-cipher.html');
+      } else {
+        document.getElementById('verify-message').textContent = 'الرمز غير صحيح، حاول مرة أخرى.';
+      }
+    }
+  </script>
+</body>
+</html>
