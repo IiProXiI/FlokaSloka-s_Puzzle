@@ -1,29 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>لغز متعدد المراحل</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body>
-  <div class="header">
-    <h1>لعبة الألغاز</h1>
-    <div class="small">متوافقة مع الجوال والكمبيوتر</div>
-  </div>
-  <div class="container">
-    <div class="card">
-      <h2>التعليمات</h2>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ألغاز فلوكا | الصفحة الرئيسية</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="assets/js/common.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>التعليمات</h1>
       <p>حل كل لغز لتحصل على رمز. أدخل الرمز أسفل كل صفحة لفتح المرحلة التالية.</p>
-      <p class="small">يتطلب: ذهن صافي، ملاحظة قوية، وتجربة 😉</p>
+      <p>يتطلب: ذهن صافي، ملاحظة قوية، وتجربة 😉</p>
+    </header>
+
+    <main class="container">
       <div class="actions">
-        <button class="primary" onclick="goNext('puzzle-1-chess.html')">ابدأ</button>
-        <button onclick="localStorage.clear(); alert('تم تصفير التقدم');">تصفير التقدم</button>
+        <button id="btn-start" class="btn primary">ابدأ</button>
+        <button id="btn-reset" class="btn danger">تصفير</button>
       </div>
-    </div>
-  </div>
-  <div class="footer">© مشروع الألغاز — مستضاف على GitHub Pages</div>
-  <script src="assets/js/common.js"></script>
-  <script>initHashesIfEmpty();</script>
-</body>
+
+      <section class="status">
+        <h2>تقدّمك</h2>
+        <ul id="progress-list">
+          <li>لغز 1: <span id="puzzle1-status">غير مكتمل</span></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <small>صنع بحب</small>
+    </footer>
+  </body>
 </html>
