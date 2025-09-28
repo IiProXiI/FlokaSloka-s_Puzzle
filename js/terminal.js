@@ -496,4 +496,27 @@ class Terminal {
             }
         }, 1000);
     }
+
+
+
+
+
+    // في js/terminal.js - داخل كلاس Terminal
+registerUser(username, password, confirmPassword) {
+    if (!username || !password) {
+        this.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
+        return false;
+        }
+
+    if (password !== confirmPassword) {
+        this.output('خطأ: كلمتا المرور غير متطابقتين', 'error');
+        return false;
+        }
+
+    // باقي كود التسجيل...
+    }
+
+authenticateUser(username, password) {
+    // كود المصادقة...
+    }
 }
