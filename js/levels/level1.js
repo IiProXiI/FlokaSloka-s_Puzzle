@@ -1,40 +1,27 @@
-// المستوى الأول: التعلم الأساسي
+// مستوى 1 - المهام التمهيدية
 class Level1 {
     constructor() {
         this.missions = [
             {
                 id: 1,
-                title: "البداية: فك شفرة Base64",
-                description: "تعلم أساسيات فك التشفير باستخدام Base64",
-                objective: "فك تشفير الرسالة: U29tZVNlY3JldA==",
+                title: "تعلم الأمر decode",
+                description: "تعلم如何使用 أمر فك التشفير",
+                objective: "استخدم decode لفك تشفير U29tZVNlY3JldA==",
                 solution: "decode U29tZVNlY3JldA==",
-                hints: [
-                    "استخدم أمر decode مع الرسالة المشفرة",
-                    "Base64 هو ترميز وليس تشفيراً",
-                    "جرب: decode U29tZVNlY3JldA=="
-                ],
-                points: 50,
-                timeLimit: 300
+                points: 20
             },
             {
-                id: 2,
-                title: "فحص الخادم الأول",
-                description: "تعلم如何使用 أداة المسح",
-                objective: "مسح خادم server-01",
+                id: 2, 
+                title: "تعلم الأمر scan",
+                description: "تعلم如何使用 أمر المسح",
+                objective: "استخدم scan لفحص server-01",
                 solution: "scan server-01",
-                hints: [
-                    "استخدم أمر scan متبوعاً باسم الخادم",
-                    "اسم الخادم هو server-01",
-                    "الأمر الكامل: scan server-01"
-                ],
-                points: 30,
-                timeLimit: 180
+                points: 30
             }
         ];
     }
 
     init() {
-        console.log("تم تحميل المستوى الأول: التعلم الأساسي");
-        return this.missions;
+        console.log("تهيئة المستوى 1");
     }
 }
