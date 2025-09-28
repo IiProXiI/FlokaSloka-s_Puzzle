@@ -63,17 +63,22 @@
             <!-- الشريط الجانبي -->
             <aside class="sidebar">
                 <div class="user-info">
-                    <div class="avatar" id="user-avatar">H</div>
+                    <div class="avatar" id="user-avatar">
+                        <img id="avatar-image" src="" alt="صورة البروفايل" style="display: none;">
+                        <span id="avatar-text">H</span>
+                    </div>
                     <div class="user-details">
                         <span id="username-display">مستخدم</span>
                         <div class="user-level">المستوى: <span id="user-level">1</span></div>
+                        <div class="user-bio" id="user-bio">لا يوجد وصف</div>
+                        <div class="user-prox">🪙 <span id="user-prox">100</span> بروكس</div>
                     </div>
                 </div>
                 
                 <nav class="nav-menu">
                     <button class="nav-btn active" data-section="terminal">الطرفية</button>
                     <button class="nav-btn" data-section="missions">المهام</button>
-                    <button class="nav-btn" data-section="tools">الأدوات</button>
+                    <button class="nav-btn" data-section="tools">متجر الأدوات</button>
                     <button class="nav-btn" data-section="profile">الملف الشخصي</button>
                     <button class="nav-btn" data-section="settings">الإعدادات</button>
                 </nav>
@@ -82,11 +87,15 @@
                     <h4>حالة النظام</h4>
                     <div class="status-item">
                         <span>الأمان:</span>
-                        <div class="status-bar"><div class="status-fill" style="width: 85%"></div></div>
+                        <div class="status-bar"><div class="status-fill" id="security-bar" style="width: 85%"></div></div>
                     </div>
                     <div class="status-item">
                         <span>الاتصال:</span>
-                        <div class="status-bar"><div class="status-fill" style="width: 70%"></div></div>
+                        <div class="status-bar"><div class="status-fill" id="connection-bar" style="width: 70%"></div></div>
+                    </div>
+                    <div class="status-item">
+                        <span>السمعة:</span>
+                        <div class="status-bar"><div class="status-fill" id="reputation-bar" style="width: 60%"></div></div>
                     </div>
                 </div>
             </aside>
@@ -117,7 +126,12 @@
                 <!-- قسم المهام -->
                 <section id="missions-section" class="content-section">
                     <div class="missions-container">
-                        <h3>المهام النشطة</h3>
+                        <h3>المهام المتاحة</h3>
+                        <div class="missions-filters">
+                            <button class="filter-btn active" data-filter="all">الكل</button>
+                            <button class="filter-btn" data-filter="active">نشطة</button>
+                            <button class="filter-btn" data-filter="completed">مكتملة</button>
+                        </div>
                         <div id="missions-list" class="missions-list"></div>
                     </div>
                 </section>
@@ -125,7 +139,10 @@
                 <!-- قسم الأدوات -->
                 <section id="tools-section" class="content-section">
                     <div class="tools-container">
-                        <h3>أدوات القرصنة</h3>
+                        <h3>متجر الأدوات</h3>
+                        <div class="tools-stats">
+                            <div class="prox-balance">🪙 رصيدك: <span id="current-prox">100</span> بروكس</div>
+                        </div>
                         <div class="tools-grid" id="tools-grid"></div>
                     </div>
                 </section>
@@ -134,7 +151,34 @@
                 <section id="profile-section" class="content-section">
                     <div class="profile-container">
                         <h3>الملف الشخصي</h3>
-                        <div class="profile-stats" id="profile-stats"></div>
+                        <div class="profile-info">
+                            <div class="profile-avatar">
+                                <img id="profile-avatar-image" src="" alt="صورة البروفايل">
+                                <div id="profile-avatar-text"></div>
+                            </div>
+                            <div class="profile-details">
+                                <div class="detail-item">
+                                    <label>اسم المستخدم:</label>
+                                    <span id="profile-username">غير معروف</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>البايو:</label>
+                                    <span id="profile-bio">لا يوجد وصف</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>المستوى:</label>
+                                    <span id="profile-level">1</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>البروكس:</label>
+                                    <span id="profile-prox">100</span> 🪙
+                                </div>
+                                <div class="detail-item">
+                                    <label>المهام المكتملة:</label>
+                                    <span id="profile-completed">0</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -151,8 +195,17 @@
                                 </select>
                             </div>
                             <div class="setting-item">
-                                <label>الأصوات:</label>
-                                <input type="range" id="sound-volume" min="0" max="100" value="50">
+                                <label>تغيير البايو:</label>
+                                <input type="text" id="bio-input" placeholder="أدخل وصفك الشخصي" class="terminal-input">
+                                <button onclick="updateBio()" class="hacker-btn">تحديث البايو</button>
+                            </div>
+                            <div class="setting-item">
+                                <label>صورة البروفايل:</label>
+                                <input type="file" id="avatar-upload" accept="image/*" class="terminal-input">
+                                <button onclick="uploadAvatar()" class="hacker-btn">رفع الصورة</button>
+                            </div>
+                            <div class="setting-item">
+                                <button onclick="logout()" class="hacker-btn logout-btn">تسجيل الخروج</button>
                             </div>
                         </div>
                     </div>
@@ -161,13 +214,21 @@
         </div>
     </div>
 
+    <!-- نافذة تأكيد المهمة -->
+    <div id="mission-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeMissionModal()">&times;</span>
+            <h3 id="mission-modal-title">تأكيد المهمة</h3>
+            <div id="mission-modal-content"></div>
+            <div class="modal-actions">
+                <button onclick="acceptMission()" class="hacker-btn">قبول المهمة</button>
+                <button onclick="closeMissionModal()" class="hacker-btn cancel">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script src="js/terminal.js"></script>
     <script src="js/game.js"></script>
-    <script src="js/levels/level1.js"></script>
-    <script src="js/levels/level2.js"></script>
-    <script src="js/levels/level3.js"></script>
-    <script src="js/levels/level4.js"></script>
-    <script src="js/levels/level5.js"></script>
 </body>
 </html>
