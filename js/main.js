@@ -6,7 +6,6 @@ class HackingSimulator {
         this.isInitialized = false;
         this.terminal = null;
         this.game = null;
-        this.auth = null; // إضافة نظام المصادقة
     }
 
     async init() {
@@ -32,7 +31,6 @@ class HackingSimulator {
 
         this.terminal = new Terminal();
         this.game = new GameEngine();
-        this.auth = new Authentication(this.terminal); // تهيئة نظام المصادقة
         
         this.isInitialized = true;
     }
@@ -199,10 +197,10 @@ class HackingSimulator {
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
         
-        if (this.auth) {
-            this.auth.loginUser(username, password);
+        if (this.terminal) {
+            this.terminal.authenticateUser(username, password);
         } else {
-            console.error('نظام المصادقة غير مهيأ');
+            console.error('الطرفية غير مهيأة');
         }
     }
 
@@ -211,10 +209,10 @@ class HackingSimulator {
         const password = document.getElementById('reg-password').value;
         const confirmPassword = document.getElementById('reg-confirm').value;
         
-        if (this.auth) {
-            this.auth.registerUser(username, password, confirmPassword);
+        if (this.terminal) {
+            this.terminal.registerUser(username, password, confirmPassword);
         } else {
-            console.error('نظام المصادقة غير مهيأ');
+            console.error('الطرفية غير مهيأة');
         }
     }
 
@@ -250,110 +248,6 @@ class HackingSimulator {
         
         document.getElementById('login-form').classList.add('active');
         document.getElementById('register-form').classList.remove('active');
-    }
-}
-
-// نظام المصادقة
-class Authentication {
-    constructor(terminal) {
-        this.terminal = terminal;
-        this.users = this.loadUsers();
-    }
-
-    loadUsers() {
-        const usersData = localStorage.getItem('hacking_simulator_users');
-        return usersData ? JSON.parse(usersData) : {};
-    }
-
-    saveUsers() {
-        localStorage.setItem('hacking_simulator_users', JSON.stringify(this.users));
-    }
-
-    registerUser(username, password, confirmPassword) {
-        if (!username || !password) {
-            this.terminal.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
-            return false;
-        }
-
-        if (password !== confirmPassword) {
-            this.terminal.output('خطأ: كلمتا المرور غير متطابقتين', 'error');
-            return false;
-        }
-
-        if (this.users[username]) {
-            this.terminal.output('خطأ: اسم المستخدم موجود مسبقاً', 'error');
-            return false;
-        }
-
-        if (password.length < 6) {
-            this.terminal.output('خطأ: كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
-            return false;
-        }
-
-        // تشفير كلمة المرور
-        const userHash = Encryption.generateHash(username + password);
-        
-        this.users[username] = {
-            username: username,
-            passwordHash: userHash,
-            createdAt: new Date().toISOString(),
-            level: 1,
-            points: 0
-        };
-
-        this.saveUsers();
-        this.terminal.output(`تم إنشاء الحساب بنجاح! مرحباً ${username}`, 'success');
-        
-        // تسجيل الدخول تلقائياً بعد التسجيل
-        setTimeout(() => this.loginUser(username, password), 1000);
-        
-        return true;
-    }
-
-    loginUser(username, password) {
-        if (!username || !password) {
-            this.terminal.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
-            return false;
-        }
-
-        const user = this.users[username];
-        const userHash = Encryption.generateHash(username + password);
-
-        if (!user || user.passwordHash !== userHash) {
-            this.terminal.output('خطأ: اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
-            return false;
-        }
-
-        // حفظ حالة المستخدم الحالي
-        localStorage.setItem('current_user', JSON.stringify({
-            username: username,
-            loginTime: new Date().toISOString()
-        }));
-
-        this.terminal.output(`تم الدخول بنجاح! مرحباً مرة أخرى ${username}`, 'success');
-        
-        // الانتقال إلى الواجهة الرئيسية
-        setTimeout(() => {
-            if (window.app) {
-                window.app.currentUser = { username: username };
-                window.app.loadUserProgress();
-                window.app.showMainInterface();
-            }
-        }, 1500);
-
-        return true;
-    }
-
-    validateSession() {
-        const userData = localStorage.getItem('current_user');
-        if (!userData) return false;
-
-        try {
-            const user = JSON.parse(userData);
-            return !!this.users[user.username];
-        } catch (e) {
-            return false;
-        }
     }
 }
 
@@ -401,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     app.init();
 });
 
-// الدوال العامة للاستدعاء من HTML - معدلة
+// الدوال العامة للاستدعاء من HTML - معدلة لاستخدام terminal بدلاً من auth
 function showLogin() {
     document.getElementById('login-form').classList.add('active');
     document.getElementById('register-form').classList.remove('active');
@@ -413,19 +307,19 @@ function showRegister() {
 }
 
 function login() {
-    if (app && app.auth) {
+    if (app && app.terminal) {
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
-        app.auth.loginUser(username, password);
+        app.terminal.authenticateUser(username, password);
     }
 }
 
 function register() {
-    if (app && app.auth) {
+    if (app && app.terminal) {
         const username = document.getElementById('reg-username').value;
         const password = document.getElementById('reg-password').value;
         const confirmPassword = document.getElementById('reg-confirm').value;
-        app.auth.registerUser(username, password, confirmPassword);
+        app.terminal.registerUser(username, password, confirmPassword);
     }
 }
 
