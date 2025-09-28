@@ -164,7 +164,7 @@ class Terminal {
             case 'tools': this.showTools(); break;
             case 'profile': this.showProfile(); break;
             case 'hint': this.requestHint(parameters); break;
-            case 'clear': this.clearTerminal(); break;
+            case 'clear': this.clear(); break;
             case 'decode': this.decodeData(parameters); break;
             case 'bruteforce': this.bruteForce(parameters); break;
             case 'sqlmap': this.sqlInjection(parameters); break;
@@ -275,17 +275,11 @@ class Terminal {
     }
 
     showTools() {
-        const tools = [
-            { name: 'الماسح الضوئي', description: 'لمسح الشبكات', level: 1 },
-            { name: 'فك التشفير', description: 'لفك تشفير النصوص', level: 1 },
-            { name: 'القوة الغاشمة', description: 'لكسر كلمات المرور', level: 2 }
-        ];
-
-        this.output('<strong>الأدوات المتاحة:</strong>', 'info');
-        
-        tools.forEach(tool => {
-            this.output(`• <strong>${tool.name}</strong> - ${tool.description}`, 'info');
-        });
+        if (window.app && window.app.game) {
+            window.app.game.displayToolsInTerminal();
+        } else {
+            this.output('نظام الأدوات غير متاح حالياً', 'error');
+        }
     }
 
     showProfile() {
@@ -295,6 +289,8 @@ class Terminal {
             this.output(`• المستخدم: ${window.app.currentUser?.username || 'غير معروف'}`, 'info');
             this.output(`• المستوى: ${progress.level}`, 'info');
             this.output(`• النقاط: ${progress.points}`, 'info');
+            this.output(`• البروكس: ${progress.prox} 🪙`, 'info');
+            this.output(`• المهام المكتملة: ${progress.completedMissions?.length || 0}`, 'info');
         } else {
             this.output('بيانات الملف الشخصي غير متاحة', 'error');
         }
