@@ -339,6 +339,11 @@ class Terminal {
         }
     }
 
+    // ✅ الدالة المضافة لتصحيح الخطأ
+    clear() {
+        this.clearTerminal();
+    }
+
     logout() {
         this.output('جاري تسجيل الخروج...', 'info');
         setTimeout(() => {
