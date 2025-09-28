@@ -246,7 +246,7 @@ function register() {
     const confirmPassword = document.getElementById('reg-confirm').value;
     
     if (app.terminal) {
-        app.terminal.registerUser(username, password, confirmPassword);
+        app.terminal.register(username, password, confirmPassword);
     }
 }
 
