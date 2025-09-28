@@ -30,16 +30,12 @@ class HackingSimulator {
 
         // تهيئة الكائنات
         this.terminal = new Terminal();
-        this.game = new GameEngine(); // تم تصحيح الخطأ هنا
+        this.game = new GameEngine();
         
         this.isInitialized = true;
         console.log('النظام مهيأ بالكامل');
     }
 
-    // ... باقي الكود بدون تغيير ...
-}
-
-// ... باقي الكود بدون تغيير ...
     async simulateBootProcess() {
         const messages = [
             "جاري تحميل نواة النظام...",
