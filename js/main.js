@@ -6,6 +6,7 @@ class HackingSimulator {
         this.isInitialized = false;
         this.terminal = null;
         this.game = null;
+        this.selectedMission = null;
     }
 
     async init() {
@@ -126,6 +127,8 @@ class HackingSimulator {
         
         if (this.game) {
             this.game.loadLevel(this.currentLevel);
+            this.game.displayMissions();
+            this.game.displayTools();
         }
     }
 
@@ -134,11 +137,54 @@ class HackingSimulator {
             const usernameDisplay = document.getElementById('username-display');
             const userLevel = document.getElementById('user-level');
             const userAvatar = document.getElementById('user-avatar');
+            const userBio = document.getElementById('user-bio');
+            const userProx = document.getElementById('user-prox');
             
             if (usernameDisplay) usernameDisplay.textContent = this.currentUser.username;
             if (userLevel) userLevel.textContent = this.currentLevel;
-            if (userAvatar) userAvatar.textContent = this.currentUser.username.charAt(0).toUpperCase();
+            if (userBio) userBio.textContent = this.userProgress.bio || 'لا يوجد وصف';
+            if (userProx) userProx.textContent = this.userProgress.prox || 100;
+
+            // تحديث صورة البروفايل
+            this.updateAvatarDisplay();
+
+            // تحديث الأشرطة
+            this.updateStatusBars();
         }
+    }
+
+    updateAvatarDisplay() {
+        const avatarImage = document.getElementById('avatar-image');
+        const avatarText = document.getElementById('avatar-text');
+        const profileAvatarImage = document.getElementById('profile-avatar-image');
+        const profileAvatarText = document.getElementById('profile-avatar-text');
+
+        if (this.userProgress.avatar) {
+            avatarImage.src = this.userProgress.avatar;
+            avatarImage.style.display = 'block';
+            avatarText.style.display = 'none';
+            
+            profileAvatarImage.src = this.userProgress.avatar;
+            profileAvatarText.style.display = 'none';
+        } else {
+            avatarImage.style.display = 'none';
+            avatarText.style.display = 'block';
+            avatarText.textContent = this.currentUser.username.charAt(0).toUpperCase();
+            
+            profileAvatarImage.style.display = 'none';
+            profileAvatarText.style.display = 'block';
+            profileAvatarText.textContent = this.currentUser.username.charAt(0).toUpperCase();
+        }
+    }
+
+    updateStatusBars() {
+        const securityBar = document.getElementById('security-bar');
+        const connectionBar = document.getElementById('connection-bar');
+        const reputationBar = document.getElementById('reputation-bar');
+
+        if (securityBar) securityBar.style.width = this.userProgress.security + '%';
+        if (connectionBar) connectionBar.style.width = this.userProgress.connection + '%';
+        if (reputationBar) reputationBar.style.width = this.userProgress.reputation + '%';
     }
 
     loadUserProgress() {
@@ -147,9 +193,16 @@ class HackingSimulator {
             this.userProgress = progressData[this.currentUser.username] || {
                 level: 1,
                 points: 0,
+                prox: 100,
                 completedMissions: [],
                 unlockedTools: ['scan', 'decrypt'],
-                hintPoints: 50
+                ownedTools: ['scan', 'decrypt'],
+                hintPoints: 50,
+                bio: 'هاكر مبتدئ',
+                avatar: null,
+                security: 85,
+                connection: 70,
+                reputation: 60
             };
             this.currentLevel = this.userProgress.level;
         } catch (e) {
@@ -157,9 +210,16 @@ class HackingSimulator {
             this.userProgress = {
                 level: 1,
                 points: 0,
+                prox: 100,
                 completedMissions: [],
                 unlockedTools: ['scan', 'decrypt'],
-                hintPoints: 50
+                ownedTools: ['scan', 'decrypt'],
+                hintPoints: 50,
+                bio: 'هاكر مبتدئ',
+                avatar: null,
+                security: 85,
+                connection: 70,
+                reputation: 60
             };
         }
     }
@@ -268,6 +328,80 @@ class HackingSimulator {
             input.value = '';
         });
         this.showLoginForm();
+    }
+
+    // دالة مساعدة لعرض نافذة المهمة
+    showMissionModal(mission) {
+        this.selectedMission = mission;
+        const modal = document.getElementById('mission-modal');
+        const title = document.getElementById('mission-modal-title');
+        const content = document.getElementById('mission-modal-content');
+
+        if (modal && title && content) {
+            title.textContent = mission.title;
+            content.innerHTML = `
+                <p><strong>الوصف:</strong> ${mission.description}</p>
+                <p><strong>المكافأة:</strong> ${mission.reward} 🪙 بروكس</p>
+                <p><strong>الصعوبة:</strong> <span class="difficulty-${mission.difficulty}">${mission.difficulty}</span></p>
+                <p><strong>الوقت المتوقع:</strong> ${mission.timeLimit} ثانية</p>
+            `;
+            modal.style.display = 'block';
+        }
+    }
+
+    // دالة لقبول المهمة
+    acceptMission() {
+        if (this.selectedMission && this.game) {
+            this.game.startMission(this.selectedMission.id);
+            this.closeMissionModal();
+        }
+    }
+
+    // دالة لإغلاق نافذة المهمة
+    closeMissionModal() {
+        const modal = document.getElementById('mission-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            this.selectedMission = null;
+        }
+    }
+
+    // دالة لشراء أداة
+    buyTool(toolId) {
+        if (this.game) {
+            this.game.buyTool(toolId);
+        }
+    }
+
+    // دالة لتحديث البايو
+    updateBio() {
+        const bioInput = document.getElementById('bio-input');
+        if (bioInput && bioInput.value.trim()) {
+            this.userProgress.bio = bioInput.value.trim();
+            this.saveUserProgress();
+            this.updateUserInterface();
+            bioInput.value = '';
+            alert('تم تحديث البايو بنجاح!');
+        }
+    }
+
+    // دالة لرفع صورة البروفايل
+    uploadAvatar() {
+        const avatarUpload = document.getElementById('avatar-upload');
+        if (avatarUpload && avatarUpload.files.length > 0) {
+            const file = avatarUpload.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                this.userProgress.avatar = e.target.result;
+                this.saveUserProgress();
+                this.updateUserInterface();
+                alert('تم رفع صورة البروفايل بنجاح!');
+            };
+            
+            reader.readAsDataURL(file);
+            avatarUpload.value = '';
+        }
     }
 }
 
@@ -387,5 +521,52 @@ function clearTerminal() {
 function changeTheme(theme) {
     if (app) {
         app.changeTheme(theme);
+    }
+}
+
+function logout() {
+    if (app) {
+        app.logout();
+    }
+}
+
+function closeMissionModal() {
+    if (app) {
+        app.closeMissionModal();
+    }
+}
+
+function acceptMission() {
+    if (app) {
+        app.acceptMission();
+    }
+}
+
+function updateBio() {
+    if (app) {
+        app.updateBio();
+    }
+}
+
+function uploadAvatar() {
+    if (app) {
+        app.uploadAvatar();
+    }
+}
+
+// دالة لاختيار مهمة
+function selectMission(missionId) {
+    if (app && app.game) {
+        const mission = app.game.missions.find(m => m.id === missionId);
+        if (mission) {
+            app.showMissionModal(mission);
+        }
+    }
+}
+
+// دالة لشراء أداة
+function buyTool(toolId) {
+    if (app) {
+        app.buyTool(toolId);
     }
 }
