@@ -101,13 +101,19 @@ class HackingSimulator {
     }
 
     showLoginForm() {
-        document.getElementById('login-form').classList.add('active');
-        document.getElementById('register-form').classList.remove('active');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        
+        if (loginForm) loginForm.classList.add('active');
+        if (registerForm) registerForm.classList.remove('active');
     }
 
     showRegisterForm() {
-        document.getElementById('register-form').classList.add('active');
-        document.getElementById('login-form').classList.remove('active');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        
+        if (registerForm) registerForm.classList.add('active');
+        if (loginForm) loginForm.classList.remove('active');
     }
 
     showMainInterface() {
