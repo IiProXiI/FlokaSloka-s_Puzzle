@@ -40,7 +40,7 @@
                         <h3>تسجيل الدخول</h3>
                         <input type="text" id="login-username" placeholder="اسم المستخدم" class="terminal-input">
                         <input type="password" id="login-password" placeholder="كلمة المرور" class="terminal-input">
-                        <button onclick="login()" class="hacker-btn">الدخول</button>
+                        <button onclick="handleLogin()" class="hacker-btn">الدخول</button>
                         <p class="switch-form">ليس لديك حساب؟ <span onclick="showRegister()">سجل الآن</span></p>
                     </div>
                     
@@ -49,7 +49,7 @@
                         <input type="text" id="reg-username" placeholder="اسم المستخدم" class="terminal-input">
                         <input type="password" id="reg-password" placeholder="كلمة المرور" class="terminal-input">
                         <input type="password" id="reg-confirm" placeholder="تأكيد كلمة المرور" class="terminal-input">
-                        <button onclick="register()" class="hacker-btn">تسجيل</button>
+                        <button onclick="handleRegister()" class="hacker-btn">تسجيل</button>
                         <p class="switch-form">لديك حساب؟ <span onclick="showLogin()">سجل الدخول</span></p>
                     </div>
                 </div>
@@ -161,18 +161,7 @@
         </div>
     </div>
 
-    <!-- نافذة المساعدة -->
-    <div id="hint-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeHint()">&times;</span>
-            <h3>تلميح</h3>
-            <div id="hint-content"></div>
-            <div class="hint-cost">التكلفة: <span id="hint-points">10</span> نقطة</div>
-            <button onclick="buyHint()" class="hacker-btn">شراء التلميح</button>
-        </div>
-    </div>
-
-    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/terminal.js"></script>
     <script src="js/game.js"></script>
     <script src="js/levels/level1.js"></script>
@@ -180,8 +169,5 @@
     <script src="js/levels/level3.js"></script>
     <script src="js/levels/level4.js"></script>
     <script src="js/levels/level5.js"></script>
-    <script src="js/hints.js"></script>
-    <script src="js/encryption.js"></script>
-    <script src="js/main.js"></script>
 </body>
 </html>
