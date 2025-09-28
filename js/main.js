@@ -598,4 +598,31 @@ function buyTool(toolId) {
     if (app) {
         app.buyTool(toolId);
     }
+
+
+
+
+
+
+
+    // إضافة مستمعي أحداث مباشرة للأزرار (كحل احتياطي)
+document.addEventListener('DOMContentLoaded', function() {
+    // انتظار تحميل DOM بالكامل
+    setTimeout(function() {
+        const loginBtn = document.querySelector('#login-form button');
+        const registerBtn = document.querySelector('#register-form button');
+        
+        if (loginBtn) {
+            loginBtn.addEventListener('click', handleLogin);
+        }
+        
+        if (registerBtn) {
+            registerBtn.addEventListener('click', handleRegister);
+        }
+        
+        console.log('✅ تم إعداد مستمعي الأحداث للأزرار');
+    }, 1000);
+});
+
+    
 }
