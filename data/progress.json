@@ -1,1 +1,10 @@
-
+{
+  "user1": {
+    "username": "user1",
+    "level": 1,
+    "points": 0,
+    "completedMissions": [],
+    "unlockedTools": ["scan", "decrypt"],
+    "hintPoints": 50
+  }
+}
