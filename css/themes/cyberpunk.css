@@ -1,1 +1,43 @@
+/* سمة السايبر بانك */
+.cyberpunk-theme {
+    --primary-color: #ff00ff;
+    --secondary-color: #00ffff;
+    --background-color: #0a0020;
+    --terminal-bg: #1a0030;
+    --text-color: #ff00ff;
+}
 
+body.cyberpunk-theme {
+    background: radial-gradient(circle, #1a0030, #0a0020);
+    position: relative;
+}
+
+body.cyberpunk-theme::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
+    animation: cyberPulse 10s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes cyberPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.cyberpunk-theme .terminal-container {
+    border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+    background: linear-gradient(135deg, #1a0030, #2a0040);
+}
+
+.cyberpunk-theme .hacker-btn:hover {
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    color: #000;
+}
