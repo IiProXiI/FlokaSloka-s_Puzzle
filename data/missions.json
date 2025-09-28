@@ -1,0 +1,55 @@
+{
+  "missions": [
+    {
+      "id": 1,
+      "title": "البداية: فك شفرة Base64",
+      "description": "تعلم أساسيات فك التشفير باستخدام Base64",
+      "level": 1,
+      "difficulty": "سهل",
+      "objective": "فك تشفير الرسالة: U29tZVNlY3JldA==",
+      "solution": "decode U29tZVNlY3JldA==",
+      "hints": [
+        "استخدم أمر decode مع الرسالة المشفرة",
+        "Base64 هو ترميز وليس تشفيراً",
+        "جرب: decode U29tZVNlY3JldA=="
+      ],
+      "points": 50,
+      "timeLimit": 300,
+      "requiredTools": ["decode"]
+    },
+    {
+      "id": 2,
+      "title": "فحص الخادم الأول",
+      "description": "تعلم如何使用 أداة المسح",
+      "level": 1,
+      "difficulty": "سهل",
+      "objective": "مسح خادم server-01",
+      "solution": "scan server-01",
+      "hints": [
+        "استخدم أمر scan متبوعاً باسم الخادم",
+        "اسم الخادم هو server-01",
+        "الأمر الكامل: scan server-01"
+      ],
+      "points": 30,
+      "timeLimit": 180,
+      "requiredTools": ["scan"]
+    },
+    {
+      "id": 3,
+      "title": "اختراق موقع بسيط",
+      "description": "اختراق موقع ويب باستخدام أدوات أساسية",
+      "level": 2,
+      "difficulty": "متوسط",
+      "objective": "اختراق موقع company-x",
+      "solution": "hack company-x",
+      "hints": [
+        "ابدأ بفحص الهدف لمعرفة المعلومات",
+        "استخدم scan company-x أولاً",
+        "ثم استخدم hack company-x"
+      ],
+      "points": 100,
+      "timeLimit": 600,
+      "requiredTools": ["scan", "hack"]
+    }
+  ]
+}
