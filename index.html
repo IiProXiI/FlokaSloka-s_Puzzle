@@ -40,7 +40,7 @@
                         <h3>تسجيل الدخول</h3>
                         <input type="text" id="login-username" placeholder="اسم المستخدم" class="terminal-input">
                         <input type="password" id="login-password" placeholder="كلمة المرور" class="terminal-input">
-                        <button onclick="handleLogin()" class="hacker-btn" id="login-btn">الدخول</button>
+                        <button onclick="handleLogin(event)" class="hacker-btn">الدخول</button>
                         <p class="switch-form">ليس لديك حساب؟ <span onclick="showRegister()">سجل الآن</span></p>
                     </div>
                     
@@ -49,7 +49,7 @@
                         <input type="text" id="reg-username" placeholder="اسم المستخدم" class="terminal-input">
                         <input type="password" id="reg-password" placeholder="كلمة المرور" class="terminal-input">
                         <input type="password" id="reg-confirm" placeholder="تأكيد كلمة المرور" class="terminal-input">
-                        <button onclick="handleRegister()" class="hacker-btn" id="register-btn">تسجيل</button>
+                        <button onclick="handleRegister(event)" class="hacker-btn">تسجيل</button>
                         <p class="switch-form">لديك حساب؟ <span onclick="showLogin()">سجل الدخول</span></p>
                     </div>
                 </div>
@@ -227,9 +227,8 @@
         </div>
     </div>
 
-    <!-- أهم: نحمّل terminal.js أولاً ثم main.js, ونستخدم defer -->
-    <script src="js/terminal.js" defer></script>
-    <script src="js/main.js" defer></script>
-    <script src="js/game.js" defer></script>
+    <script src="js/main.js"></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/game.js"></script>
 </body>
 </html>
