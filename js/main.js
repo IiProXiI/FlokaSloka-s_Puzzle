@@ -154,66 +154,6 @@ class HackingSimulator {
         document.getElementById('theme-selector').addEventListener('change', (e) => {
             this.changeTheme(e.target.value);
         });
-
-        // إضافة مستمعي الأحداث للنماذج
-        this.setupAuthEventListeners();
-    }
-
-    setupAuthEventListeners() {
-        // مستمع لأزرار التسجيل والدخول
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-
-        if (loginForm) {
-            loginForm.querySelector('button').addEventListener('click', (e) => {
-                e.preventDefault();
-                this.handleLogin();
-            });
-        }
-
-        if (registerForm) {
-            registerForm.querySelector('button').addEventListener('click', (e) => {
-                e.preventDefault();
-                this.handleRegister();
-            });
-        }
-
-        // مستمع لزر الإدخال (Enter) في حقول النماذج
-        const authInputs = document.querySelectorAll('.terminal-input');
-        authInputs.forEach(input => {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    if (e.target.closest('#login-form')) {
-                        this.handleLogin();
-                    } else if (e.target.closest('#register-form')) {
-                        this.handleRegister();
-                    }
-                }
-            });
-        });
-    }
-
-    handleLogin() {
-        const username = document.getElementById('login-username').value;
-        const password = document.getElementById('login-password').value;
-        
-        if (this.terminal) {
-            this.terminal.authenticateUser(username, password);
-        } else {
-            console.error('الطرفية غير مهيأة');
-        }
-    }
-
-    handleRegister() {
-        const username = document.getElementById('reg-username').value;
-        const password = document.getElementById('reg-password').value;
-        const confirmPassword = document.getElementById('reg-confirm').value;
-        
-        if (this.terminal) {
-            this.terminal.registerUser(username, password, confirmPassword);
-        } else {
-            console.error('الطرفية غير مهيأة');
-        }
     }
 
     showSection(sectionId) {
@@ -225,29 +165,14 @@ class HackingSimulator {
 
     changeTheme(theme) {
         const themeLink = document.getElementById('theme');
-        if (themeLink) {
-            themeLink.href = `css/themes/${theme}.css`;
-            document.body.className = `${theme}-theme`;
-        }
+        themeLink.href = `css/themes/${theme}.css`;
+        document.body.className = `${theme}-theme`;
     }
 
     logout() {
         localStorage.removeItem('current_user');
         this.currentUser = null;
         this.showAuthScreen();
-        
-        // إعادة تعيين النماذج
-        this.resetAuthForms();
-    }
-
-    resetAuthForms() {
-        const inputs = document.querySelectorAll('.terminal-input');
-        inputs.forEach(input => {
-            input.value = '';
-        });
-        
-        document.getElementById('login-form').classList.add('active');
-        document.getElementById('register-form').classList.remove('active');
     }
 }
 
@@ -295,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     app.init();
 });
 
-// الدوال العامة للاستدعاء من HTML - معدلة لاستخدام terminal بدلاً من auth
+// الدوال العامة للاستدعاء من HTML
 function showLogin() {
     document.getElementById('login-form').classList.add('active');
     document.getElementById('register-form').classList.remove('active');
@@ -307,37 +232,33 @@ function showRegister() {
 }
 
 function login() {
-    if (app && app.terminal) {
-        const username = document.getElementById('login-username').value;
-        const password = document.getElementById('login-password').value;
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    
+    if (app.terminal) {
         app.terminal.authenticateUser(username, password);
     }
 }
 
 function register() {
-    if (app && app.terminal) {
-        const username = document.getElementById('reg-username').value;
-        const password = document.getElementById('reg-password').value;
-        const confirmPassword = document.getElementById('reg-confirm').value;
+    const username = document.getElementById('reg-username').value;
+    const password = document.getElementById('reg-password').value;
+    const confirmPassword = document.getElementById('reg-confirm').value;
+    
+    if (app.terminal) {
         app.terminal.registerUser(username, password, confirmPassword);
     }
 }
 
 function toggleTheme() {
-    if (app) {
-        const currentTheme = document.body.classList.contains('matrix-theme') ? 'matrix' : 'cyberpunk';
-        const newTheme = currentTheme === 'matrix' ? 'cyberpunk' : 'matrix';
-        app.changeTheme(newTheme);
-        
-        const themeSelector = document.getElementById('theme-selector');
-        if (themeSelector) {
-            themeSelector.value = newTheme;
-        }
-    }
+    const currentTheme = document.body.classList.contains('matrix-theme') ? 'matrix' : 'cyberpunk';
+    const newTheme = currentTheme === 'matrix' ? 'cyberpunk' : 'matrix';
+    app.changeTheme(newTheme);
+    document.getElementById('theme-selector').value = newTheme;
 }
 
 function clearTerminal() {
-    if (app && app.terminal) {
+    if (app.terminal) {
         app.terminal.clear();
     }
 }
