@@ -1,4 +1,3 @@
-// الملف الرئيسي للتطبيق
 class HackingSimulator {
     constructor() {
         this.currentUser = null;
