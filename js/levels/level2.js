@@ -1,23 +1,19 @@
-// level2.js - المستوى الثاني
-const level2 = {
-    id: 2,
-    title: 'المتوسط',
-    missions: [3, 4],
-    unlockConditions: {
-        points: 200
-    },
-    onStart: function() {
-        if (window.app && window.app.terminal) {
-            window.app.terminal.output('المستوى الثاني: تحديات أكثر صعوبة!', 'warning');
-        }
-    },
-    onComplete: function() {
-        if (window.app && window.app.terminal) {
-            window.app.terminal.output('مذهل! أنت تتقدم بسرعة.', 'success');
-        }
+// مستوى 2 - قرصنة الويب
+class Level2 {
+    constructor() {
+        this.missions = [
+            {
+                id: 3,
+                title: "اختراق موقع بسيط",
+                description: "اختراق موقع ويب تجريبي",
+                objective: "استخدم hack لاختراق web-target",
+                solution: "hack web-target",
+                points: 50
+            }
+        ];
     }
-};
 
-if (window.app && window.app.game) {
-    window.app.game.levels.push(level2);
+    init() {
+        console.log("تهيئة المستوى 2");
+    }
 }
