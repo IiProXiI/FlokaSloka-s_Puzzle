@@ -487,27 +487,35 @@ function showRegister() {
     }
 }
 
-function handleLogin() {
+function handleLogin(event) {
+    if (event) event.preventDefault(); // منع إعادة تحميل الصفحة
+    
     const username = document.getElementById('login-username')?.value;
     const password = document.getElementById('login-password')?.value;
+    
+    console.log('محاولة دخول:', username); // للتdebug
     
     if (!username || !password) {
         alert('يرجى إدخال اسم المستخدم وكلمة المرور');
         return;
     }
     
-    if (app && app.terminal && typeof app.terminal.authenticateUser === 'function') {
+    if (app && app.terminal) {
         app.terminal.authenticateUser(username, password);
     } else {
         alert('النظام غير مهيأ بعد، يرجى الانتظار...');
-        console.warn('محاولة تسجيل دخول قبل جاهزية الطرفية', { appExists: !!app, terminalExists: !!(app && app.terminal) });
+        console.error('app:', app, 'app.terminal:', app?.terminal);
     }
 }
 
-function handleRegister() {
+function handleRegister(event) {
+    if (event) event.preventDefault(); // منع إعادة تحميل الصفحة
+    
     const username = document.getElementById('reg-username')?.value;
     const password = document.getElementById('reg-password')?.value;
     const confirmPassword = document.getElementById('reg-confirm')?.value;
+    
+    console.log('محاولة تسجيل:', username); // للتdebug
     
     if (!username || !password || !confirmPassword) {
         alert('يرجى ملء جميع الحقول');
@@ -519,11 +527,11 @@ function handleRegister() {
         return;
     }
     
-    if (app && app.terminal && typeof app.terminal.registerUser === 'function') {
+    if (app && app.terminal) {
         app.terminal.registerUser(username, password, confirmPassword);
     } else {
         alert('النظام غير مهيأ بعد، يرجى الانتظار...');
-        console.warn('محاولة تسجيل قبل جاهزية الطرفية', { appExists: !!app, terminalExists: !!(app && app.terminal) });
+        console.error('app:', app, 'app.terminal:', app?.terminal);
     }
 }
 
