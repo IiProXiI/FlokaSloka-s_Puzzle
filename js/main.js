@@ -20,7 +20,7 @@ class HackingSimulator {
     }
 
     async initializeSystem() {
-        // تهيئة localStorage
+        // تهيئة localStorage الافتراضية
         if (!localStorage.getItem('hacking_simulator_users')) {
             localStorage.setItem('hacking_simulator_users', JSON.stringify({}));
         }
@@ -29,9 +29,16 @@ class HackingSimulator {
             localStorage.setItem('hacking_simulator_progress', JSON.stringify({}));
         }
 
+        // تأكد أن الكلاس Terminal موجود قبل الإنشاء
+        if (typeof Terminal === 'undefined') {
+            console.error('Terminal class غير معرف - تأكد من ترتيب تحميل السكربتات (terminal.js يجب أن يُحمّل قبل main.js)');
+            // رمي خطأ هنا سيساعدك في الConsole لو المشكلة مستمرة
+            throw new Error('Terminal class غير معرف');
+        }
+
         // تهيئة الكائنات
         this.terminal = new Terminal();
-        this.game = new GameEngine();
+        this.game = (typeof GameEngine !== 'undefined') ? new GameEngine() : null;
         
         this.isInitialized = true;
         console.log('النظام مهيأ بالكامل');
@@ -55,18 +62,18 @@ class HackingSimulator {
         const bootMessages = document.getElementById('boot-messages');
 
         for (let i = 0; i < messages.length; i++) {
-            await this.delay(300);
+            await this.delay(250);
             
             const messageElement = document.createElement('div');
             messageElement.textContent = `> ${messages[i]}`;
             messageElement.className = 'output-line';
-            bootMessages.appendChild(messageElement);
-            bootMessages.scrollTop = bootMessages.scrollHeight;
+            if (bootMessages) bootMessages.appendChild(messageElement);
+            if (bootMessages) bootMessages.scrollTop = bootMessages.scrollHeight;
 
-            progressBar.style.width = `${((i + 1) / messages.length) * 100}%`;
+            if (progressBar) progressBar.style.width = `${((i + 1) / messages.length) * 100}%`;
         }
 
-        await this.delay(500);
+        await this.delay(400);
     }
 
     checkAuthentication() {
@@ -107,6 +114,10 @@ class HackingSimulator {
         
         if (loginForm) loginForm.classList.add('active');
         if (registerForm) registerForm.classList.remove('active');
+
+        // focus للحقل الأول
+        const loginUsername = document.getElementById('login-username');
+        if (loginUsername) loginUsername.focus();
     }
 
     showRegisterForm() {
@@ -115,20 +126,23 @@ class HackingSimulator {
         
         if (registerForm) registerForm.classList.add('active');
         if (loginForm) loginForm.classList.remove('active');
+
+        const regUsername = document.getElementById('reg-username');
+        if (regUsername) regUsername.focus();
     }
 
     showMainInterface() {
         this.showScreen('main-screen');
         this.updateUserInterface();
         
-        if (this.terminal) {
+        if (this.terminal && typeof this.terminal.initialize === 'function') {
             this.terminal.initialize();
         }
         
         if (this.game) {
-            this.game.loadLevel(this.currentLevel);
-            this.game.displayMissions();
-            this.game.displayTools();
+            if (typeof this.game.loadLevel === 'function') this.game.loadLevel(this.currentLevel);
+            if (typeof this.game.displayMissions === 'function') this.game.displayMissions();
+            if (typeof this.game.displayTools === 'function') this.game.displayTools();
         }
     }
 
@@ -160,20 +174,29 @@ class HackingSimulator {
         const profileAvatarText = document.getElementById('profile-avatar-text');
 
         if (this.userProgress.avatar) {
-            avatarImage.src = this.userProgress.avatar;
-            avatarImage.style.display = 'block';
-            avatarText.style.display = 'none';
+            if (avatarImage) {
+                avatarImage.src = this.userProgress.avatar;
+                avatarImage.style.display = 'block';
+            }
+            if (avatarText) avatarText.style.display = 'none';
             
-            profileAvatarImage.src = this.userProgress.avatar;
-            profileAvatarText.style.display = 'none';
+            if (profileAvatarImage) {
+                profileAvatarImage.src = this.userProgress.avatar;
+                profileAvatarImage.style.display = 'block';
+            }
+            if (profileAvatarText) profileAvatarText.style.display = 'none';
         } else {
-            avatarImage.style.display = 'none';
-            avatarText.style.display = 'block';
-            avatarText.textContent = this.currentUser.username.charAt(0).toUpperCase();
+            if (avatarImage) avatarImage.style.display = 'none';
+            if (avatarText) {
+                avatarText.style.display = 'block';
+                avatarText.textContent = (this.currentUser?.username || 'H').charAt(0).toUpperCase();
+            }
             
-            profileAvatarImage.style.display = 'none';
-            profileAvatarText.style.display = 'block';
-            profileAvatarText.textContent = this.currentUser.username.charAt(0).toUpperCase();
+            if (profileAvatarImage) profileAvatarImage.style.display = 'none';
+            if (profileAvatarText) {
+                profileAvatarText.style.display = 'block';
+                profileAvatarText.textContent = (this.currentUser?.username || 'H').charAt(0).toUpperCase();
+            }
         }
     }
 
@@ -182,9 +205,9 @@ class HackingSimulator {
         const connectionBar = document.getElementById('connection-bar');
         const reputationBar = document.getElementById('reputation-bar');
 
-        if (securityBar) securityBar.style.width = this.userProgress.security + '%';
-        if (connectionBar) connectionBar.style.width = this.userProgress.connection + '%';
-        if (reputationBar) reputationBar.style.width = this.userProgress.reputation + '%';
+        if (securityBar) securityBar.style.width = (this.userProgress.security || 0) + '%';
+        if (connectionBar) connectionBar.style.width = (this.userProgress.connection || 0) + '%';
+        if (reputationBar) reputationBar.style.width = (this.userProgress.reputation || 0) + '%';
     }
 
     loadUserProgress() {
@@ -204,7 +227,7 @@ class HackingSimulator {
                 connection: 70,
                 reputation: 60
             };
-            this.currentLevel = this.userProgress.level;
+            this.currentLevel = this.userProgress.level || 1;
         } catch (e) {
             console.error('خطأ في تحميل تقدم المستخدم:', e);
             this.userProgress = {
@@ -242,11 +265,11 @@ class HackingSimulator {
         // التنقل بين الأقسام
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const section = e.target.getAttribute('data-section');
+                const section = e.currentTarget.getAttribute('data-section');
                 this.showSection(section);
                 
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
+                e.currentTarget.classList.add('active');
             });
         });
 
@@ -276,7 +299,7 @@ class HackingSimulator {
     }
 
     setupAuthEventListeners() {
-        // أحداث الإدخال في النماذج
+        // أحداث الإدخال في النماذج (اضغط Enter)
         const authInputs = document.querySelectorAll('.terminal-input');
         authInputs.forEach(input => {
             input.addEventListener('keypress', (e) => {
@@ -330,7 +353,6 @@ class HackingSimulator {
         this.showLoginForm();
     }
 
-    // دالة مساعدة لعرض نافذة المهمة
     showMissionModal(mission) {
         this.selectedMission = mission;
         const modal = document.getElementById('mission-modal');
@@ -349,7 +371,6 @@ class HackingSimulator {
         }
     }
 
-    // دالة لقبول المهمة
     acceptMission() {
         if (this.selectedMission && this.game) {
             this.game.startMission(this.selectedMission.id);
@@ -357,7 +378,6 @@ class HackingSimulator {
         }
     }
 
-    // دالة لإغلاق نافذة المهمة
     closeMissionModal() {
         const modal = document.getElementById('mission-modal');
         if (modal) {
@@ -366,14 +386,12 @@ class HackingSimulator {
         }
     }
 
-    // دالة لشراء أداة
     buyTool(toolId) {
         if (this.game) {
             this.game.buyTool(toolId);
         }
     }
 
-    // دالة لتحديث البايو
     updateBio() {
         const bioInput = document.getElementById('bio-input');
         if (bioInput && bioInput.value.trim()) {
@@ -385,7 +403,6 @@ class HackingSimulator {
         }
     }
 
-    // دالة لرفع صورة البروفايل
     uploadAvatar() {
         const avatarUpload = document.getElementById('avatar-upload');
         if (avatarUpload && avatarUpload.files.length > 0) {
@@ -446,10 +463,14 @@ let app = null;
 
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
-    app = new HackingSimulator();
-    app.init().catch(error => {
-        console.error('خطأ في تهيئة التطبيق:', error);
-    });
+    try {
+        app = new HackingSimulator();
+        app.init().catch(error => {
+            console.error('خطأ في تهيئة التطبيق:', error);
+        });
+    } catch (e) {
+        console.error('فشل في إنشاء التطبيق:', e);
+    }
 });
 
 // ================= دوال الاستدعاء من HTML =================
@@ -475,10 +496,11 @@ function handleLogin() {
         return;
     }
     
-    if (app && app.terminal) {
+    if (app && app.terminal && typeof app.terminal.authenticateUser === 'function') {
         app.terminal.authenticateUser(username, password);
     } else {
         alert('النظام غير مهيأ بعد، يرجى الانتظار...');
+        console.warn('محاولة تسجيل دخول قبل جاهزية الطرفية', { appExists: !!app, terminalExists: !!(app && app.terminal) });
     }
 }
 
@@ -497,10 +519,11 @@ function handleRegister() {
         return;
     }
     
-    if (app && app.terminal) {
+    if (app && app.terminal && typeof app.terminal.registerUser === 'function') {
         app.terminal.registerUser(username, password, confirmPassword);
     } else {
         alert('النظام غير مهيأ بعد، يرجى الانتظار...');
+        console.warn('محاولة تسجيل قبل جاهزية الطرفية', { appExists: !!app, terminalExists: !!(app && app.terminal) });
     }
 }
 
@@ -554,7 +577,6 @@ function uploadAvatar() {
     }
 }
 
-// دالة لاختيار مهمة
 function selectMission(missionId) {
     if (app && app.game) {
         const mission = app.game.missions.find(m => m.id === missionId);
@@ -564,7 +586,6 @@ function selectMission(missionId) {
     }
 }
 
-// دالة لشراء أداة
 function buyTool(toolId) {
     if (app) {
         app.buyTool(toolId);
