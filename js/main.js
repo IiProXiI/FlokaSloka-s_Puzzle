@@ -9,18 +9,17 @@ class HackingSimulator {
     }
 
     async init() {
+        console.log('جاري تهيئة النظام...');
         await this.initializeSystem();
         this.setupEventListeners();
         this.showScreen('loading-screen');
         
-        // محاكاة عملية التحميل
         await this.simulateBootProcess();
-        
         this.checkAuthentication();
     }
 
     async initializeSystem() {
-        // تهيئة localStorage إذا كان فارغاً
+        // تهيئة localStorage
         if (!localStorage.getItem('hacking_simulator_users')) {
             localStorage.setItem('hacking_simulator_users', JSON.stringify({}));
         }
@@ -29,10 +28,12 @@ class HackingSimulator {
             localStorage.setItem('hacking_simulator_progress', JSON.stringify({}));
         }
 
+        // تهيئة الكائنات
         this.terminal = new Terminal();
         this.game = new GameEngine();
         
         this.isInitialized = true;
+        console.log('النظام مهيأ بالكامل');
     }
 
     async simulateBootProcess() {
@@ -53,7 +54,7 @@ class HackingSimulator {
         const bootMessages = document.getElementById('boot-messages');
 
         for (let i = 0; i < messages.length; i++) {
-            await this.delay(500);
+            await this.delay(300);
             
             const messageElement = document.createElement('div');
             messageElement.textContent = `> ${messages[i]}`;
@@ -64,15 +65,21 @@ class HackingSimulator {
             progressBar.style.width = `${((i + 1) / messages.length) * 100}%`;
         }
 
-        await this.delay(1000);
+        await this.delay(500);
     }
 
     checkAuthentication() {
         const savedUser = localStorage.getItem('current_user');
         if (savedUser) {
-            this.currentUser = JSON.parse(savedUser);
-            this.loadUserProgress();
-            this.showMainInterface();
+            try {
+                this.currentUser = JSON.parse(savedUser);
+                this.loadUserProgress();
+                this.showMainInterface();
+                console.log('تم تحميل المستخدم:', this.currentUser.username);
+            } catch (e) {
+                console.error('خطأ في تحميل بيانات المستخدم:', e);
+                this.showAuthScreen();
+            }
         } else {
             this.showAuthScreen();
         }
@@ -82,46 +89,83 @@ class HackingSimulator {
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
-        document.getElementById(screenId).classList.add('active');
+        const screenElement = document.getElementById(screenId);
+        if (screenElement) {
+            screenElement.classList.add('active');
+        }
     }
 
     showAuthScreen() {
         this.showScreen('auth-screen');
+        this.showLoginForm();
+    }
+
+    showLoginForm() {
         document.getElementById('login-form').classList.add('active');
         document.getElementById('register-form').classList.remove('active');
+    }
+
+    showRegisterForm() {
+        document.getElementById('register-form').classList.add('active');
+        document.getElementById('login-form').classList.remove('active');
     }
 
     showMainInterface() {
         this.showScreen('main-screen');
         this.updateUserInterface();
-        this.terminal.initialize();
-        this.game.loadLevel(this.currentLevel);
+        
+        if (this.terminal) {
+            this.terminal.initialize();
+        }
+        
+        if (this.game) {
+            this.game.loadLevel(this.currentLevel);
+        }
     }
 
     updateUserInterface() {
         if (this.currentUser) {
-            document.getElementById('username-display').textContent = this.currentUser.username;
-            document.getElementById('user-level').textContent = this.currentLevel;
-            document.getElementById('user-avatar').textContent = this.currentUser.username.charAt(0).toUpperCase();
+            const usernameDisplay = document.getElementById('username-display');
+            const userLevel = document.getElementById('user-level');
+            const userAvatar = document.getElementById('user-avatar');
+            
+            if (usernameDisplay) usernameDisplay.textContent = this.currentUser.username;
+            if (userLevel) userLevel.textContent = this.currentLevel;
+            if (userAvatar) userAvatar.textContent = this.currentUser.username.charAt(0).toUpperCase();
         }
     }
 
     loadUserProgress() {
-        const progressData = JSON.parse(localStorage.getItem('hacking_simulator_progress'));
-        this.userProgress = progressData[this.currentUser.username] || {
-            level: 1,
-            points: 0,
-            completedMissions: [],
-            unlockedTools: ['scan', 'decrypt'],
-            hintPoints: 50
-        };
-        this.currentLevel = this.userProgress.level;
+        try {
+            const progressData = JSON.parse(localStorage.getItem('hacking_simulator_progress') || '{}');
+            this.userProgress = progressData[this.currentUser.username] || {
+                level: 1,
+                points: 0,
+                completedMissions: [],
+                unlockedTools: ['scan', 'decrypt'],
+                hintPoints: 50
+            };
+            this.currentLevel = this.userProgress.level;
+        } catch (e) {
+            console.error('خطأ في تحميل تقدم المستخدم:', e);
+            this.userProgress = {
+                level: 1,
+                points: 0,
+                completedMissions: [],
+                unlockedTools: ['scan', 'decrypt'],
+                hintPoints: 50
+            };
+        }
     }
 
     saveUserProgress() {
-        const progressData = JSON.parse(localStorage.getItem('hacking_simulator_progress'));
-        progressData[this.currentUser.username] = this.userProgress;
-        localStorage.setItem('hacking_simulator_progress', JSON.stringify(progressData));
+        try {
+            const progressData = JSON.parse(localStorage.getItem('hacking_simulator_progress') || '{}');
+            progressData[this.currentUser.username] = this.userProgress;
+            localStorage.setItem('hacking_simulator_progress', JSON.stringify(progressData));
+        } catch (e) {
+            console.error('خطأ في حفظ تقدم المستخدم:', e);
+        }
     }
 
     delay(ms) {
@@ -135,7 +179,6 @@ class HackingSimulator {
                 const section = e.target.getAttribute('data-section');
                 this.showSection(section);
                 
-                // تحديث الحالة النشطة
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
             });
@@ -143,16 +186,42 @@ class HackingSimulator {
 
         // إدخال الطرفية
         const terminalInput = document.getElementById('terminal-input');
-        terminalInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.terminal.processCommand(e.target.value);
-                e.target.value = '';
-            }
-        });
+        if (terminalInput) {
+            terminalInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    if (this.terminal) {
+                        this.terminal.processCommand(e.target.value);
+                        e.target.value = '';
+                    }
+                }
+            });
+        }
 
         // تغيير السمة
-        document.getElementById('theme-selector').addEventListener('change', (e) => {
-            this.changeTheme(e.target.value);
+        const themeSelector = document.getElementById('theme-selector');
+        if (themeSelector) {
+            themeSelector.addEventListener('change', (e) => {
+                this.changeTheme(e.target.value);
+            });
+        }
+
+        // أحداث النماذج
+        this.setupAuthEventListeners();
+    }
+
+    setupAuthEventListeners() {
+        // أحداث الإدخال في النماذج
+        const authInputs = document.querySelectorAll('.terminal-input');
+        authInputs.forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    if (e.target.closest('#login-form')) {
+                        handleLogin();
+                    } else if (e.target.closest('#register-form')) {
+                        handleRegister();
+                    }
+                }
+            });
         });
     }
 
@@ -160,23 +229,43 @@ class HackingSimulator {
         document.querySelectorAll('.content-section').forEach(section => {
             section.classList.remove('active');
         });
-        document.getElementById(`${sectionId}-section`).classList.add('active');
+        const sectionElement = document.getElementById(`${sectionId}-section`);
+        if (sectionElement) {
+            sectionElement.classList.add('active');
+        }
     }
 
     changeTheme(theme) {
         const themeLink = document.getElementById('theme');
-        themeLink.href = `css/themes/${theme}.css`;
-        document.body.className = `${theme}-theme`;
+        if (themeLink) {
+            themeLink.href = `css/themes/${theme}.css`;
+            document.body.className = `${theme}-theme`;
+            
+            // تحديث selector السمة
+            const themeSelector = document.getElementById('theme-selector');
+            if (themeSelector) {
+                themeSelector.value = theme;
+            }
+        }
     }
 
     logout() {
         localStorage.removeItem('current_user');
         this.currentUser = null;
         this.showAuthScreen();
+        this.resetAuthForms();
+    }
+
+    resetAuthForms() {
+        const inputs = document.querySelectorAll('.terminal-input');
+        inputs.forEach(input => {
+            input.value = '';
+        });
+        this.showLoginForm();
     }
 }
 
-// فئات مساعدة
+// فئة التشفير المساعدة
 class Encryption {
     static encrypt(text, key = 'hack2024') {
         let result = '';
@@ -212,53 +301,85 @@ class Encryption {
     }
 }
 
-// تهيئة التطبيق عند تحميل الصفحة
-let app;
+// المتغير العام للتطبيق
+let app = null;
 
+// تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
     app = new HackingSimulator();
-    app.init();
+    app.init().catch(error => {
+        console.error('خطأ في تهيئة التطبيق:', error);
+    });
 });
 
-// الدوال العامة للاستدعاء من HTML
+// ================= دوال الاستدعاء من HTML =================
+
 function showLogin() {
-    document.getElementById('login-form').classList.add('active');
-    document.getElementById('register-form').classList.remove('active');
-}
-
-function showRegister() {
-    document.getElementById('register-form').classList.add('active');
-    document.getElementById('login-form').classList.remove('active');
-}
-
-function login() {
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
-    
-    if (app.terminal) {
-        app.terminal.authenticateUser(username, password);
+    if (app) {
+        app.showLoginForm();
     }
 }
 
-function register() {
-    const username = document.getElementById('reg-username').value;
-    const password = document.getElementById('reg-password').value;
-    const confirmPassword = document.getElementById('reg-confirm').value;
+function showRegister() {
+    if (app) {
+        app.showRegisterForm();
+    }
+}
+
+function handleLogin() {
+    const username = document.getElementById('login-username')?.value;
+    const password = document.getElementById('login-password')?.value;
     
-    if (app.terminal) {
+    if (!username || !password) {
+        alert('يرجى إدخال اسم المستخدم وكلمة المرور');
+        return;
+    }
+    
+    if (app && app.terminal) {
+        app.terminal.authenticateUser(username, password);
+    } else {
+        alert('النظام غير مهيأ بعد، يرجى الانتظار...');
+    }
+}
+
+function handleRegister() {
+    const username = document.getElementById('reg-username')?.value;
+    const password = document.getElementById('reg-password')?.value;
+    const confirmPassword = document.getElementById('reg-confirm')?.value;
+    
+    if (!username || !password || !confirmPassword) {
+        alert('يرجى ملء جميع الحقول');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('كلمتا المرور غير متطابقتين');
+        return;
+    }
+    
+    if (app && app.terminal) {
         app.terminal.registerUser(username, password, confirmPassword);
+    } else {
+        alert('النظام غير مهيأ بعد، يرجى الانتظار...');
     }
 }
 
 function toggleTheme() {
-    const currentTheme = document.body.classList.contains('matrix-theme') ? 'matrix' : 'cyberpunk';
-    const newTheme = currentTheme === 'matrix' ? 'cyberpunk' : 'matrix';
-    app.changeTheme(newTheme);
-    document.getElementById('theme-selector').value = newTheme;
+    if (app) {
+        const currentTheme = document.body.classList.contains('matrix-theme') ? 'matrix' : 'cyberpunk';
+        const newTheme = currentTheme === 'matrix' ? 'cyberpunk' : 'matrix';
+        app.changeTheme(newTheme);
+    }
 }
 
 function clearTerminal() {
-    if (app.terminal) {
+    if (app && app.terminal) {
         app.terminal.clear();
+    }
+}
+
+function changeTheme(theme) {
+    if (app) {
+        app.changeTheme(theme);
     }
 }
