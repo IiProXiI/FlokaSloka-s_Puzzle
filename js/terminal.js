@@ -5,6 +5,7 @@ class Terminal {
         this.historyIndex = -1;
         this.currentMission = null;
         this.isProcessing = false;
+        this.users = this.loadUsers(); // تحميل المستخدمين
     }
 
     initialize() {
@@ -497,108 +498,137 @@ class Terminal {
         }, 1000);
     }
 
+    // ========== دوال التسجيل والمصادقة المضافة ==========
 
-
-    // داخل كلاس Terminal - بعد الدوال الموجودة
-registerUser(username, password, confirmPassword) {
-    if (!username || !password) {
-        this.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
-        return false;
-    }
-
-    if (password !== confirmPassword) {
-        this.output('خطأ: كلمتا المرور غير متطابقتين', 'error');
-        return false;
-    }
-
-    if (this.users && this.users[username]) {
-        this.output('خطأ: اسم المستخدم موجود مسبقاً', 'error');
-        return false;
-    }
-
-    if (password.length < 6) {
-        this.output('خطأ: كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
-        return false;
-    }
-
-    // تحميل المستخدمين من localStorage
-    const users = this.loadUsers();
-    
-    // تشفير كلمة المرور
-    const userHash = this.generateHash(username + password);
-    
-    users[username] = {
-        username: username,
-        passwordHash: userHash,
-        createdAt: new Date().toISOString(),
-        level: 1,
-        points: 0
-    };
-
-    this.saveUsers(users);
-    this.output(`تم إنشاء الحساب بنجاح! مرحباً ${username}`, 'success');
-    
-    // تسجيل الدخول تلقائياً بعد التسجيل
-    setTimeout(() => this.authenticateUser(username, password), 1000);
-    
-    return true;
-}
-
-authenticateUser(username, password) {
-    if (!username || !password) {
-        this.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
-        return false;
-    }
-
-    const users = this.loadUsers();
-    const user = users[username];
-    const userHash = this.generateHash(username + password);
-
-    if (!user || user.passwordHash !== userHash) {
-        this.output('خطأ: اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
-        return false;
-    }
-
-    // حفظ حالة المستخدم الحالي
-    localStorage.setItem('current_user', JSON.stringify({
-        username: username,
-        loginTime: new Date().toISOString()
-    }));
-
-    this.output(`تم الدخول بنجاح! مرحباً مرة أخرى ${username}`, 'success');
-    
-    // الانتقال إلى الواجهة الرئيسية
-    setTimeout(() => {
-        if (window.app) {
-            window.app.currentUser = { username: username };
-            window.app.loadUserProgress();
-            window.app.showMainInterface();
+    registerUser(username, password, confirmPassword) {
+        if (!username || !password) {
+            this.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
+            return false;
         }
-    }, 1500);
 
-    return true;
-}
+        if (password !== confirmPassword) {
+            this.output('خطأ: كلمتا المرور غير متطابقتين', 'error');
+            return false;
+        }
 
-// دالة مساعدة لتحميل المستخدمين
-loadUsers() {
-    const usersData = localStorage.getItem('hacking_simulator_users');
-    return usersData ? JSON.parse(usersData) : {};
-}
+        if (this.users[username]) {
+            this.output('خطأ: اسم المستخدم موجود مسبقاً', 'error');
+            return false;
+        }
 
-// دالة مساعدة لحفظ المستخدمين
-saveUsers(users) {
-    localStorage.setItem('hacking_simulator_users', JSON.stringify(users));
-}
+        if (password.length < 6) {
+            this.output('خطأ: كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+            return false;
+        }
 
-// دالة مساعدة لتوليد الهاش
-generateHash(text) {
-    let hash = 0;
-    for (let i = 0; i < text.length; i++) {
-        const char = text.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
+        // تشفير كلمة المرور
+        const userHash = this.generateHash(username + password);
+        
+        this.users[username] = {
+            username: username,
+            passwordHash: userHash,
+            createdAt: new Date().toISOString(),
+            level: 1,
+            points: 0
+        };
+
+        this.saveUsers();
+        this.output(`تم إنشاء الحساب بنجاح! مرحباً ${username}`, 'success');
+        
+        // تسجيل الدخول تلقائياً بعد التسجيل
+        setTimeout(() => this.authenticateUser(username, password), 1000);
+        
+        return true;
     }
-    return hash.toString(16);
+
+    authenticateUser(username, password) {
+        if (!username || !password) {
+            this.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
+            return false;
+        }
+
+        const user = this.users[username];
+        const userHash = this.generateHash(username + password);
+
+        if (!user || user.passwordHash !== userHash) {
+            this.output('خطأ: اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
+            return false;
+        }
+
+        // حفظ حالة المستخدم الحالي
+        localStorage.setItem('current_user', JSON.stringify({
+            username: username,
+            loginTime: new Date().toISOString()
+        }));
+
+        this.output(`تم الدخول بنجاح! مرحباً مرة أخرى ${username}`, 'success');
+        
+        // الانتقال إلى الواجهة الرئيسية
+        setTimeout(() => {
+            if (window.app) {
+                window.app.currentUser = { username: username };
+                window.app.loadUserProgress();
+                window.app.showMainInterface();
+            }
+        }, 1500);
+
+        return true;
+    }
+
+    loadUsers() {
+        const usersData = localStorage.getItem('hacking_simulator_users');
+        return usersData ? JSON.parse(usersData) : {};
+    }
+
+    saveUsers() {
+        localStorage.setItem('hacking_simulator_users', JSON.stringify(this.users));
+    }
+
+    generateHash(text) {
+        let hash = 0;
+        for (let i = 0; i < text.length; i++) {
+            const char = text.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return hash.toString(16);
+    }
 }
 
+// تأكد من وجود كائن Encryption إذا كان مستخدمًا في الكود
+if (typeof Encryption === 'undefined') {
+    class Encryption {
+        static encrypt(text, key = 'hack2024') {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                const charCode = text.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                result += String.fromCharCode(charCode);
+            }
+            return btoa(result);
+        }
+
+        static decrypt(encryptedText, key = 'hack2024') {
+            try {
+                const text = atob(encryptedText);
+                let result = '';
+                for (let i = 0; i < text.length; i++) {
+                    const charCode = text.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                    result += String.fromCharCode(charCode);
+                }
+                return result;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        static generateHash(text) {
+            let hash = 0;
+            for (let i = 0; i < text.length; i++) {
+                const char = text.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString(16);
+        }
+    }
 }
