@@ -1,92 +1,187 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Hacking Device</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Hacking Simulator Pro - محاكاة القرصنة</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes/matrix.css" id="theme">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <!-- الشاشة الرئيسية -->
-        <div class="device-frame">
-            <!-- الشاشة العليا -->
-            <div class="screen-container">
-                <div class="screen" id="mainScreen">
-                    <div class="screen-header">
-                        <span class="logo">CYBER-SEC v2.1</span>
-                        <span class="battery">🔋 98%</span>
-                    </div>
-                    
-                    <div class="content" id="screenContent">
-                        <!-- المحتوى يتغير ديناميكياً -->
-                        <div class="welcome-screen">
-                            <div class="hacker-text">>_ INITIALIZING SYSTEM...</div>
-                            <div class="loading-bar">
-                                <div class="progress"></div>
-                            </div>
-                            <div class="status">CONNECTING TO NETWORK...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="screen-footer">
-                        <span class="timestamp" id="timestamp">23:45:17</span>
-                        <span class="signal">📶 5G</span>
-                    </div>
+    <!-- شاشة التحميل -->
+    <div id="loading-screen" class="screen active">
+        <div class="terminal-loader">
+            <div class="terminal-header">
+                <div class="terminal-title">نظام التشغيل HACK-OS v2.1.4</div>
+                <div class="terminal-controls">
+                    <span class="control close"></span>
+                    <span class="control minimize"></span>
+                    <span class="control maximize"></span>
                 </div>
             </div>
-
-            <!-- لوحة المفاتيح -->
-            <div class="keyboard">
-                <div class="row">
-                    <button class="key num" data-key="1">1</button>
-                    <button class="key num" data-key="2">2</button>
-                    <button class="key num" data-key="3">3</button>
-                    <button class="key func" data-key="clear">CLR</button>
-                </div>
-                <div class="row">
-                    <button class="key num" data-key="4">4</button>
-                    <button class="key num" data-key="5">5</button>
-                    <button class="key num" data-key="6">6</button>
-                    <button class="key func" data-key="enter">ENTER</button>
-                </div>
-                <div class="row">
-                    <button class="key num" data-key="7">7</button>
-                    <button class="key num" data-key="8">8</button>
-                    <button class="key num" data-key="9">9</button>
-                    <button class="key func" data-key="backspace">⌫</button>
-                </div>
-                <div class="row">
-                    <button class="key func wide" data-key="0">0</button>
-                    <button class="key func" data-key="power">PWR</button>
-                </div>
-                
-                <!-- أزرار الملاحة -->
-                <div class="nav-buttons">
-                    <button class="nav-btn up" data-action="up">↑</button>
-                    <div class="nav-middle">
-                        <button class="nav-btn left" data-action="left">←</button>
-                        <button class="nav-btn center" data-action="select">OK</button>
-                        <button class="nav-btn right" data-action="right">→</button>
-                    </div>
-                    <button class="nav-btn down" data-action="down">↓</button>
-                </div>
+            <div class="text">جاري تهيئة النظام...</div>
+            <div class="progress">
+                <div class="progress-bar" id="boot-progress"></div>
             </div>
+            <div class="terminal-text" id="boot-messages"></div>
+        </div>
+    </div>
 
-            <!-- المؤشرات -->
-            <div class="indicators">
-                <div class="indicator wifi"></div>
-                <div class="indicator bluetooth"></div>
-                <div class="indicator power"></div>
+    <!-- شاشة التسجيل/الدخول -->
+    <div id="auth-screen" class="screen">
+        <div class="auth-container">
+            <div class="hacker-terminal">
+                <div class="terminal-header">
+                    <span>نظام المصادقة - الوصول الآمن</span>
+                </div>
+                <div class="auth-form">
+                    <div id="login-form" class="form active">
+                        <h3>تسجيل الدخول</h3>
+                        <input type="text" id="login-username" placeholder="اسم المستخدم" class="terminal-input">
+                        <input type="password" id="login-password" placeholder="كلمة المرور" class="terminal-input">
+                        <button onclick="login()" class="hacker-btn">الدخول</button>
+                        <p class="switch-form">ليس لديك حساب؟ <span onclick="showRegister()">سجل الآن</span></p>
+                    </div>
+                    
+                    <div id="register-form" class="form">
+                        <h3>إنشاء حساب جديد</h3>
+                        <input type="text" id="reg-username" placeholder="اسم المستخدم" class="terminal-input">
+                        <input type="password" id="reg-password" placeholder="كلمة المرور" class="terminal-input">
+                        <input type="password" id="reg-confirm" placeholder="تأكيد كلمة المرور" class="terminal-input">
+                        <button onclick="register()" class="hacker-btn">تسجيل</button>
+                        <p class="switch-form">لديك حساب؟ <span onclick="showLogin()">سجل الدخول</span></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- الأصوات -->
-    <audio id="keySound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
-    <audio id="beepSound" src="https://assets.mixkit.co/sfx/preview/mixkit-beep-space-alarm-3084.mp3"></audio>
-    
-    <script src="script.js"></script>
+    <!-- الواجهة الرئيسية -->
+    <div id="main-screen" class="screen">
+        <div class="main-container">
+            <!-- الشريط الجانبي -->
+            <aside class="sidebar">
+                <div class="user-info">
+                    <div class="avatar" id="user-avatar">H</div>
+                    <div class="user-details">
+                        <span id="username-display">مستخدم</span>
+                        <div class="user-level">المستوى: <span id="user-level">1</span></div>
+                    </div>
+                </div>
+                
+                <nav class="nav-menu">
+                    <button class="nav-btn active" data-section="terminal">الطرفية</button>
+                    <button class="nav-btn" data-section="missions">المهام</button>
+                    <button class="nav-btn" data-section="tools">الأدوات</button>
+                    <button class="nav-btn" data-section="profile">الملف الشخصي</button>
+                    <button class="nav-btn" data-section="settings">الإعدادات</button>
+                </nav>
+                
+                <div class="system-status">
+                    <h4>حالة النظام</h4>
+                    <div class="status-item">
+                        <span>الأمان:</span>
+                        <div class="status-bar"><div class="status-fill" style="width: 85%"></div></div>
+                    </div>
+                    <div class="status-item">
+                        <span>الاتصال:</span>
+                        <div class="status-bar"><div class="status-fill" style="width: 70%"></div></div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- المنطقة الرئيسية -->
+            <main class="content-area">
+                <!-- قسم الطرفية -->
+                <section id="terminal-section" class="content-section active">
+                    <div class="terminal-container">
+                        <div class="terminal-header">
+                            <span>طرفية القرصنة - HACK-OS</span>
+                            <div class="terminal-controls">
+                                <button onclick="clearTerminal()" class="control-btn">مسح</button>
+                                <button onclick="toggleTheme()" class="control-btn">الثيم</button>
+                            </div>
+                        </div>
+                        <div class="terminal-output" id="terminal-output">
+                            <div class="output-line">HACK-OS v2.1.4 - جاهز</div>
+                            <div class="output-line">اكتب 'help' للحصول على قائمة الأوامر</div>
+                        </div>
+                        <div class="terminal-input-line">
+                            <span class="prompt">user@hack-os:~$</span>
+                            <input type="text" id="terminal-input" class="terminal-input-cmd" autocomplete="off">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- قسم المهام -->
+                <section id="missions-section" class="content-section">
+                    <div class="missions-container">
+                        <h3>المهام النشطة</h3>
+                        <div id="missions-list" class="missions-list"></div>
+                    </div>
+                </section>
+
+                <!-- قسم الأدوات -->
+                <section id="tools-section" class="content-section">
+                    <div class="tools-container">
+                        <h3>أدوات القرصنة</h3>
+                        <div class="tools-grid" id="tools-grid"></div>
+                    </div>
+                </section>
+
+                <!-- قسم الملف الشخصي -->
+                <section id="profile-section" class="content-section">
+                    <div class="profile-container">
+                        <h3>الملف الشخصي</h3>
+                        <div class="profile-stats" id="profile-stats"></div>
+                    </div>
+                </section>
+
+                <!-- قسم الإعدادات -->
+                <section id="settings-section" class="content-section">
+                    <div class="settings-container">
+                        <h3>إعدادات النظام</h3>
+                        <div class="settings-options">
+                            <div class="setting-item">
+                                <label>السمات:</label>
+                                <select id="theme-selector" onchange="changeTheme(this.value)">
+                                    <option value="matrix">ماتريكس</option>
+                                    <option value="cyberpunk">سايبر بانك</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>الأصوات:</label>
+                                <input type="range" id="sound-volume" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- نافذة المساعدة -->
+    <div id="hint-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeHint()">&times;</span>
+            <h3>تلميح</h3>
+            <div id="hint-content"></div>
+            <div class="hint-cost">التكلفة: <span id="hint-points">10</span> نقطة</div>
+            <button onclick="buyHint()" class="hacker-btn">شراء التلميح</button>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/levels/level1.js"></script>
+    <script src="js/levels/level2.js"></script>
+    <script src="js/levels/level3.js"></script>
+    <script src="js/levels/level4.js"></script>
+    <script src="js/levels/level5.js"></script>
+    <script src="js/hints.js"></script>
+    <script src="js/encryption.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
