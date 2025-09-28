@@ -47,7 +47,8 @@ class Terminal {
         
         if (this.historyIndex < 0) {
             this.historyIndex = -1;
-            document.getElementById('terminal-input').value = '';
+            const inp = document.getElementById('terminal-input');
+            if (inp) inp.value = '';
             return;
         }
         
@@ -55,8 +56,11 @@ class Terminal {
             this.historyIndex = this.commandHistory.length - 1;
         }
 
-        document.getElementById('terminal-input').value = this.commandHistory[this.historyIndex];
-        this.resizeInput(document.getElementById('terminal-input'));
+        const inp = document.getElementById('terminal-input');
+        if (inp) {
+            inp.value = this.commandHistory[this.historyIndex];
+            this.resizeInput(inp);
+        }
     }
 
     autoComplete(input) {
@@ -89,7 +93,7 @@ class Terminal {
             return;
         }
 
-        if (!input.trim()) return;
+        if (!input || !input.trim()) return;
 
         this.addToHistory(input);
         this.displayCommand(input);
@@ -113,9 +117,16 @@ class Terminal {
 
         const commandLine = document.createElement('div');
         commandLine.className = 'output-line command';
-        commandLine.innerHTML = `<span class="prompt">user@hack-os:~$</span> ${command}`;
+        commandLine.innerHTML = `<span class="prompt">user@hack-os:~$</span> ${this.escapeHtml(command)}`;
         outputElement.appendChild(commandLine);
         this.scrollToBottom();
+    }
+
+    escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
     }
 
     output(text, type = 'normal') {
@@ -126,6 +137,7 @@ class Terminal {
         messageLine.className = `output-line ${type}`;
         
         if (typeof text === 'string') {
+            // نسمح بالـ HTML المحدود من formatText
             messageLine.innerHTML = this.formatText(text);
         } else {
             messageLine.appendChild(text);
@@ -150,8 +162,8 @@ class Terminal {
     }
 
     executeCommand(input) {
-        const args = input.split(' ');
-        const command = args[0].toLowerCase();
+        const args = input.split(' ').filter(s => s !== '');
+        const command = (args[0] || '').toLowerCase();
         const parameters = args.slice(1);
 
         switch(command) {
@@ -170,7 +182,7 @@ class Terminal {
             case 'sqlmap': this.sqlInjection(parameters); break;
             case 'logout': this.logout(); break;
             default: 
-                this.output(`أمر غير معروف: '${command}'. اكتب 'help' للحصول على المساعدة.`, 'error');
+                this.output(`أمر غير معروف: '${this.escapeHtml(command)}'. اكتب 'help' للحصول على المساعدة.`, 'error');
         }
     }
 
@@ -207,7 +219,7 @@ class Terminal {
             return;
         }
 
-        const target = parameters[0];
+        const target = this.escapeHtml(parameters[0]);
         this.output(`جاري فحص ${target}...`, 'info');
 
         setTimeout(() => {
@@ -216,7 +228,7 @@ class Terminal {
             this.output('• البورتات المفتوحة: 22 (SSH), 80 (HTTP), 443 (HTTPS)', 'info');
             this.output('• الإصدارات: Apache 2.4.41, OpenSSH 8.2', 'info');
             this.output('• الثغرات المحتملة: 2', 'warning');
-        }, 2000);
+        }, 1200);
     }
 
     decryptText(parameters) {
@@ -226,16 +238,16 @@ class Terminal {
         }
 
         const encryptedText = parameters[0];
-        this.output(`جاري فك تشفير: ${encryptedText}...`, 'info');
+        this.output(`جاري فك تشفير: ${this.escapeHtml(encryptedText)}...`, 'info');
 
         setTimeout(() => {
             const decrypted = Encryption.decrypt(encryptedText);
             if (decrypted) {
-                this.output(`<strong>تم فك التشفير:</strong> ${decrypted}`, 'success');
+                this.output(`<strong>تم فك التشفير:</strong> ${this.escapeHtml(decrypted)}`, 'success');
             } else {
                 this.output('فشل فك التشفير', 'error');
             }
-        }, 1500);
+        }, 800);
     }
 
     connectToServer(parameters) {
@@ -244,12 +256,12 @@ class Terminal {
             return;
         }
 
-        const server = parameters[0];
+        const server = this.escapeHtml(parameters[0]);
         this.output(`جاري الاتصال بـ ${server}...`, 'info');
 
         setTimeout(() => {
             this.output(`<strong>تم الاتصال بنجاح بـ ${server}</strong>`, 'success');
-        }, 2000);
+        }, 1000);
     }
 
     hackTarget(parameters) {
@@ -258,16 +270,16 @@ class Terminal {
             return;
         }
 
-        const target = parameters[0];
+        const target = this.escapeHtml(parameters[0]);
         this.output(`بدء اختراق ${target}...`, 'warning');
 
         setTimeout(() => {
             this.output(`<strong>تم اختراق ${target} بنجاح!</strong>`, 'success');
-        }, 3000);
+        }, 1500);
     }
 
     showMissions() {
-        if (window.app && window.app.game) {
+        if (window.app && window.app.game && typeof window.app.game.displayMissionsInTerminal === 'function') {
             window.app.game.displayMissionsInTerminal();
         } else {
             this.output('نظام المهام غير متاح حالياً', 'error');
@@ -275,7 +287,7 @@ class Terminal {
     }
 
     showTools() {
-        if (window.app && window.app.game) {
+        if (window.app && window.app.game && typeof window.app.game.displayToolsInTerminal === 'function') {
             window.app.game.displayToolsInTerminal();
         } else {
             this.output('نظام الأدوات غير متاح حالياً', 'error');
@@ -286,7 +298,7 @@ class Terminal {
         if (window.app && window.app.userProgress) {
             const progress = window.app.userProgress;
             this.output('<strong>الملف الشخصي:</strong>', 'info');
-            this.output(`• المستخدم: ${window.app.currentUser?.username || 'غير معروف'}`, 'info');
+            this.output(`• المستخدم: ${this.escapeHtml(window.app.currentUser?.username || 'غير معروف')}`, 'info');
             this.output(`• المستوى: ${progress.level}`, 'info');
             this.output(`• النقاط: ${progress.points}`, 'info');
             this.output(`• البروكس: ${progress.prox} 🪙`, 'info');
@@ -307,16 +319,16 @@ class Terminal {
         }
 
         const encodedText = parameters[0];
-        this.output(`جاري فك ترميز: ${encodedText}...`, 'info');
+        this.output(`جاري فك ترميز: ${this.escapeHtml(encodedText)}...`, 'info');
 
         setTimeout(() => {
             try {
                 const decoded = atob(encodedText);
-                this.output(`<strong>تم فك الترميز (Base64):</strong> ${decoded}`, 'success');
+                this.output(`<strong>تم فك الترميز (Base64):</strong> ${this.escapeHtml(decoded)}`, 'success');
             } catch (e) {
                 this.output('فشل فك الترميز', 'error');
             }
-        }, 1000);
+        }, 700);
     }
 
     bruteForce(parameters) {
@@ -335,7 +347,6 @@ class Terminal {
         }
     }
 
-    // ✅ الدالة المضافة لتصحيح الخطأ
     clear() {
         this.clearTerminal();
     }
@@ -346,7 +357,7 @@ class Terminal {
             if (window.app) {
                 window.app.logout();
             }
-        }, 1000);
+        }, 700);
     }
 
     // ========== دوال التسجيل والمصادقة ==========
@@ -386,12 +397,12 @@ class Terminal {
         };
 
         this.saveUsers();
-        this.output(`✅ تم إنشاء الحساب بنجاح! مرحباً ${username}`, 'success');
+        this.output(`✅ تم إنشاء الحساب بنجاح! مرحباً ${this.escapeHtml(username)}`, 'success');
         
         // تسجيل الدخول تلقائياً
         setTimeout(() => {
             this.authenticateUser(username, password);
-        }, 1000);
+        }, 800);
         
         return true;
     }
@@ -418,7 +429,7 @@ class Terminal {
             loginTime: new Date().toISOString()
         }));
 
-        this.output(`✅ تم الدخول بنجاح! مرحباً مرة أخرى ${username}`, 'success');
+        this.output(`✅ تم الدخول بنجاح! مرحباً مرة أخرى ${this.escapeHtml(username)}`, 'success');
         
         // الانتقال للواجهة الرئيسية
         setTimeout(() => {
@@ -427,7 +438,7 @@ class Terminal {
                 window.app.loadUserProgress();
                 window.app.showMainInterface();
             }
-        }, 1500);
+        }, 900);
 
         return true;
     }
