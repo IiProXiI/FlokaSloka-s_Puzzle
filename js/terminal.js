@@ -362,6 +362,17 @@ class Terminal {
 
     // ========== دوال التسجيل والمصادقة ==========
 
+
+    registerUser(username, password, confirmPassword) {
+        console.log('✅ استدعاء registerUser:', username);
+    // ... باقي الكود
+        }
+
+    authenticateUser(username, password) {
+        console.log('✅ استدعاء authenticateUser:', username);
+    // ... باقي الكود
+        }
+
     registerUser(username, password, confirmPassword) {
         console.log('محاولة تسجيل مستخدم جديد:', username);
         
