@@ -499,24 +499,106 @@ class Terminal {
 
 
 
-
-
-    // في js/terminal.js - داخل كلاس Terminal
+    // داخل كلاس Terminal - بعد الدوال الموجودة
 registerUser(username, password, confirmPassword) {
     if (!username || !password) {
         this.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
         return false;
-        }
+    }
 
     if (password !== confirmPassword) {
         this.output('خطأ: كلمتا المرور غير متطابقتين', 'error');
         return false;
-        }
-
-    // باقي كود التسجيل...
     }
+
+    if (this.users && this.users[username]) {
+        this.output('خطأ: اسم المستخدم موجود مسبقاً', 'error');
+        return false;
+    }
+
+    if (password.length < 6) {
+        this.output('خطأ: كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+        return false;
+    }
+
+    // تحميل المستخدمين من localStorage
+    const users = this.loadUsers();
+    
+    // تشفير كلمة المرور
+    const userHash = this.generateHash(username + password);
+    
+    users[username] = {
+        username: username,
+        passwordHash: userHash,
+        createdAt: new Date().toISOString(),
+        level: 1,
+        points: 0
+    };
+
+    this.saveUsers(users);
+    this.output(`تم إنشاء الحساب بنجاح! مرحباً ${username}`, 'success');
+    
+    // تسجيل الدخول تلقائياً بعد التسجيل
+    setTimeout(() => this.authenticateUser(username, password), 1000);
+    
+    return true;
+}
 
 authenticateUser(username, password) {
-    // كود المصادقة...
+    if (!username || !password) {
+        this.output('خطأ: اسم المستخدم وكلمة المرور مطلوبان', 'error');
+        return false;
     }
+
+    const users = this.loadUsers();
+    const user = users[username];
+    const userHash = this.generateHash(username + password);
+
+    if (!user || user.passwordHash !== userHash) {
+        this.output('خطأ: اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
+        return false;
+    }
+
+    // حفظ حالة المستخدم الحالي
+    localStorage.setItem('current_user', JSON.stringify({
+        username: username,
+        loginTime: new Date().toISOString()
+    }));
+
+    this.output(`تم الدخول بنجاح! مرحباً مرة أخرى ${username}`, 'success');
+    
+    // الانتقال إلى الواجهة الرئيسية
+    setTimeout(() => {
+        if (window.app) {
+            window.app.currentUser = { username: username };
+            window.app.loadUserProgress();
+            window.app.showMainInterface();
+        }
+    }, 1500);
+
+    return true;
+}
+
+// دالة مساعدة لتحميل المستخدمين
+loadUsers() {
+    const usersData = localStorage.getItem('hacking_simulator_users');
+    return usersData ? JSON.parse(usersData) : {};
+}
+
+// دالة مساعدة لحفظ المستخدمين
+saveUsers(users) {
+    localStorage.setItem('hacking_simulator_users', JSON.stringify(users));
+}
+
+// دالة مساعدة لتوليد الهاش
+generateHash(text) {
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+        const char = text.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return hash.toString(16);
+}
+
 }
