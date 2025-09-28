@@ -36,6 +36,10 @@ class HackingSimulator {
         console.log('النظام مهيأ بالكامل');
     }
 
+    // ... باقي الكود بدون تغيير ...
+}
+
+// ... باقي الكود بدون تغيير ...
     async simulateBootProcess() {
         const messages = [
             "جاري تحميل نواة النظام...",
